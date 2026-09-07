@@ -1,0 +1,11 @@
+[Desktop Entry]
+Name=Google Antigravity
+Comment=Antigravity Agent Platform & Hub
+GenericName=Development Tool
+Exec=/usr/bin/antigravity %U
+Icon=antigravity
+Type=Application
+StartupNotify=true
+StartupWMClass=antigravity
+Categories=Development;
+MimeType=x-scheme-handler/antigravity;x-scheme-handler/antigravity-ide;

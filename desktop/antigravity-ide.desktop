@@ -1,0 +1,17 @@
+[Desktop Entry]
+Name=Antigravity IDE
+Comment=Antigravity Code Editor & IDE
+GenericName=Text Editor
+Exec=/usr/bin/antigravity-ide --open-url %U
+Icon=antigravity-ide
+Type=Application
+StartupNotify=true
+StartupWMClass=Antigravity IDE
+Categories=TextEditor;Development;IDE;
+MimeType=text/plain;inode/directory;x-scheme-handler/antigravity-ide;x-scheme-handler/antigravity;
+Actions=new-empty-window;
+
+[Desktop Action new-empty-window]
+Name=New Empty Window
+Exec=/usr/bin/antigravity-ide --new-window %F
+Icon=antigravity-ide

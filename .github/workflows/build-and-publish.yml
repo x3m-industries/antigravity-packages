@@ -1,0 +1,162 @@
+name: Build and Publish Packages
+
+on:
+  schedule:
+    - cron: '0 5 * * *' # Daily at 05:00 UTC
+  workflow_dispatch:
+    inputs:
+      force_build:
+        description: 'Force rebuild even if version already exists in releases'
+        required: false
+        type: boolean
+        default: false
+  push:
+    branches:
+      - main
+    paths:
+      - 'scripts/**'
+      - 'desktop/**'
+      - '.github/workflows/build-and-publish.yml'
+
+permissions:
+  contents: write
+  pages: write
+  id-token: write
+
+concurrency:
+  group: "packaging"
+  cancel-in-progress: false
+
+jobs:
+  check:
+    name: Check Upstream Releases
+    runs-on: ubuntu-latest
+    outputs:
+      has_update: ${{ steps.check.outputs.has_update }}
+      tag_name: ${{ steps.check.outputs.tag_name }}
+      ide_version: ${{ steps.check.outputs.ide_version }}
+      ide_url_x64: ${{ steps.check.outputs.ide_url_x64 }}
+      ide_url_arm64: ${{ steps.check.outputs.ide_url_arm64 }}
+      hub_version: ${{ steps.check.outputs.hub_version }}
+      hub_url_x64: ${{ steps.check.outputs.hub_url_x64 }}
+      hub_url_arm64: ${{ steps.check.outputs.hub_url_arm64 }}
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Check upstream versions
+        id: check
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          FORCE_BUILD: ${{ inputs.force_build }}
+        run: |
+          python3 scripts/check_upstream.py
+
+  build:
+    name: Build Packages & Repositories
+    needs: check
+    if: needs.check.outputs.has_update == 'true' || inputs.force_build == true
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Install build tools
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y rpm createrepo-c dpkg-dev apt-utils zstd
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Import GPG signing key
+        if: env.GPG_PRIVATE_KEY != ''
+        env:
+          GPG_PRIVATE_KEY: ${{ secrets.GPG_PRIVATE_KEY }}
+        run: |
+          echo "$GPG_PRIVATE_KEY" | gpg --batch --import
+          mkdir -p ~/.rpmmacros
+          cat << 'MACROS_EOF' > ~/.rpmmacros
+          %_gpg_name X3M Antigravity Packagers
+          %_signature gpg
+          %__gpg_sign_cmd %{__gpg} gpg --batch --no-verbose --no-armor --pinentry-mode loopback -u "%{_gpg_name}" -sbo %{__signature_filename} %{__plaintext_filename}
+          MACROS_EOF
+
+      - name: Build Antigravity IDE (x86_64)
+        if: needs.check.outputs.ide_url_x64 != ''
+        run: |
+          python3 scripts/build_packages.py \
+            --package antigravity-ide \
+            --version-full "${{ needs.check.outputs.ide_version }}" \
+            --url "${{ needs.check.outputs.ide_url_x64 }}" \
+            --arch x86_64 \
+            --output-dir ./dist/packages
+
+      - name: Build Antigravity Hub (x86_64)
+        if: needs.check.outputs.hub_url_x64 != ''
+        run: |
+          python3 scripts/build_packages.py \
+            --package antigravity \
+            --version-full "${{ needs.check.outputs.hub_version }}" \
+            --url "${{ needs.check.outputs.hub_url_x64 }}" \
+            --arch x86_64 \
+            --output-dir ./dist/packages
+
+      - name: Sign RPM packages with GPG
+        if: env.GPG_PRIVATE_KEY != ''
+        env:
+          GPG_PRIVATE_KEY: ${{ secrets.GPG_PRIVATE_KEY }}
+        run: |
+          for f in ./dist/packages/*.rpm; do
+            [ -e "$f" ] || continue
+            echo "Signing $f..."
+            rpmsign --addsign "$f" || true
+          done
+
+      - name: Publish GitHub Release
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          TAG="${{ needs.check.outputs.tag_name }}"
+          # Delete existing release/tag if force build
+          gh release delete "$TAG" --yes 2>/dev/null || true
+          git tag -d "$TAG" 2>/dev/null || true
+          git push origin ":refs/tags/$TAG" 2>/dev/null || true
+
+          gh release create "$TAG" ./dist/packages/* \
+            --title "Antigravity Packages - $TAG" \
+            --notes "Automated community release of Google Antigravity & Antigravity IDE for Linux. Built and signed by X3M Industries."
+
+      - name: Prepare RPM files for repository metadata
+        run: |
+          mkdir -p ./dist/rpm
+          cp ./dist/packages/*.rpm ./dist/rpm/
+
+      - name: Generate Repository Metadata
+        run: |
+          ./scripts/generate_repos.sh "${{ needs.check.outputs.tag_name }}" ./dist
+
+      - name: Upload GitHub Pages artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: ./dist
+
+  deploy-pages:
+    name: Deploy to GitHub Pages
+    needs: [check, build]
+    if: needs.check.outputs.has_update == 'true' || inputs.force_build == true
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
