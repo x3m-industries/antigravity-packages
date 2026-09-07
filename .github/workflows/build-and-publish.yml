@@ -84,10 +84,10 @@ jobs:
             echo "$GPG_PRIVATE_KEY" | gpg --batch --import
             rm -rf ~/.rpmmacros
             cat << 'MACROS_EOF' > ~/.rpmmacros
-          %_gpg_name X3M Antigravity Packagers
-          %_signature gpg
-          %__gpg_sign_cmd %{__gpg} gpg --batch --no-verbose --no-armor --pinentry-mode loopback -u "%{_gpg_name}" -sbo %{__signature_filename} %{__plaintext_filename}
-          MACROS_EOF
+%_gpg_name X3M Antigravity Packagers
+%_signature gpg
+%__gpg_sign_cmd %{__gpg} gpg --batch --no-verbose --no-armor --pinentry-mode loopback -u "%{_gpg_name}" -sbo %{__signature_filename} %{__plaintext_filename}
+MACROS_EOF
           fi
 
       - name: Build Antigravity IDE (x86_64)
@@ -110,6 +110,12 @@ jobs:
             --arch x86_64 \
             --output-dir ./dist/packages
 
+      - name: Flatten packages directory
+        run: |
+          find ./dist/packages -mindepth 2 -type f -exec mv -t ./dist/packages {} +
+          find ./dist/packages -mindepth 1 -type d -delete
+          ls -la ./dist/packages
+
       - name: Sign RPM packages with GPG
         env:
           GPG_PRIVATE_KEY: ${{ secrets.GPG_PRIVATE_KEY }}
@@ -127,7 +133,7 @@ jobs:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           TAG="${{ needs.check.outputs.tag_name }}"
-          # Delete existing release/tag if force build
+          # Clean up any partial release or tag
           gh release delete "$TAG" --yes 2>/dev/null || true
           git tag -d "$TAG" 2>/dev/null || true
           git push origin ":refs/tags/$TAG" 2>/dev/null || true
@@ -144,6 +150,12 @@ jobs:
       - name: Generate Repository Metadata
         run: |
           ./scripts/generate_repos.sh "${{ needs.check.outputs.tag_name }}" ./dist
+
+      - name: Clean up temporary package files before Pages upload
+        run: |
+          # Keep only metadata and site in dist/
+          rm -rf ./dist/packages
+          rm -f ./dist/rpm/*.rpm
 
       - name: Upload GitHub Pages artifact
         uses: actions/upload-pages-artifact@v5
