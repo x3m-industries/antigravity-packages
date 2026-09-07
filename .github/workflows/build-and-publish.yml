@@ -77,17 +77,18 @@ jobs:
           python-version: '3.12'
 
       - name: Import GPG signing key
-        if: ${{ secrets.GPG_PRIVATE_KEY != '' }}
         env:
           GPG_PRIVATE_KEY: ${{ secrets.GPG_PRIVATE_KEY }}
         run: |
-          echo "$GPG_PRIVATE_KEY" | gpg --batch --import
-          rm -rf ~/.rpmmacros
-          cat << 'MACROS_EOF' > ~/.rpmmacros
+          if [ -n "$GPG_PRIVATE_KEY" ]; then
+            echo "$GPG_PRIVATE_KEY" | gpg --batch --import
+            rm -rf ~/.rpmmacros
+            cat << 'MACROS_EOF' > ~/.rpmmacros
           %_gpg_name X3M Antigravity Packagers
           %_signature gpg
           %__gpg_sign_cmd %{__gpg} gpg --batch --no-verbose --no-armor --pinentry-mode loopback -u "%{_gpg_name}" -sbo %{__signature_filename} %{__plaintext_filename}
           MACROS_EOF
+          fi
 
       - name: Build Antigravity IDE (x86_64)
         if: needs.check.outputs.ide_url_x64 != ''
@@ -110,13 +111,16 @@ jobs:
             --output-dir ./dist/packages
 
       - name: Sign RPM packages with GPG
-        if: ${{ secrets.GPG_PRIVATE_KEY != '' }}
+        env:
+          GPG_PRIVATE_KEY: ${{ secrets.GPG_PRIVATE_KEY }}
         run: |
-          for f in ./dist/packages/*.rpm; do
-            [ -e "$f" ] || continue
-            echo "Signing $f..."
-            rpmsign --addsign "$f" || true
-          done
+          if [ -n "$GPG_PRIVATE_KEY" ]; then
+            for f in ./dist/packages/*.rpm; do
+              [ -e "$f" ] || continue
+              echo "Signing $f..."
+              rpmsign --addsign "$f" || true
+            done
+          fi
 
       - name: Publish GitHub Release
         env:
