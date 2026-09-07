@@ -83,12 +83,12 @@ jobs:
           if [ -n "$GPG_PRIVATE_KEY" ]; then
             echo "$GPG_PRIVATE_KEY" | gpg --batch --import
             rm -rf ~/.rpmmacros
-            cat << 'MACROS_EOF' > ~/.rpmmacros
-%_gpg_name X3M Antigravity Packagers
-%_signature gpg
-%__gpg /usr/bin/gpg
-%__gpg_sign_cmd %{__gpg} --batch --no-verbose --no-armor --pinentry-mode loopback -u "%{_gpg_name}" -sbo %{__signature_filename} %{__plaintext_filename}
-MACROS_EOF
+            {
+              echo "%_gpg_name X3M Antigravity Packagers"
+              echo "%_signature gpg"
+              echo "%__gpg /usr/bin/gpg"
+              echo '%__gpg_sign_cmd %{__gpg} --batch --no-verbose --no-armor --pinentry-mode loopback -u "%{_gpg_name}" -sbo %{__signature_filename} %{__plaintext_filename}'
+            } > ~/.rpmmacros
           fi
 
       - name: Build Antigravity IDE (x86_64)
