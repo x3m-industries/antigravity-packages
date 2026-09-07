@@ -67,6 +67,20 @@ def build_rpm(package_name, version, release, arch, app_source_dir, output_dir, 
     install_dest = f"/usr/share/{package_name}"
     bin_target = f"{install_dest}/bin/{package_name}" if package_name == "antigravity-ide" else f"{install_dest}/{package_name}"
 
+    icon_install = ""
+    icon_files = ""
+    if os.path.exists(icon_file):
+        icon_install = f"""
+mkdir -p %{{buildroot}}/usr/share/icons/hicolor/512x512/apps
+mkdir -p %{{buildroot}}/usr/share/pixmaps
+cp "{icon_file}" %{{buildroot}}/usr/share/icons/hicolor/512x512/apps/{package_name}.png
+cp "{icon_file}" %{{buildroot}}/usr/share/pixmaps/{package_name}.png
+"""
+        icon_files = f"""
+/usr/share/icons/hicolor/512x512/apps/{package_name}.png
+/usr/share/pixmaps/{package_name}.png
+"""
+
     spec_content = f"""
 %define _topdir {rpm_root}
 %define _rpmdir {output_dir}
@@ -88,38 +102,30 @@ Requires:       gtk3, libnotify, nss, alsa-lib, libXScrnSaver
 Google Antigravity packages distributed for Linux.
 
 %install
-mkdir -p %{{buildroot}}{install_dest}
-cp -r {app_source_dir}/* %{{buildroot}}{install_dest}/
+mkdir -p "%{{buildroot}}{install_dest}"
+cp -r "{app_source_dir}"/* "%{{buildroot}}{install_dest}/"
 
 # Permissions
-find %{{buildroot}}{install_dest} -type f -exec chmod 0644 {{}} +
-find %{{buildroot}}{install_dest} -type d -exec chmod 0755 {{}} +
-chmod 0755 %{{buildroot}}{install_dest}/{package_name} || true
-chmod 0755 %{{buildroot}}{install_dest}/bin/{package_name} || true
-chmod 0755 %{{buildroot}}{install_dest}/chrome-sandbox || true
+find "%{{buildroot}}{install_dest}" -type f -exec chmod 0644 {{}} +
+find "%{{buildroot}}{install_dest}" -type d -exec chmod 0755 {{}} +
+chmod 0755 "%{{buildroot}}{install_dest}/{package_name}" 2>/dev/null || true
+chmod 0755 "%{{buildroot}}{install_dest}/bin/{package_name}" 2>/dev/null || true
+chmod 0755 "%{{buildroot}}{install_dest}/chrome-sandbox" 2>/dev/null || true
 
 # Symlink to /usr/bin
-mkdir -p %{{buildroot}}/usr/bin
-ln -sf {bin_target} %{{buildroot}}/usr/bin/{package_name}
+mkdir -p "%{{buildroot}}/usr/bin"
+ln -sf "{bin_target}" "%{{buildroot}}/usr/bin/{package_name}"
 
 # Desktop entry
-mkdir -p %{{buildroot}}/usr/share/applications
-cp {desktop_file} %{{buildroot}}/usr/share/applications/{package_name}.desktop
-
-# Icon
-if [ -f "{icon_file}" ]; then
-    mkdir -p %{{buildroot}}/usr/share/icons/hicolor/512x512/apps
-    mkdir -p %{{buildroot}}/usr/share/pixmaps
-    cp {icon_file} %{{buildroot}}/usr/share/icons/hicolor/512x512/apps/{package_name}.png
-    cp {icon_file} %{{buildroot}}/usr/share/pixmaps/{package_name}.png
-fi
+mkdir -p "%{{buildroot}}/usr/share/applications"
+cp "{desktop_file}" "%{{buildroot}}/usr/share/applications/{package_name}.desktop"
+{icon_install}
 
 %files
 {install_dest}
 /usr/bin/{package_name}
 /usr/share/applications/{package_name}.desktop
-%optional /usr/share/icons/hicolor/512x512/apps/{package_name}.png
-%optional /usr/share/pixmaps/{package_name}.png
+{icon_files}
 
 %post
 update-desktop-database /usr/share/applications &> /dev/null || true
@@ -256,10 +262,12 @@ def main():
     with tarfile.open(tar_path, "r:gz") as t:
         t.extractall(work_dir)
 
-    # Identify unpacked directory
-    dirs = [d for d in work_dir.iterdir() if d.is_dir()]
-    app_dir = dirs[0]
-    print(f"App directory unpacked: {app_dir}")
+    # Identify unpacked directory and rename it to a clean path with no spaces
+    dirs = [d for d in work_dir.iterdir() if d.is_dir() and d.name != "app_source"]
+    raw_dir = dirs[0]
+    app_dir = work_dir / "app_source"
+    raw_dir.rename(app_dir)
+    print(f"App directory sanitized: {app_dir}")
 
     # Desktop & icon setup
     repo_root = Path(__file__).resolve().parent.parent
