@@ -2,7 +2,7 @@
 
 Automated community RPM (DNF) and DEB (APT) packaging for **Google Antigravity** and **Antigravity IDE**, maintained by **[X3M Industries](https://github.com/x3m-industries)**.
 
-This repository tracks upstream releases on [antigravity.google/download](https://antigravity.google/download), packages them into standard native `.rpm` and `.deb` packages with proper desktop integration, signs them with GPG, and serves them via public DNF and APT repositories.
+This repository tracks upstream releases on [antigravity.google/download](https://antigravity.google/download), packages them into native `.rpm` and `.deb` packages for both **x86_64** and **aarch64 / arm64**, signs them with GPG, and serves them via public DNF and APT repositories.
 
 ---
 
@@ -10,6 +10,9 @@ This repository tracks upstream releases on [antigravity.google/download](https:
 
 * **`antigravity-ide`**: The official VS Code–based agentic coding IDE. Includes command-line access (`antigravity-ide ./project`), FreeDesktop menu shortcuts, hi-res application icons, and browser login callback handling (`antigravity-ide://`).
 * **`antigravity`**: Google Antigravity agent runtime and hub background platform.
+* **Architectures supported:**
+  * `x86_64` (Intel / AMD 64-bit)
+  * `aarch64` / `arm64` (Apple Silicon Macs with Linux, Raspberry Pi 5, Snapdragon X Elite, AWS Graviton)
 
 ---
 

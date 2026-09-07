@@ -2,6 +2,7 @@
 """
 Package builder for Antigravity & Antigravity IDE.
 Builds both .rpm and .deb packages from Google's official tarballs.
+Supports x86_64 and aarch64 / arm64.
 """
 
 import os
@@ -55,8 +56,9 @@ def split_version(version_full):
     return version_full, "1"
 
 def build_rpm(package_name, version, release, arch, app_source_dir, output_dir, desktop_file, icon_file):
-    print(f"\n--- Building RPM: {package_name}-{version}-{release}.{arch}.rpm ---")
-    work_dir = Path("/tmp/rpmbuild-work")
+    rpm_arch = "aarch64" if arch in ["aarch64", "arm64", "arm"] else "x86_64"
+    print(f"\n--- Building RPM: {package_name}-{version}-{release}.{rpm_arch}.rpm ---")
+    work_dir = Path(f"/tmp/rpmbuild-work-{package_name}-{rpm_arch}")
     if work_dir.exists():
         shutil.rmtree(work_dir)
     
@@ -140,15 +142,15 @@ gtk-update-icon-cache -f /usr/share/icons/hicolor &> /dev/null || true
     with open(spec_file, "w") as f:
         f.write(spec_content)
 
-    subprocess.run(["rpmbuild", "-bb", str(spec_file)], check=True)
+    subprocess.run(["rpmbuild", "-bb", "--target", rpm_arch, str(spec_file)], check=True)
     print("RPM build successful.")
 
 def build_deb(package_name, version, release, arch, app_source_dir, output_dir, desktop_file, icon_file):
-    deb_arch = "amd64" if arch == "x86_64" else "arm64"
+    deb_arch = "arm64" if arch in ["aarch64", "arm64", "arm"] else "amd64"
     deb_version = f"{version}-{release}"
     print(f"\n--- Building DEB: {package_name}_{deb_version}_{deb_arch}.deb ---")
 
-    stage_dir = Path("/tmp/debbuild-work") / f"{package_name}_{deb_version}_{deb_arch}"
+    stage_dir = Path(f"/tmp/debbuild-work-{package_name}-{deb_arch}") / f"{package_name}_{deb_version}_{deb_arch}"
     if stage_dir.exists():
         shutil.rmtree(stage_dir)
 
@@ -248,7 +250,7 @@ def main():
     out_dir.mkdir(parents=True, exist_ok=True)
 
     version, release = split_version(args.version_full)
-    work_dir = Path(f"/tmp/pkg-work-{args.package}")
+    work_dir = Path(f"/tmp/pkg-work-{args.package}-{args.arch}")
     if work_dir.exists():
         shutil.rmtree(work_dir)
     work_dir.mkdir(parents=True, exist_ok=True)
@@ -275,12 +277,10 @@ def main():
     icon_file = work_dir / f"{args.package}.png"
 
     if args.package == "antigravity-ide":
-        # Extract code.png
         ide_icon = app_dir / "resources" / "app" / "resources" / "linux" / "code.png"
         if ide_icon.exists():
             shutil.copy(ide_icon, icon_file)
     else:
-        # Hub: extract icon.png from resources/app.asar
         asar_path = app_dir / "resources" / "app.asar"
         if asar_path.exists():
             extract_asar_file(str(asar_path), "icon.png", str(icon_file))
@@ -292,7 +292,7 @@ def main():
     if shutil.which("dpkg-deb"):
         build_deb(args.package, version, release, args.arch, str(app_dir), str(out_dir), str(desktop_file), str(icon_file))
     else:
-        print("Note: dpkg-deb not found on this system, skipping local DEB build (will run in GitHub Actions).")
+        print("Note: dpkg-deb not found on this system, skipping local DEB build.")
 
 if __name__ == "__main__":
     main()

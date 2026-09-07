@@ -11,7 +11,6 @@ PKG_DIR="${DIST_DIR}/packages"
 mkdir -p "${RPM_DIR}" "${DEB_DIR}"
 
 echo "=== Generating RPM Repository Metadata ==="
-# createrepo_c with baseurl pointing to GitHub Releases assets
 createrepo_c -u "https://github.com/x3m-industries/antigravity-packages/releases/download/${RELEASE_TAG}/" "${RPM_DIR}"
 
 # Copy RPM GPG public key
@@ -29,17 +28,20 @@ REPO_EOF
 
 echo "=== Generating DEB Repository Metadata ==="
 DEB_POOL="${DEB_DIR}/pool/main"
-DEB_DISTS="${DEB_DIR}/dists/stable/main/binary-amd64"
-mkdir -p "${DEB_POOL}" "${DEB_DISTS}"
+mkdir -p "${DEB_POOL}"
 
-# Copy debs into pool if any exist
 if compgen -G "${PKG_DIR}/*.deb" > /dev/null; then
     cp "${PKG_DIR}"/*.deb "${DEB_POOL}/"
     
-    # Generate Packages file
     if command -v dpkg-scanpackages > /dev/null 2>&1; then
-        (cd "${DEB_DIR}" && dpkg-scanpackages --multiversion pool/main > dists/stable/main/binary-amd64/Packages)
-        gzip -9c "${DEB_DISTS}/Packages" > "${DEB_DISTS}/Packages.gz"
+        for ARCH in amd64 arm64; do
+            DISTS_ARCH="${DEB_DIR}/dists/stable/main/binary-${ARCH}"
+            mkdir -p "${DISTS_ARCH}"
+            (cd "${DEB_DIR}" && dpkg-scanpackages --arch "${ARCH}" --multiversion pool/main > "dists/stable/main/binary-${ARCH}/Packages" 2>/dev/null || true)
+            if [ -s "${DISTS_ARCH}/Packages" ]; then
+                gzip -9c "${DISTS_ARCH}/Packages" > "${DISTS_ARCH}/Packages.gz"
+            fi
+        done
         
         # Generate Release file
         cat << REL_EOF > "${DEB_DIR}/dists/stable/Release"
@@ -88,17 +90,22 @@ cat << 'HTML_EOF' > "${DIST_DIR}/index.html"
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Antigravity Linux Repositories (X3M Industries)</title>
     <style>
-        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; line-height: 1.6; max-width: 800px; margin: 40px auto; padding: 0 20px; color: #24292e; }
+        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; line-height: 1.6; max-width: 820px; margin: 40px auto; padding: 0 20px; color: #24292e; }
         pre { background: #f6f8fa; padding: 16px; border-radius: 6px; overflow-x: auto; border: 1px solid #e1e4e8; }
         code { font-family: 'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, monospace; }
         h1, h2 { border-bottom: 1px solid #eaecef; padding-bottom: .3em; }
-        .tag { background: #0366d6; color: white; padding: 2px 8px; border-radius: 12px; font-size: 0.85em; }
+        .badge { display: inline-block; background: #0366d6; color: white; padding: 3px 10px; border-radius: 12px; font-size: 0.85em; margin-right: 6px; }
     </style>
 </head>
 <body>
     <h1>Google Antigravity & Antigravity IDE Packages</h1>
     <p>Automated RPM (DNF) and DEB (APT) repositories for Google Antigravity, maintained by <strong>X3M Industries</strong>.</p>
-    
+    <div>
+        <span class="badge">x86_64</span>
+        <span class="badge">aarch64 / arm64</span>
+        <span class="badge">GPG-Signed</span>
+    </div>
+
     <h2>Fedora / RHEL / Rocky / AlmaLinux / CentOS (RPM)</h2>
     <p>Add the repository to DNF:</p>
     <pre><code>sudo curl -fsSL https://x3m-industries.github.io/antigravity-packages/rpm/antigravity.repo -o /etc/yum.repos.d/antigravity.repo

@@ -96,6 +96,16 @@ jobs:
             --arch x86_64 \
             --output-dir ./dist/packages
 
+      - name: Build Antigravity IDE (aarch64 / arm64)
+        if: needs.check.outputs.ide_url_arm64 != ''
+        run: |
+          python3 scripts/build_packages.py \
+            --package antigravity-ide \
+            --version-full "${{ needs.check.outputs.ide_version }}" \
+            --url "${{ needs.check.outputs.ide_url_arm64 }}" \
+            --arch aarch64 \
+            --output-dir ./dist/packages
+
       - name: Build Antigravity Hub (x86_64)
         if: needs.check.outputs.hub_url_x64 != ''
         run: |
@@ -104,6 +114,16 @@ jobs:
             --version-full "${{ needs.check.outputs.hub_version }}" \
             --url "${{ needs.check.outputs.hub_url_x64 }}" \
             --arch x86_64 \
+            --output-dir ./dist/packages
+
+      - name: Build Antigravity Hub (aarch64 / arm64)
+        if: needs.check.outputs.hub_url_arm64 != ''
+        run: |
+          python3 scripts/build_packages.py \
+            --package antigravity \
+            --version-full "${{ needs.check.outputs.hub_version }}" \
+            --url "${{ needs.check.outputs.hub_url_arm64 }}" \
+            --arch aarch64 \
             --output-dir ./dist/packages
 
       - name: Flatten packages directory
@@ -136,7 +156,7 @@ jobs:
 
           gh release create "$TAG" ./dist/packages/* \
             --title "Antigravity Packages - $TAG" \
-            --notes "Automated community release of Google Antigravity & Antigravity IDE for Linux. Built and signed by X3M Industries."
+            --notes "Automated community release of Google Antigravity & Antigravity IDE for Linux (x86_64 & aarch64). Built and signed by X3M Industries."
 
       - name: Prepare RPM files for repository metadata
         run: |
