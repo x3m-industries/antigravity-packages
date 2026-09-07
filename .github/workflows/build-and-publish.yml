@@ -77,12 +77,12 @@ jobs:
           python-version: '3.12'
 
       - name: Import GPG signing key
-        if: env.GPG_PRIVATE_KEY != ''
+        if: ${{ secrets.GPG_PRIVATE_KEY != '' }}
         env:
           GPG_PRIVATE_KEY: ${{ secrets.GPG_PRIVATE_KEY }}
         run: |
           echo "$GPG_PRIVATE_KEY" | gpg --batch --import
-          mkdir -p ~/.rpmmacros
+          rm -rf ~/.rpmmacros
           cat << 'MACROS_EOF' > ~/.rpmmacros
           %_gpg_name X3M Antigravity Packagers
           %_signature gpg
@@ -110,9 +110,7 @@ jobs:
             --output-dir ./dist/packages
 
       - name: Sign RPM packages with GPG
-        if: env.GPG_PRIVATE_KEY != ''
-        env:
-          GPG_PRIVATE_KEY: ${{ secrets.GPG_PRIVATE_KEY }}
+        if: ${{ secrets.GPG_PRIVATE_KEY != '' }}
         run: |
           for f in ./dist/packages/*.rpm; do
             [ -e "$f" ] || continue
