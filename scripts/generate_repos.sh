@@ -157,9 +157,10 @@ cat << 'HTML_EOF' > "${DIST_DIR}/index.html"
         h1 {
             font-size: clamp(2.2rem, 5vw, 3.2rem);
             font-weight: 800;
-            line-height: 1.15;
+            line-height: 1.3;
             letter-spacing: -0.03em;
-            margin-bottom: 16px;
+            margin-bottom: 20px;
+            padding: 4px 0 12px;
             background: linear-gradient(135deg, #ffffff 30%, #94a3b8 100%);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
@@ -358,7 +359,7 @@ cat << 'HTML_EOF' > "${DIST_DIR}/index.html"
                 <span class="badge highlight">● Fully Automated</span>
                 <span class="badge">x86_64 &amp; aarch64</span>
                 <span class="badge">GPG Signed</span>
-                <span class="badge">OAuth Callback Ready</span>
+                <span class="badge">Native .desktop Files</span>
             </div>
         </header>
 
@@ -419,8 +420,8 @@ sudo curl -fsSL https://x3m-industries.github.io/antigravity-packages/deb/antigr
                 <p>Tracked daily against Google's download CDN. Whenever a new version is released, the pipeline builds, signs, and updates the repositories automatically.</p>
             </div>
             <div class="feature-card">
-                <h3>🖥️ Native Desktop &amp; CLI</h3>
-                <p>Includes high-resolution icons, FreeDesktop menu entries, full CLI arguments (<code>antigravity-ide .</code>), and browser OAuth callback handlers (<code>antigravity-ide://</code>).</p>
+                <h3>🖥️ Native .desktop &amp; CLI</h3>
+                <p>Includes high-resolution icons, FreeDesktop .desktop entries for GNOME/KDE/XFCE, full CLI arguments (<code>antigravity-ide .</code>), and clean system integration.</p>
             </div>
             <div class="feature-card">
                 <h3>🔐 GPG Signed &amp; Secure</h3>
