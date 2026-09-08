@@ -82,12 +82,12 @@ jobs:
         run: |
           if [ -n "$GPG_PRIVATE_KEY" ]; then
             echo "$GPG_PRIVATE_KEY" | gpg --batch --import
+            sudo rpm --import RPM-GPG-KEY-antigravity
             rm -rf ~/.rpmmacros
             {
-              echo "%_gpg_name X3M Antigravity Packagers"
-              echo "%_signature gpg"
-              echo "%__gpg /usr/bin/gpg"
-              echo '%__gpg_sign_cmd %{__gpg} --batch --no-verbose --no-armor --pinentry-mode loopback -u "%{_gpg_name}" -sbo %{__signature_filename} %{__plaintext_filename}'
+              echo "%_openpgp_sign_id E83A23BC57FE6953E4B5F4657A48CA4D7E7B6601"
+              echo "%_gpg_name E83A23BC57FE6953E4B5F4657A48CA4D7E7B6601"
+              echo "%_gpg_sign_cmd_extra_args --batch --pinentry-mode loopback"
             } > ~/.rpmmacros
           fi
 
@@ -146,7 +146,7 @@ jobs:
               [ -e "$f" ] || continue
               echo "Signing $f..."
               rpmsign --addsign "$f"
-              rpm -K "$f"
+              rpm -K -v "$f"
             done
           fi
 
