@@ -2,6 +2,7 @@
 
 <p align="center">
   <a href="https://github.com/x3m-industries/antigravity-packages/actions/workflows/build-and-publish.yml"><img src="https://github.com/x3m-industries/antigravity-packages/actions/workflows/build-and-publish.yml/badge.svg" alt="Build Status" /></a>
+  <a href="https://github.com/x3m-industries/antigravity-packages/releases"><img src="https://img.shields.io/github/downloads/x3m-industries/antigravity-packages/total?color=8b5cf6&logo=github&label=Downloads" alt="Total Downloads" /></a>
   <a href="https://x3m-industries.github.io/antigravity-packages/"><img src="https://img.shields.io/badge/Repository-Online-10b981" alt="Repository Status" /></a>
   <img src="https://img.shields.io/badge/Architectures-x86__64%20%7C%20aarch64-6366f1" alt="Architectures" />
   <img src="https://img.shields.io/badge/Signatures-GPG%20Signed-38bdf8" alt="GPG Signed" />
@@ -112,6 +113,18 @@ mise install
 
 # Check upstream release status
 python3 scripts/check_upstream.py
+```
+
+### 📊 Download & Usage Analytics
+
+Track real-time downloads across packages, architectures, and distro formats:
+
+```bash
+# Display download metrics dashboard
+./scripts/stats.py
+
+# Export raw JSON metrics
+./scripts/stats.py --json
 ```
 
 ---

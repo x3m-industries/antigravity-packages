@@ -580,6 +580,7 @@ cat << 'HTML_EOF' > "${DIST_DIR}/index.html"
                 <span class="badge">x86_64 &amp; aarch64</span>
                 <span class="badge">GPG Signed</span>
                 <span class="badge">Native .desktop Files</span>
+                <a href="https://github.com/x3m-industries/antigravity-packages/releases" target="_blank" style="text-decoration:none;display:inline-flex;align-items:center;"><img src="https://img.shields.io/github/downloads/x3m-industries/antigravity-packages/total?color=8b5cf6&logo=github&label=Downloads&style=flat-square" alt="Total Downloads" style="border-radius:6px;vertical-align:middle;height:26px;"></a>
             </div>
         </header>
 
