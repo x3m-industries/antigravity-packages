@@ -8,4 +8,4 @@ Type=Application
 StartupNotify=true
 StartupWMClass=antigravity
 Categories=Development;
-MimeType=x-scheme-handler/antigravity;x-scheme-handler/antigravity-ide;
+MimeType=x-scheme-handler/antigravity;

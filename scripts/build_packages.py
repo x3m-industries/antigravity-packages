@@ -55,6 +55,35 @@ def split_version(version_full):
         return parts[0], parts[1]
     return version_full, "1"
 
+def sanitize_tree_permissions(directory):
+    """Ensure correct executable and file permissions for packaged tree.
+    Directories -> 0755
+    Executables (ELF binaries, scripts with shebang, binaries in bin/) -> 0755
+    Regular files -> 0644
+    """
+    for root, dirs, files in os.walk(directory):
+        for d in dirs:
+            os.chmod(os.path.join(root, d), 0o755)
+        for f in files:
+            p = os.path.join(root, f)
+            if os.path.islink(p):
+                continue
+            is_exec = False
+            if f in ["antigravity", "antigravity-ide", "chrome-sandbox", "chrome_crashpad_handler", "language_server", "webm_encoder", "rg"] or f.startswith("language_server"):
+                is_exec = True
+            elif f.endswith(".sh") or "/bin/" in p or "/node_modules/.bin/" in p:
+                is_exec = True
+            else:
+                try:
+                    with open(p, "rb") as fp:
+                        header = fp.read(4)
+                        if header == b"\x7fELF" or header[:2] == b"#!":
+                            is_exec = True
+                except Exception:
+                    pass
+            
+            os.chmod(p, 0o755 if is_exec else 0o644)
+
 def build_rpm(package_name, version, release, arch, app_source_dir, output_dir, desktop_file, icon_file):
     rpm_arch = "aarch64" if arch in ["aarch64", "arm64", "arm"] else "x86_64"
     print(f"\n--- Building RPM: {package_name}-{version}-{release}.{rpm_arch}.rpm ---")
@@ -105,14 +134,13 @@ Google Antigravity packages distributed for Linux.
 
 %install
 mkdir -p "%{{buildroot}}{install_dest}"
-cp -r "{app_source_dir}"/* "%{{buildroot}}{install_dest}/"
+cp -a "{app_source_dir}"/* "%{{buildroot}}{install_dest}/"
 
 # Permissions
-find "%{{buildroot}}{install_dest}" -type f -exec chmod 0644 {{}} +
 find "%{{buildroot}}{install_dest}" -type d -exec chmod 0755 {{}} +
-chmod 0755 "%{{buildroot}}{install_dest}/{package_name}" 2>/dev/null || true
-chmod 0755 "%{{buildroot}}{install_dest}/bin/{package_name}" 2>/dev/null || true
-chmod 0755 "%{{buildroot}}{install_dest}/chrome-sandbox" 2>/dev/null || true
+find "%{{buildroot}}{install_dest}" -type f -exec chmod 0644 {{}} +
+find "%{{buildroot}}{install_dest}" -type f \( -name "*.sh" -o -name "*.so*" -o -name "{package_name}" -o -name "chrome-sandbox" -o -name "chrome_crashpad_handler" -o -name "language_server*" -o -name "webm_encoder" -o -name "rg" -o -path "*/bin/*" \) -exec chmod 0755 {{}} +
+find "%{{buildroot}}{install_dest}" -type f -exec sh -c 'for f; do if head -c 4 "$f" 2>/dev/null | grep -q "^.ELF"; then chmod 0755 "$f"; fi; done' _ {{}} +
 
 # Symlink to /usr/bin
 mkdir -p "%{{buildroot}}/usr/bin"
@@ -159,15 +187,7 @@ def build_deb(package_name, version, release, arch, app_source_dir, output_dir, 
     shutil.copytree(app_source_dir, install_dest, dirs_exist_ok=True)
 
     # Permissions
-    for root, dirs, files in os.walk(install_dest):
-        for d in dirs:
-            os.chmod(os.path.join(root, d), 0o755)
-        for f in files:
-            p = os.path.join(root, f)
-            if f in [package_name, "chrome-sandbox", "chrome_crashpad_handler"] or "/bin/" in p:
-                os.chmod(p, 0o755)
-            else:
-                os.chmod(p, 0o644)
+    sanitize_tree_permissions(install_dest)
 
     # Bin symlink
     bin_dir = stage_dir / "usr" / "bin"
@@ -270,6 +290,7 @@ def main():
     app_dir = work_dir / "app_source"
     raw_dir.rename(app_dir)
     print(f"App directory sanitized: {app_dir}")
+    sanitize_tree_permissions(app_dir)
 
     # Desktop & icon setup
     repo_root = Path(__file__).resolve().parent.parent
