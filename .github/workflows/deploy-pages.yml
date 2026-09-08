@@ -1,0 +1,78 @@
+name: Deploy GitHub Pages
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - 'scripts/generate_repos.sh'
+      - 'assets/**'
+      - 'desktop/**'
+      - 'README.md'
+      - '.github/workflows/deploy-pages.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: "pages"
+  cancel-in-progress: true
+
+jobs:
+  deploy:
+    name: Build & Deploy Landing Page
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v7
+
+      - name: Install repository metadata tools
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y createrepo-c dpkg-dev apt-utils zstd
+
+      - name: Fetch latest release packages
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          mkdir -p ./dist/packages ./dist/rpm
+          TAG=$(gh release view --json tagName --jq .tagName 2>/dev/null || echo "")
+          if [ -z "$TAG" ]; then
+            echo "No existing releases found, using placeholder tag."
+            TAG="vlatest"
+          else
+            echo "Downloading packages from latest release $TAG..."
+            gh release download "$TAG" --dir ./dist/packages || true
+            cp ./dist/packages/*.rpm ./dist/rpm/ 2>/dev/null || true
+          fi
+          echo "RELEASE_TAG=$TAG" >> $GITHUB_ENV
+
+      - name: Import GPG signing key for repo release signing
+        env:
+          GPG_PRIVATE_KEY: ${{ secrets.GPG_PRIVATE_KEY }}
+        run: |
+          if [ -n "$GPG_PRIVATE_KEY" ]; then
+            echo "$GPG_PRIVATE_KEY" | gpg --batch --import
+          fi
+
+      - name: Generate Repository Metadata & Landing Page
+        run: |
+          ./scripts/generate_repos.sh "$RELEASE_TAG" ./dist
+
+      - name: Clean up package binaries before Pages upload
+        run: |
+          # Retain only metadata, site assets, and lightweight index files in dist
+          rm -rf ./dist/packages
+          rm -f ./dist/rpm/*.rpm
+          ls -la ./dist
+
+      - name: Upload GitHub Pages artifact
+        uses: actions/upload-pages-artifact@v5
+        with:
+          path: ./dist
+
+      - name: Deploy to GitHub Pages
+        uses: actions/deploy-pages@v5

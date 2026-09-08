@@ -44,43 +44,66 @@ def get_latest_upstream():
         }
     }
 
-def get_existing_releases():
+def get_latest_release():
     try:
-        res = subprocess.run(["gh", "release", "list", "--json", "tagName"], capture_output=True, text=True)
+        res = subprocess.run(["gh", "release", "view", "--json", "tagName,assets"], capture_output=True, text=True)
         if res.returncode == 0:
-            data = json.loads(res.stdout)
-            return [r["tagName"] for r in data]
+            return json.loads(res.stdout)
     except Exception as e:
         print(f"Warning checking GitHub releases: {e}", file=sys.stderr)
-    return []
+    return None
 
 def main():
     upstream = get_latest_upstream()
     print("Upstream versions:", json.dumps(upstream, indent=2))
     
-    existing = get_existing_releases()
-    print("Existing GitHub releases:", existing)
-
     ide_ver = upstream["antigravity-ide"]["version_full"]
     hub_ver = upstream["antigravity"]["version_full"]
 
-    # Target tag name combines both versions or primary IDE version
-    tag_name = f"v{ide_ver}"
-    has_update = tag_name not in existing
+    latest_rel = get_latest_release()
+    prev_tag = latest_rel.get("tagName", "") if latest_rel else ""
+    existing_assets = [a.get("name", "") for a in latest_rel.get("assets", [])] if latest_rel else []
 
-    # Check if forced via env
-    if os.environ.get("FORCE_BUILD", "").lower() in ["true", "1", "yes"]:
-        has_update = True
-        print("Build forced via FORCE_BUILD")
+    print(f"Latest release tag: {prev_tag}")
+    print(f"Existing assets count: {len(existing_assets)}")
 
-    print(f"Tag: {tag_name}, has_update: {has_update}")
+    # Check if ide_ver is already in the latest release assets
+    ide_present = any(f"antigravity-ide-{ide_ver}" in a or f"antigravity-ide_{ide_ver}" in a for a in existing_assets)
+    # Check if hub_ver is already in the latest release assets
+    hub_present = any(f"antigravity-{hub_ver}" in a or f"antigravity_{hub_ver}" in a for a in existing_assets)
 
-    # Set GitHub Actions output if in GITHUB_OUTPUT environment
+    ide_needs_build = not ide_present
+    hub_needs_build = not hub_present
+
+    # Environment overrides
+    force_build = os.environ.get("FORCE_BUILD", "").lower() in ["true", "1", "yes"]
+    force_ide = os.environ.get("FORCE_IDE", "").lower() in ["true", "1", "yes"] or force_build
+    force_hub = os.environ.get("FORCE_HUB", "").lower() in ["true", "1", "yes"] or force_build
+
+    if force_ide:
+        ide_needs_build = True
+    if force_hub:
+        hub_needs_build = True
+
+    has_update = ide_needs_build or hub_needs_build
+
+    # Target tag name combines both versions so it is always unique when either updates
+    tag_name = f"v{ide_ver}_hub-{hub_ver}"
+    if not prev_tag:
+        tag_name = f"v{ide_ver}"
+
+    print(f"ide_needs_build: {ide_needs_build} (upstream: {ide_ver}, present: {ide_present})")
+    print(f"hub_needs_build: {hub_needs_build} (upstream: {hub_ver}, present: {hub_present})")
+    print(f"has_update: {has_update}, target tag: {tag_name}")
+
     github_output = os.environ.get("GITHUB_OUTPUT")
     if github_output:
         with open(github_output, "a") as f:
             f.write(f"has_update={'true' if has_update else 'false'}\n")
+            f.write(f"ide_needs_build={'true' if ide_needs_build else 'false'}\n")
+            f.write(f"hub_needs_build={'true' if hub_needs_build else 'false'}\n")
             f.write(f"tag_name={tag_name}\n")
+            f.write(f"prev_tag={prev_tag}\n")
             f.write(f"ide_version={ide_ver}\n")
             f.write(f"ide_url_x64={upstream['antigravity-ide']['url_x64'] or ''}\n")
             f.write(f"ide_url_arm64={upstream['antigravity-ide']['url_arm64'] or ''}\n")

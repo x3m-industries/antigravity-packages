@@ -6,17 +6,20 @@ on:
   workflow_dispatch:
     inputs:
       force_build:
-        description: 'Force rebuild even if version already exists in releases'
+        description: 'Force rebuild all packages'
         required: false
         type: boolean
         default: false
-  push:
-    branches:
-      - main
-    paths:
-      - 'scripts/**'
-      - 'desktop/**'
-      - '.github/workflows/build-and-publish.yml'
+      force_ide:
+        description: 'Force rebuild Antigravity IDE only'
+        required: false
+        type: boolean
+        default: false
+      force_hub:
+        description: 'Force rebuild Antigravity Hub only'
+        required: false
+        type: boolean
+        default: false
 
 permissions:
   contents: write
@@ -33,7 +36,10 @@ jobs:
     runs-on: ubuntu-latest
     outputs:
       has_update: ${{ steps.check.outputs.has_update }}
+      ide_needs_build: ${{ steps.check.outputs.ide_needs_build }}
+      hub_needs_build: ${{ steps.check.outputs.hub_needs_build }}
       tag_name: ${{ steps.check.outputs.tag_name }}
+      prev_tag: ${{ steps.check.outputs.prev_tag }}
       ide_version: ${{ steps.check.outputs.ide_version }}
       ide_url_x64: ${{ steps.check.outputs.ide_url_x64 }}
       ide_url_arm64: ${{ steps.check.outputs.ide_url_arm64 }}
@@ -53,14 +59,16 @@ jobs:
         id: check
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          FORCE_BUILD: ${{ github.event_name == 'push' || inputs.force_build }}
+          FORCE_BUILD: ${{ inputs.force_build }}
+          FORCE_IDE: ${{ inputs.force_ide }}
+          FORCE_HUB: ${{ inputs.force_hub }}
         run: |
           python3 scripts/check_upstream.py
 
   build:
     name: Build Packages & Repositories
     needs: check
-    if: needs.check.outputs.has_update == 'true' || inputs.force_build == true
+    if: needs.check.outputs.has_update == 'true'
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
@@ -90,8 +98,34 @@ jobs:
             } > ~/.rpmmacros
           fi
 
+      # Reuse prebuilt packages if only one of the apps changed
+      - name: Reuse prebuilt Antigravity Hub packages
+        if: needs.check.outputs.hub_needs_build != 'true' && needs.check.outputs.prev_tag != ''
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          mkdir -p ./dist/packages
+          echo "Reusing prebuilt Hub packages from ${{ needs.check.outputs.prev_tag }}..."
+          gh release download "${{ needs.check.outputs.prev_tag }}" \
+            --pattern "antigravity-${{ needs.check.outputs.hub_version }}*" \
+            --pattern "antigravity_${{ needs.check.outputs.hub_version }}*" \
+            --dir ./dist/packages || true
+
+      - name: Reuse prebuilt Antigravity IDE packages
+        if: needs.check.outputs.ide_needs_build != 'true' && needs.check.outputs.prev_tag != ''
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          mkdir -p ./dist/packages
+          echo "Reusing prebuilt IDE packages from ${{ needs.check.outputs.prev_tag }}..."
+          gh release download "${{ needs.check.outputs.prev_tag }}" \
+            --pattern "antigravity-ide-${{ needs.check.outputs.ide_version }}*" \
+            --pattern "antigravity-ide_${{ needs.check.outputs.ide_version }}*" \
+            --dir ./dist/packages || true
+
+      # Build Antigravity IDE only if needed
       - name: Build Antigravity IDE (x86_64)
-        if: needs.check.outputs.ide_url_x64 != ''
+        if: needs.check.outputs.ide_needs_build == 'true' && needs.check.outputs.ide_url_x64 != ''
         run: |
           python3 scripts/build_packages.py \
             --package antigravity-ide \
@@ -101,7 +135,7 @@ jobs:
             --output-dir ./dist/packages
 
       - name: Build Antigravity IDE (aarch64 / arm64)
-        if: needs.check.outputs.ide_url_arm64 != ''
+        if: needs.check.outputs.ide_needs_build == 'true' && needs.check.outputs.ide_url_arm64 != ''
         run: |
           python3 scripts/build_packages.py \
             --package antigravity-ide \
@@ -110,8 +144,9 @@ jobs:
             --arch aarch64 \
             --output-dir ./dist/packages
 
+      # Build Antigravity Hub only if needed
       - name: Build Antigravity Hub (x86_64)
-        if: needs.check.outputs.hub_url_x64 != ''
+        if: needs.check.outputs.hub_needs_build == 'true' && needs.check.outputs.hub_url_x64 != ''
         run: |
           python3 scripts/build_packages.py \
             --package antigravity \
@@ -121,7 +156,7 @@ jobs:
             --output-dir ./dist/packages
 
       - name: Build Antigravity Hub (aarch64 / arm64)
-        if: needs.check.outputs.hub_url_arm64 != ''
+        if: needs.check.outputs.hub_needs_build == 'true' && needs.check.outputs.hub_url_arm64 != ''
         run: |
           python3 scripts/build_packages.py \
             --package antigravity \
@@ -143,9 +178,12 @@ jobs:
           if [ -n "$GPG_PRIVATE_KEY" ]; then
             for f in ./dist/packages/*.rpm; do
               [ -e "$f" ] || continue
+              if rpm -qpi "$f" | grep -A 1 "Signature" | grep -qv "(none)"; then
+                echo "$f is already signed."
+                continue
+              fi
               echo "Signing $f..."
               rpmsign --addsign "$f"
-              rpm -qpi "$f" | grep -A 1 "Signature"
               if rpm -qpi "$f" | grep -q "Signature.*(none)"; then
                 echo "Error: $f was not signed!"
                 exit 1
@@ -158,14 +196,13 @@ jobs:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           TAG="${{ needs.check.outputs.tag_name }}"
-          # Clean up any existing release or tag
           gh release delete "$TAG" --yes 2>/dev/null || true
           git tag -d "$TAG" 2>/dev/null || true
           git push origin ":refs/tags/$TAG" 2>/dev/null || true
 
           gh release create "$TAG" ./dist/packages/* \
             --title "Antigravity Packages - $TAG" \
-            --notes "Automated community release of Google Antigravity & Antigravity IDE for Linux (x86_64 & aarch64). Built and signed by X3M Industries."
+            --notes "Automated release of Google Antigravity & Antigravity IDE for Linux. IDE: ${{ needs.check.outputs.ide_version }} | Hub: ${{ needs.check.outputs.hub_version }}"
 
       - name: Prepare RPM files for repository metadata
         run: |
@@ -178,7 +215,6 @@ jobs:
 
       - name: Clean up temporary package files before Pages upload
         run: |
-          # Keep only metadata and site in dist/
           rm -rf ./dist/packages
           rm -f ./dist/rpm/*.rpm
 
@@ -189,13 +225,8 @@ jobs:
 
   deploy-pages:
     name: Deploy to GitHub Pages
-    needs: [check, build]
-    if: needs.check.outputs.has_update == 'true' || inputs.force_build == true
+    needs: build
     runs-on: ubuntu-latest
-    environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
     steps:
       - name: Deploy to GitHub Pages
-        id: deployment
         uses: actions/deploy-pages@v5
