@@ -81,9 +81,13 @@ cat << LIST_EOF > "${DEB_DIR}/antigravity.list"
 deb [signed-by=/etc/apt/keyrings/antigravity.gpg] https://x3m-industries.github.io/antigravity-packages/deb stable main
 LIST_EOF
 
-# Copy GPG keys to dist root
+# Copy GPG keys and assets to dist root
 cp RPM-GPG-KEY-antigravity "${DIST_DIR}/"
 cp antigravity.gpg "${DIST_DIR}/"
+if [ -d "assets" ]; then
+    cp -r assets "${DIST_DIR}/"
+    cp assets/favicon.png "${DIST_DIR}/favicon.png" 2>/dev/null || true
+fi
 
 # Modern, stunning Antigravity-styled landing page
 cat << 'HTML_EOF' > "${DIST_DIR}/index.html"
@@ -92,8 +96,110 @@ cat << 'HTML_EOF' > "${DIST_DIR}/index.html"
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Google Antigravity Linux Repositories | X3M Industries</title>
-    <meta name="description" content="Community RPM and DEB repositories for Google Antigravity & Antigravity IDE.">
+    <title>Google Antigravity for Linux — Native RPM &amp; DEB Repositories | Fedora, Ubuntu, Debian</title>
+    <meta name="description" content="Official community RPM and DEB repositories for Google Antigravity &amp; Antigravity IDE on Linux. Install with DNF or APT on Fedora, Ubuntu, Debian, RHEL, Rocky Linux, and openSUSE. Automated daily updates, native .desktop integration, and GPG signed.">
+    <meta name="keywords" content="Google Antigravity, Antigravity Linux, Antigravity IDE, Antigravity RPM, Antigravity DEB, Fedora Antigravity, Ubuntu Antigravity, Debian Antigravity, RHEL Antigravity, Rocky Linux, openSUSE, install Antigravity, Linux IDE, AI code editor, DeepMind Antigravity, DNF repository, APT repository, x86_64, aarch64, arm64">
+    <meta name="author" content="X3M Industries">
+    <link rel="canonical" href="https://x3m-industries.github.io/antigravity-packages/">
+    <meta name="robots" content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1">
+
+    <!-- Favicon & Icons -->
+    <link rel="icon" type="image/png" href="favicon.png">
+    <link rel="apple-touch-icon" href="favicon.png">
+
+    <!-- Open Graph (Facebook, LinkedIn, Discord) -->
+    <meta property="og:type" content="website">
+    <meta property="og:site_name" content="Google Antigravity Linux Repositories">
+    <meta property="og:title" content="Google Antigravity for Linux — RPM &amp; DEB Repositories">
+    <meta property="og:description" content="Native RPM &amp; DEB packages for Google Antigravity and Antigravity IDE on Fedora, Ubuntu, Debian, and RHEL. Automated daily builds, .desktop integration, and GPG signed.">
+    <meta property="og:url" content="https://x3m-industries.github.io/antigravity-packages/">
+    <meta property="og:image" content="https://x3m-industries.github.io/antigravity-packages/assets/icon.png">
+    <meta property="og:locale" content="en_US">
+
+    <!-- Twitter / X Cards -->
+    <meta name="twitter:card" content="summary">
+    <meta name="twitter:title" content="Google Antigravity for Linux — RPM &amp; DEB Repositories">
+    <meta name="twitter:description" content="Community RPM and DEB package repositories for Google Antigravity &amp; Antigravity IDE on Fedora, Ubuntu, Debian, and RHEL.">
+    <meta name="twitter:image" content="https://x3m-industries.github.io/antigravity-packages/assets/icon.png">
+
+    <!-- Schema.org JSON-LD Structured Data -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@graph": [
+        {
+          "@type": "SoftwareApplication",
+          "name": "Google Antigravity IDE",
+          "applicationCategory": "DeveloperApplication",
+          "operatingSystem": "Linux (Fedora, RHEL, Ubuntu, Debian, Rocky Linux, openSUSE)",
+          "offers": {
+            "@type": "Offer",
+            "price": "0",
+            "priceCurrency": "USD"
+          },
+          "description": "Google Antigravity IDE packaged natively as RPM and DEB for Linux distributions.",
+          "url": "https://x3m-industries.github.io/antigravity-packages/",
+          "downloadUrl": "https://x3m-industries.github.io/antigravity-packages/",
+          "publisher": {
+            "@type": "Organization",
+            "name": "X3M Industries",
+            "url": "https://github.com/x3m-industries"
+          }
+        },
+        {
+          "@type": "SoftwareApplication",
+          "name": "Google Antigravity Hub",
+          "applicationCategory": "DeveloperApplication",
+          "operatingSystem": "Linux",
+          "offers": {
+            "@type": "Offer",
+            "price": "0",
+            "priceCurrency": "USD"
+          },
+          "description": "Google Antigravity agent runtime and hub packaged natively as RPM and DEB for Linux distributions.",
+          "url": "https://x3m-industries.github.io/antigravity-packages/",
+          "downloadUrl": "https://x3m-industries.github.io/antigravity-packages/"
+        },
+        {
+          "@type": "FAQPage",
+          "mainEntity": [
+            {
+              "@type": "Question",
+              "name": "How do I install Google Antigravity on Fedora, RHEL, or Rocky Linux?",
+              "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "Add the repository with 'sudo curl -fsSL https://x3m-industries.github.io/antigravity-packages/rpm/antigravity.repo -o /etc/yum.repos.d/antigravity.repo' and run 'sudo dnf install antigravity-ide antigravity'."
+              }
+            },
+            {
+              "@type": "Question",
+              "name": "How do I install Google Antigravity on Ubuntu, Debian, or Linux Mint?",
+              "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "Add the GPG key to /etc/apt/keyrings and the sources file to /etc/apt/sources.list.d/, then run 'sudo apt update && sudo apt install antigravity-ide antigravity'."
+              }
+            },
+            {
+              "@type": "Question",
+              "name": "Are ARM64 / aarch64 architectures supported?",
+              "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "Yes, both x86_64 (Intel/AMD) and aarch64 (ARM64) packages are compiled, signed, and published for RPM and DEB distributions."
+              }
+            },
+            {
+              "@type": "Question",
+              "name": "How do updates work for Google Antigravity on Linux?",
+              "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "The repository checks daily for upstream releases from Google. Once installed, normal system updates ('sudo dnf update' or 'sudo apt upgrade') will automatically upgrade Antigravity to the newest version."
+              }
+            }
+          ]
+        }
+      ]
+    }
+    </script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
@@ -155,12 +261,13 @@ cat << 'HTML_EOF' > "${DIST_DIR}/index.html"
         }
 
         h1 {
+            display: inline-block;
             font-size: clamp(2.2rem, 5vw, 3.2rem);
             font-weight: 800;
-            line-height: 1.3;
+            line-height: 1.35;
             letter-spacing: -0.03em;
-            margin-bottom: 20px;
-            padding: 4px 0 12px;
+            margin: 0 auto 20px;
+            padding: 6px 16px 16px;
             background: linear-gradient(135deg, #ffffff 30%, #94a3b8 100%);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
@@ -325,6 +432,119 @@ cat << 'HTML_EOF' > "${DIST_DIR}/index.html"
             color: var(--text-muted);
         }
 
+        /* Supported Distros */
+        .distros-card {
+            background: var(--card-bg);
+            border: 1px solid var(--card-border);
+            border-radius: 14px;
+            padding: 28px 24px;
+            backdrop-filter: blur(10px);
+            margin-bottom: 40px;
+            text-align: center;
+        }
+
+        .distros-card h2 {
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: #fff;
+            margin-bottom: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .distro-tags {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        .distro-tag {
+            background: rgba(255, 255, 255, 0.04);
+            border: 1px solid var(--card-border);
+            border-radius: 8px;
+            padding: 6px 14px;
+            font-size: 0.85rem;
+            color: var(--text-main);
+            font-weight: 500;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        /* FAQ Section */
+        .faq-section {
+            margin-bottom: 40px;
+        }
+
+        .faq-section h2 {
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: #fff;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .faq-item {
+            background: var(--card-bg);
+            border: 1px solid var(--card-border);
+            border-radius: 12px;
+            margin-bottom: 12px;
+            overflow: hidden;
+            transition: border-color 0.2s;
+        }
+
+        .faq-item[open] {
+            border-color: rgba(99, 102, 241, 0.4);
+        }
+
+        .faq-item summary {
+            padding: 16px 20px;
+            color: var(--text-main);
+            font-size: 0.95rem;
+            font-weight: 600;
+            cursor: pointer;
+            list-style: none;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            user-select: none;
+        }
+
+        .faq-item summary::-webkit-details-marker {
+            display: none;
+        }
+
+        .faq-item summary::after {
+            content: "+";
+            font-size: 1.2rem;
+            color: var(--text-muted);
+            transition: transform 0.2s;
+        }
+
+        .faq-item[open] summary::after {
+            content: "−";
+            color: var(--accent);
+        }
+
+        .faq-answer {
+            padding: 0 20px 18px;
+            color: var(--text-muted);
+            font-size: 0.9rem;
+            line-height: 1.6;
+        }
+
+        .faq-answer code {
+            background: var(--code-bg);
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-family: 'JetBrains Mono', monospace;
+            color: var(--accent);
+            font-size: 0.85rem;
+        }
+
         footer {
             text-align: center;
             font-size: 0.85rem;
@@ -429,6 +649,49 @@ sudo curl -fsSL https://x3m-industries.github.io/antigravity-packages/deb/antigr
             </div>
         </div>
 
+        <div class="distros-card">
+            <h2>Tested &amp; Supported Linux Distributions</h2>
+            <div class="distro-tags">
+                <span class="distro-tag">Fedora 39 / 40 / 41 / 42</span>
+                <span class="distro-tag">Ubuntu 24.04 / 22.04 LTS</span>
+                <span class="distro-tag">Debian 12 Bookworm / 11 Bullseye</span>
+                <span class="distro-tag">RHEL 8 / 9</span>
+                <span class="distro-tag">CentOS Stream</span>
+                <span class="distro-tag">Rocky Linux &amp; AlmaLinux</span>
+                <span class="distro-tag">openSUSE Tumbleweed &amp; Leap</span>
+                <span class="distro-tag">Pop!_OS &amp; Linux Mint</span>
+                <span class="distro-tag">x86_64 &amp; aarch64 (ARM64)</span>
+            </div>
+        </div>
+
+        <section class="faq-section">
+            <h2>Frequently Asked Questions</h2>
+            <details class="faq-item" open>
+                <summary>How do updates work?</summary>
+                <div class="faq-answer">
+                    Our pipeline monitors Google's official release CDN daily. When Google publishes a new release, packages are automatically compiled, GPG-signed, and deployed to this repository. You simply update your system via <code>sudo dnf update</code> or <code>sudo apt upgrade</code>.
+                </div>
+            </details>
+            <details class="faq-item">
+                <summary>Are ARM64 / aarch64 systems supported?</summary>
+                <div class="faq-answer">
+                    Yes! Both <code>x86_64</code> (Intel/AMD) and <code>aarch64</code> (ARM64, Raspberry Pi, Ampere, Apple Silicon Linux VMs) RPM and DEB packages are natively built and published for each release.
+                </div>
+            </details>
+            <details class="faq-item">
+                <summary>How is package security and authenticity verified?</summary>
+                <div class="faq-answer">
+                    All RPM and DEB packages and repository metadata are cryptographically signed with the official <code>X3M Antigravity Packagers</code> GPG key (Fingerprint: <code>E83A 23BC 57FE 6953 E4B5 F465 7A48 CA4D 7E7B 6601</code>). Package managers will automatically verify the signature prior to installation.
+                </div>
+            </details>
+            <details class="faq-item">
+                <summary>How do I launch Antigravity from the terminal or application menu?</summary>
+                <div class="faq-answer">
+                    Once installed, you can launch the IDE with <code>antigravity-ide .</code> or search for <strong>Antigravity IDE</strong> in your GNOME, KDE, or XFCE application menu. The FreeDesktop entries include full protocol handlers for smooth Google login.
+                </div>
+            </details>
+        </section>
+
         <footer>
             <p>Maintained with pride by <a href="https://github.com/x3m-industries" target="_blank">X3M Industries</a> · <a href="https://github.com/x3m-industries/antigravity-packages" target="_blank">View GitHub Repository</a></p>
         </footer>
@@ -458,5 +721,27 @@ sudo curl -fsSL https://x3m-industries.github.io/antigravity-packages/deb/antigr
 </body>
 </html>
 HTML_EOF
+
+# Generate robots.txt
+cat << 'ROBOTS_EOF' > "${DIST_DIR}/robots.txt"
+User-agent: *
+Allow: /
+
+Sitemap: https://x3m-industries.github.io/antigravity-packages/sitemap.xml
+ROBOTS_EOF
+
+# Generate sitemap.xml
+CURRENT_DATE=$(date -u +"%Y-%m-%d")
+cat << SITEMAP_EOF > "${DIST_DIR}/sitemap.xml"
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+  <url>
+    <loc>https://x3m-industries.github.io/antigravity-packages/</loc>
+    <lastmod>${CURRENT_DATE}</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>1.0</priority>
+  </url>
+</urlset>
+SITEMAP_EOF
 
 echo "Repository generation complete."
