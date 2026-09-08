@@ -82,7 +82,6 @@ jobs:
         run: |
           if [ -n "$GPG_PRIVATE_KEY" ]; then
             echo "$GPG_PRIVATE_KEY" | gpg --batch --import
-            sudo rpm --import RPM-GPG-KEY-antigravity
             rm -rf ~/.rpmmacros
             {
               echo "%_openpgp_sign_id E83A23BC57FE6953E4B5F4657A48CA4D7E7B6601"
@@ -146,7 +145,11 @@ jobs:
               [ -e "$f" ] || continue
               echo "Signing $f..."
               rpmsign --addsign "$f"
-              rpm -K -v "$f"
+              rpm -qpi "$f" | grep -A 1 "Signature"
+              if rpm -qpi "$f" | grep -q "Signature.*(none)"; then
+                echo "Error: $f was not signed!"
+                exit 1
+              fi
             done
           fi
 
