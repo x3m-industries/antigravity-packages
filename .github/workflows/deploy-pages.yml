@@ -9,6 +9,7 @@ on:
       - 'assets/**'
       - 'desktop/**'
       - 'README.md'
+      - 'google*.html'
       - '.github/workflows/deploy-pages.yml'
   workflow_dispatch:
 

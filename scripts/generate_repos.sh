@@ -84,6 +84,9 @@ LIST_EOF
 # Copy GPG keys and assets to dist root
 cp RPM-GPG-KEY-antigravity "${DIST_DIR}/"
 cp antigravity.gpg "${DIST_DIR}/"
+if compgen -G "google*.html" > /dev/null; then
+    cp google*.html "${DIST_DIR}/"
+fi
 if [ -d "assets" ]; then
     cp -r assets "${DIST_DIR}/"
     cp assets/favicon.png "${DIST_DIR}/favicon.png" 2>/dev/null || true
