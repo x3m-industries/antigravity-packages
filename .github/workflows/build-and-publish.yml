@@ -178,7 +178,7 @@ jobs:
           if [ -n "$GPG_PRIVATE_KEY" ]; then
             for f in ./dist/packages/*.rpm; do
               [ -e "$f" ] || continue
-              if rpm -qpi "$f" | grep -A 1 "Signature" | grep -qv "(none)"; then
+              if ! rpm -qpi "$f" | grep -q "Signature.*(none)"; then
                 echo "$f is already signed."
                 continue
               fi
