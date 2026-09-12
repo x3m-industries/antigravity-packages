@@ -18,25 +18,32 @@ from pathlib import Path
 
 def extract_asar_file(asar_path, target_file, output_path):
     """Extract a specific file from an Electron asar archive."""
-    with open(asar_path, "rb") as f:
-        buf = f.read(16)
-        if len(buf) < 16:
-            return False
-        magic, header_size, header_json_size, header_len = struct.unpack('<IIII', buf)
-        header_json = f.read(header_len).decode('utf-8', errors='ignore')
-        header = json.loads(header_json)
-        
-        file_info = header.get("files", {}).get(target_file)
-        if not file_info:
-            return False
-        
-        offset = int(file_info["offset"])
-        size = int(file_info["size"])
-        f.seek(16 + header_len + offset)
-        data = f.read(size)
-        with open(output_path, "wb") as out:
-            out.write(data)
-        return True
+    try:
+        with open(asar_path, "rb") as f:
+            buf = f.read(16)
+            if len(buf) < 16:
+                return False
+            magic, header_size, header_json_size, header_len = struct.unpack('<IIII', buf)
+            header_json = f.read(header_len).decode('utf-8', errors='ignore')
+            header = json.loads(header_json)
+            
+            file_info = header.get("files", {}).get(target_file)
+            if not file_info:
+                return False
+            
+            offset = int(file_info["offset"])
+            size = int(file_info["size"])
+            payload_start = 8 + header_size
+            f.seek(payload_start + offset)
+            data = f.read(size)
+            if len(data) != size:
+                return False
+            with open(output_path, "wb") as out:
+                out.write(data)
+            return True
+    except Exception as e:
+        print(f"Warning extracting {target_file} from {asar_path}: {e}")
+        return False
 
 def download_file(url, output_path):
     print(f"Downloading {url} -> {output_path}")
@@ -303,8 +310,14 @@ def main():
             shutil.copy(ide_icon, icon_file)
     else:
         asar_path = app_dir / "resources" / "app.asar"
+        extracted = False
         if asar_path.exists():
-            extract_asar_file(str(asar_path), "icon.png", str(icon_file))
+            extracted = extract_asar_file(str(asar_path), "icon.png", str(icon_file))
+        if not extracted or not icon_file.exists() or icon_file.stat().st_size == 0:
+            fallback_icon = repo_root / "assets" / "icon.png"
+            if fallback_icon.exists():
+                print(f"Using fallback icon: {fallback_icon}")
+                shutil.copy(fallback_icon, icon_file)
 
     # Build RPM
     build_rpm(args.package, version, release, args.arch, str(app_dir), str(out_dir), str(desktop_file), str(icon_file))
