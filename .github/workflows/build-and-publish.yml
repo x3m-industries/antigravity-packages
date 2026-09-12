@@ -2,7 +2,7 @@ name: Build and Publish Packages
 
 on:
   schedule:
-    - cron: '0 5 * * *' # Daily at 05:00 UTC
+    - cron: '30 2 * * *' # Nightly at 02:30 UTC (04:30 CEST)
   workflow_dispatch:
     inputs:
       force_build:
