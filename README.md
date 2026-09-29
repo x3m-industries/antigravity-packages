@@ -15,7 +15,18 @@
 
 ## 🚀 Quick Installation
 
-### Fedora / RHEL / CentOS Stream / Rocky / AlmaLinux (DNF)
+### ⚡ Universal One-Line Installer (Recommended)
+Automatically detects your Linux distribution (Fedora, RHEL, CentOS, Ubuntu, Debian, Rocky, Alma, openSUSE), configures repository GPG keys, and installs Antigravity:
+
+```bash
+curl -fsSL https://x3m-industries.github.io/antigravity-packages/install.sh | bash
+```
+
+---
+
+### Manual Installation by Distribution
+
+#### Fedora / RHEL / CentOS Stream / Rocky / AlmaLinux (DNF)
 
 ```bash
 # 1. Add the repository
@@ -30,7 +41,7 @@ sudo dnf update antigravity-ide
 
 ---
 
-### Ubuntu / Debian / Pop!_OS / Linux Mint (APT)
+#### Ubuntu / Debian / Pop!_OS / Linux Mint (APT)
 
 ```bash
 # 1. Add the GPG key & APT sources (modern DEB822 format)
@@ -43,8 +54,28 @@ sudo apt update
 sudo apt install antigravity-ide antigravity
 
 # 3. Update anytime
-sudo apt update && sudo apt upgrade antigravity-ide
+sudo apt update && sudo apt install --only-upgrade antigravity-ide antigravity
 ```
+
+---
+
+#### Arch Linux / Manjaro / EndeavourOS
+
+Prebuilt binaries and standalone packages are published with every release:
+* **Standalone Tarballs:** Available directly on our [GitHub Releases](https://github.com/x3m-industries/antigravity-packages/releases).
+* **RPM Extraction:** Extract natively using `rpmextract` or convert with `debtap`:
+  ```bash
+  debtap antigravity-ide_*_amd64.deb
+  sudo pacman -U antigravity-ide-*.pkg.tar.zst
+  ```
+* **AUR:** Official `antigravity-bin` and `antigravity-ide-bin` PKGBUILDs coming soon.
+
+---
+
+### 🔄 Updating Antigravity
+The repositories synchronize daily with Google's CDN. To update your installation:
+* **Fedora / RHEL / Rocky:** `sudo dnf update antigravity-ide antigravity`
+* **Ubuntu / Debian / Mint:** `sudo apt update && sudo apt install --only-upgrade antigravity-ide antigravity`
 
 ---
 

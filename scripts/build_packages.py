@@ -146,7 +146,7 @@ cp -a "{app_source_dir}"/* "%{{buildroot}}{install_dest}/"
 # Permissions
 find "%{{buildroot}}{install_dest}" -type d -exec chmod 0755 {{}} +
 find "%{{buildroot}}{install_dest}" -type f -exec chmod 0644 {{}} +
-find "%{{buildroot}}{install_dest}" -type f \( -name "*.sh" -o -name "*.so*" -o -name "{package_name}" -o -name "chrome-sandbox" -o -name "chrome_crashpad_handler" -o -name "language_server*" -o -name "webm_encoder" -o -name "rg" -o -path "*/bin/*" \) -exec chmod 0755 {{}} +
+find "%{{buildroot}}{install_dest}" -type f \\( -name "*.sh" -o -name "*.so*" -o -name "{package_name}" -o -name "chrome-sandbox" -o -name "chrome_crashpad_handler" -o -name "language_server*" -o -name "webm_encoder" -o -name "rg" -o -path "*/bin/*" \\) -exec chmod 0755 {{}} +
 find "%{{buildroot}}{install_dest}" -type f -exec sh -c 'for f; do if head -c 4 "$f" 2>/dev/null | grep -q "^.ELF"; then chmod 0755 "$f"; fi; done' _ {{}} +
 
 # Symlink to /usr/bin

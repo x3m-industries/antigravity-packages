@@ -191,6 +191,10 @@ jobs:
             done
           fi
 
+      - name: Run Container Package Smoke Tests
+        run: |
+          ./scripts/smoke_test.sh ./dist/packages
+
       - name: Publish GitHub Release
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}

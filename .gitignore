@@ -1,0 +1,44 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+env/
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+
+# Testing & Linters
+.pytest_cache/
+.coverage
+htmlcov/
+.mypy_cache/
+.ruff_cache/
+
+# Package outputs & artifacts
+*.deb
+*.rpm
+*.tar.gz
+*.tar.xz
+*.tar.zst
+
+# Temporary & OS files
+tmp/
+.DS_Store
+*.swp
+*~
+.vscode/
+.idea/

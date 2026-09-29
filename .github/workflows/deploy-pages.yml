@@ -6,8 +6,10 @@ on:
       - main
     paths:
       - 'scripts/generate_repos.sh'
+      - 'templates/**'
       - 'assets/**'
       - 'desktop/**'
+      - 'install.sh'
       - 'README.md'
       - 'google*.html'
       - '.github/workflows/deploy-pages.yml'
