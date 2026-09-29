@@ -96,6 +96,14 @@
             },
             {
               "@type": "Question",
+              "name": "Is it safe to run the universal one-line installer more than once?",
+              "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "Yes, absolutely. The installer is completely idempotent. Running it multiple times safely refreshes your repository configurations and GPG keys without creating duplicates, and verifies or upgrades Antigravity IDE and Antigravity Hub to the latest upstream release."
+              }
+            },
+            {
+              "@type": "Question",
               "name": "How do I update Google Antigravity IDE on Ubuntu or Debian?",
               "acceptedAnswer": {
                 "@type": "Answer",
@@ -137,17 +145,17 @@
     <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap"></noscript>
     <style>
         :root {
-            --bg-color: #0f172a;
-            --card-bg: rgba(22, 33, 56, 0.75);
-            --card-border: rgba(255, 255, 255, 0.11);
-            --card-hover-border: rgba(99, 102, 241, 0.45);
+            --bg-color: #0b1120;
+            --card-bg: rgba(30, 41, 67, 0.78);
+            --card-border: rgba(255, 255, 255, 0.13);
+            --card-hover-border: rgba(99, 102, 241, 0.55);
             --primary: #4f46e5;
-            --primary-glow: rgba(79, 70, 229, 0.35);
+            --primary-glow: rgba(79, 70, 229, 0.4);
             --accent: #38bdf8;
-            --accent-glow: rgba(56, 189, 248, 0.25);
+            --accent-glow: rgba(56, 189, 248, 0.28);
             --text-main: #f8fafc;
-            --text-muted: #94a3b8;
-            --code-bg: #030712;
+            --text-muted: #cbd5e1;
+            --code-bg: #020617;
             --success: #10b981;
             --success-glow: rgba(16, 185, 129, 0.25);
         }
@@ -182,9 +190,9 @@
             min-height: 100vh;
             overflow-x: hidden;
             background-image: 
-                radial-gradient(circle at 50% 0%, rgba(99, 102, 241, 0.22) 0%, transparent 60%),
-                radial-gradient(circle at 10% 20%, rgba(56, 189, 248, 0.14) 0%, transparent 45%),
-                radial-gradient(circle at 90% 30%, rgba(168, 85, 247, 0.14) 0%, transparent 50%);
+                radial-gradient(circle at 50% 0%, rgba(99, 102, 241, 0.24) 0%, transparent 60%),
+                radial-gradient(circle at 10% 20%, rgba(56, 189, 248, 0.16) 0%, transparent 45%),
+                radial-gradient(circle at 90% 30%, rgba(168, 85, 247, 0.16) 0%, transparent 50%);
             background-attachment: fixed;
         }
 
@@ -301,20 +309,20 @@
             border-radius: 9999px;
             font-size: 0.8rem;
             font-weight: 600;
-            background: rgba(255, 255, 255, 0.04);
-            border: 1px solid var(--card-border);
-            color: var(--text-main);
+            background: rgba(255, 255, 255, 0.06);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            color: #f1f5f9;
             transition: all 0.2s ease;
         }
 
         .badge:hover {
-            border-color: rgba(255, 255, 255, 0.2);
-            background: rgba(255, 255, 255, 0.08);
+            border-color: rgba(255, 255, 255, 0.28);
+            background: rgba(255, 255, 255, 0.1);
         }
 
         .badge.highlight {
-            background: rgba(16, 185, 129, 0.1);
-            border-color: rgba(16, 185, 129, 0.3);
+            background: rgba(16, 185, 129, 0.15);
+            border-color: rgba(16, 185, 129, 0.4);
             color: #34d399;
         }
 
@@ -328,11 +336,11 @@
 
         /* Terminal One-Line Installer */
         .terminal-card {
-            background: linear-gradient(180deg, rgba(24, 36, 62, 0.95) 0%, rgba(14, 20, 36, 0.98) 100%);
-            border: 1px solid rgba(99, 102, 241, 0.35);
+            background: linear-gradient(180deg, rgba(30, 44, 76, 0.95) 0%, rgba(14, 22, 42, 0.98) 100%);
+            border: 1px solid rgba(99, 102, 241, 0.45);
             border-radius: 16px;
             overflow: hidden;
-            box-shadow: 0 24px 50px -12px rgba(0, 0, 0, 0.8), 0 0 0 1px rgba(255, 255, 255, 0.08);
+            box-shadow: 0 0 36px -6px rgba(99, 102, 241, 0.3), 0 24px 50px -12px rgba(0, 0, 0, 0.85), inset 0 1px 0 rgba(255, 255, 255, 0.12);
             margin-bottom: 36px;
             backdrop-filter: blur(14px);
         }
@@ -342,8 +350,8 @@
             align-items: center;
             justify-content: space-between;
             padding: 12px 18px;
-            background: rgba(8, 14, 28, 0.55);
-            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+            background: rgba(10, 16, 32, 0.65);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
             flex-wrap: wrap;
             gap: 8px;
         }
@@ -392,8 +400,8 @@
             justify-content: space-between;
             gap: 16px;
             font-family: 'JetBrains Mono', monospace;
-            background: var(--code-bg);
-            box-shadow: inset 0 2px 6px rgba(0, 0, 0, 0.55);
+            background: #020617;
+            box-shadow: inset 0 2px 8px rgba(0, 0, 0, 0.65);
         }
 
         .terminal-prompt {
@@ -433,14 +441,14 @@
             border-radius: 18px;
             padding: 28px;
             backdrop-filter: blur(14px);
-            box-shadow: 0 24px 48px -15px rgba(0, 0, 0, 0.65), 0 0 0 1px rgba(255, 255, 255, 0.05);
+            box-shadow: 0 24px 48px -15px rgba(0, 0, 0, 0.65), inset 0 1px 0 rgba(255, 255, 255, 0.1);
             margin-bottom: 40px;
         }
 
         .tabs-header-label {
             margin-bottom: 16px;
             font-size: 0.9rem;
-            color: var(--text-muted);
+            color: #cbd5e1;
             font-weight: 600;
             display: flex;
             align-items: center;
@@ -450,7 +458,8 @@
         .tab-buttons {
             display: flex;
             gap: 8px;
-            background: rgba(0, 0, 0, 0.35);
+            background: rgba(10, 16, 32, 0.6);
+            border: 1px solid rgba(255, 255, 255, 0.08);
             padding: 5px;
             border-radius: 12px;
             margin-bottom: 26px;
@@ -461,7 +470,7 @@
             padding: 12px 18px;
             border: none;
             background: transparent;
-            color: var(--text-muted);
+            color: #cbd5e1;
             font-family: inherit;
             font-size: 0.95rem;
             font-weight: 600;
@@ -477,13 +486,13 @@
 
         .tab-btn:hover {
             color: #fff;
-            background: rgba(255, 255, 255, 0.04);
+            background: rgba(255, 255, 255, 0.08);
         }
 
         .tab-btn.active {
             background: #4f46e5;
             color: #ffffff;
-            box-shadow: 0 4px 16px rgba(79, 70, 229, 0.4);
+            box-shadow: 0 4px 16px rgba(79, 70, 229, 0.45);
         }
 
         .tab-btn .detected-tag {
@@ -567,16 +576,16 @@
 
         .code-block {
             position: relative;
-            background: var(--code-bg);
-            border: 1px solid rgba(255, 255, 255, 0.07);
+            background: #020617;
+            border: 1px solid rgba(255, 255, 255, 0.12);
             border-radius: 12px;
             padding: 16px 20px;
             font-family: 'JetBrains Mono', monospace;
             font-size: 0.9rem;
-            color: #e2e8f0;
+            color: #f8fafc;
             overflow-x: auto;
             margin-bottom: 22px;
-            box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.3);
+            box-shadow: inset 0 2px 6px rgba(0, 0, 0, 0.65);
         }
 
         .code-block code {
@@ -590,9 +599,9 @@
             position: absolute;
             top: 10px;
             right: 10px;
-            background: rgba(255, 255, 255, 0.08);
-            border: 1px solid rgba(255, 255, 255, 0.12);
-            color: var(--text-muted);
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            color: #f1f5f9;
             padding: 5px 12px;
             border-radius: 7px;
             font-size: 0.75rem;
@@ -607,8 +616,8 @@
 
         .terminal-copy {
             position: static;
-            background: rgba(255, 255, 255, 0.1);
-            border-color: rgba(255, 255, 255, 0.16);
+            background: rgba(255, 255, 255, 0.12);
+            border-color: rgba(255, 255, 255, 0.22);
             color: #fff;
             padding: 6px 14px;
             white-space: nowrap;
@@ -653,7 +662,7 @@
             border-radius: 16px;
             padding: 24px;
             backdrop-filter: blur(12px);
-            box-shadow: 0 14px 28px -8px rgba(0, 0, 0, 0.55);
+            box-shadow: 0 14px 28px -8px rgba(0, 0, 0, 0.55), inset 0 1px 0 rgba(255, 255, 255, 0.08);
             transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.25s ease, box-shadow 0.25s ease;
         }
 
@@ -686,7 +695,7 @@
             border-radius: 16px;
             padding: 30px 24px;
             backdrop-filter: blur(12px);
-            box-shadow: 0 16px 36px -12px rgba(0, 0, 0, 0.55);
+            box-shadow: 0 16px 36px -12px rgba(0, 0, 0, 0.55), inset 0 1px 0 rgba(255, 255, 255, 0.08);
             margin-bottom: 40px;
             text-align: center;
         }
@@ -710,13 +719,13 @@
         }
 
         .distro-tag {
-            background: rgba(255, 255, 255, 0.04);
-            border: 1px solid var(--card-border);
+            background: rgba(255, 255, 255, 0.06);
+            border: 1px solid rgba(255, 255, 255, 0.15);
             border-radius: 9px;
             padding: 7px 15px;
             font-size: 0.85rem;
-            color: var(--text-main);
-            font-weight: 500;
+            color: #f1f5f9;
+            font-weight: 600;
             display: inline-flex;
             align-items: center;
             gap: 6px;
@@ -724,8 +733,9 @@
         }
 
         .distro-tag:hover {
-            border-color: rgba(255, 255, 255, 0.2);
-            background: rgba(255, 255, 255, 0.07);
+            border-color: rgba(99, 102, 241, 0.55);
+            background: rgba(99, 102, 241, 0.15);
+            color: #fff;
         }
 
         /* FAQ Section */
@@ -747,12 +757,12 @@
             border-radius: 14px;
             margin-bottom: 12px;
             overflow: hidden;
-            box-shadow: 0 4px 14px -2px rgba(0, 0, 0, 0.4);
+            box-shadow: 0 4px 14px -2px rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.06);
             transition: border-color 0.2s ease, box-shadow 0.2s ease;
         }
 
         .faq-item[open] {
-            border-color: rgba(99, 102, 241, 0.4);
+            border-color: rgba(99, 102, 241, 0.5);
         }
 
         .faq-item summary {
@@ -776,9 +786,9 @@
         .faq-item summary::after {
             content: "+";
             font-size: 1.3rem;
-            color: var(--text-muted);
+            color: var(--accent);
             transition: transform 0.2s ease;
-            font-weight: 400;
+            font-weight: 500;
         }
 
         .faq-item[open] summary::after {
@@ -788,8 +798,8 @@
 
         .faq-answer {
             padding: 0 22px 20px;
-            color: var(--text-muted);
-            font-size: 0.9rem;
+            color: #cbd5e1;
+            font-size: 0.92rem;
             line-height: 1.65;
         }
 
@@ -1032,6 +1042,12 @@ sudo curl -fsSL https://x3m-industries.github.io/antigravity-packages/deb/antigr
                     <div class="code-block" style="margin: 8px 0;">
                         <code>curl -fsSL https://x3m-industries.github.io/antigravity-packages/install.sh | bash</code>
                     </div>
+                </div>
+            </details>
+            <details class="faq-item">
+                <summary>Is it safe to run the universal one-line installer more than once?</summary>
+                <div class="faq-answer">
+                    Yes, absolutely! The universal installer is completely idempotent. Running it multiple times safely refreshes your repository definitions and GPG keys without creating duplicates, and verifies or upgrades your Antigravity IDE and Hub installation to the latest available upstream version.
                 </div>
             </details>
             <details class="faq-item">

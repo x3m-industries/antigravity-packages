@@ -108,12 +108,16 @@ install_deb() {
 
 install_zypper() {
     info "Configuring Zypper repository for openSUSE..."
-    ${SUDO} zypper --non-interactive addrepo -f https://x3m-industries.github.io/antigravity-packages/rpm/ antigravity || true
+    if ${SUDO} zypper repos antigravity > /dev/null 2>&1; then
+        ${SUDO} zypper --non-interactive modifyrepo --enable --refresh antigravity
+    else
+        ${SUDO} zypper --non-interactive addrepo -f https://x3m-industries.github.io/antigravity-packages/rpm/ antigravity
+    fi
     ${SUDO} rpm --import https://x3m-industries.github.io/antigravity-packages/rpm/RPM-GPG-KEY-antigravity
-    success "Added zypper repository 'antigravity'"
+    success "Configured zypper repository 'antigravity'"
 
-    info "Installing Antigravity IDE and Antigravity Agent Platform..."
-    ${SUDO} zypper --non-interactive install antigravity-ide antigravity
+    info "Installing / updating Antigravity IDE and Antigravity Agent Platform..."
+    ${SUDO} zypper --non-interactive install -y antigravity-ide antigravity
 }
 
 case "${DISTRO_ID}" in
