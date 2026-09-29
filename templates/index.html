@@ -549,13 +549,20 @@
             to { opacity: 1; transform: translateY(0); }
         }
 
+        .step-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 8px;
+            gap: 12px;
+        }
+
         .step-label {
             font-size: 0.85rem;
             text-transform: uppercase;
             letter-spacing: 0.06em;
             color: var(--accent);
             font-weight: 700;
-            margin-bottom: 10px;
             display: flex;
             align-items: center;
             gap: 8px;
@@ -596,44 +603,52 @@
         }
 
         .copy-btn {
-            position: absolute;
-            top: 10px;
-            right: 10px;
-            background: rgba(255, 255, 255, 0.1);
-            border: 1px solid rgba(255, 255, 255, 0.2);
+            position: static;
+            width: 32px;
+            height: 32px;
+            background: rgba(255, 255, 255, 0.08);
+            border: 1px solid rgba(255, 255, 255, 0.16);
             color: #f1f5f9;
-            padding: 5px 12px;
-            border-radius: 7px;
-            font-size: 0.75rem;
-            font-weight: 600;
-            font-family: inherit;
+            border-radius: 8px;
             cursor: pointer;
             transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
             display: inline-flex;
             align-items: center;
-            gap: 6px;
+            justify-content: center;
+            flex-shrink: 0;
         }
 
         .terminal-copy {
-            position: static;
+            width: 36px;
+            height: 36px;
             background: rgba(255, 255, 255, 0.12);
             border-color: rgba(255, 255, 255, 0.22);
             color: #fff;
-            padding: 6px 14px;
-            white-space: nowrap;
         }
 
         .copy-btn:hover {
             background: rgba(255, 255, 255, 0.18);
+            border-color: rgba(255, 255, 255, 0.32);
             color: #fff;
-            border-color: rgba(255, 255, 255, 0.25);
             transform: translateY(-1px);
         }
 
+        .copy-btn .check-icon {
+            display: none;
+        }
+
         .copy-btn.copied {
-            background: rgba(16, 185, 129, 0.2);
-            border-color: rgba(16, 185, 129, 0.5);
+            background: rgba(16, 185, 129, 0.22);
+            border-color: rgba(16, 185, 129, 0.55);
             color: #34d399;
+        }
+
+        .copy-btn.copied .copy-icon {
+            display: none;
+        }
+
+        .copy-btn.copied .check-icon {
+            display: inline-block;
         }
 
         /* Feature Grid */
@@ -886,9 +901,9 @@
                     <span class="prompt-symbol">$</span>
                     <code>curl -fsSL https://x3m-industries.github.io/antigravity-packages/install.sh | bash</code>
                 </div>
-                <button class="copy-btn terminal-copy" onclick="copyCode(this)" aria-label="Copy installation command">
-                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
-                    <span>Copy</span>
+                <button class="copy-btn terminal-copy" onclick="copyCode(this)" aria-label="Copy installation command" title="Copy to clipboard">
+                    <svg class="copy-icon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
+                    <svg class="check-icon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#34d399" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
                 </button>
             </div>
         </div>
@@ -909,62 +924,74 @@
 
             <!-- RPM Tab -->
             <div id="rpm" class="tab-content active">
-                <div class="step-label"><span class="step-num">1</span> Add the RPM repository</div>
-                <div class="code-block">
-                    <button class="copy-btn" onclick="copyCode(this)">
-                        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
-                        <span>Copy</span>
+                <div class="step-header">
+                    <div class="step-label"><span class="step-num">1</span> Add the RPM repository</div>
+                    <button class="copy-btn" onclick="copyCode(this)" aria-label="Copy to clipboard" title="Copy to clipboard">
+                        <svg class="copy-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
+                        <svg class="check-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#34d399" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
                     </button>
+                </div>
+                <div class="code-block">
                     <code>sudo curl -fsSL https://x3m-industries.github.io/antigravity-packages/rpm/antigravity.repo -o /etc/yum.repos.d/antigravity.repo</code>
                 </div>
 
-                <div class="step-label"><span class="step-num">2</span> Install Antigravity IDE &amp; Hub</div>
-                <div class="code-block">
-                    <button class="copy-btn" onclick="copyCode(this)">
-                        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
-                        <span>Copy</span>
+                <div class="step-header">
+                    <div class="step-label"><span class="step-num">2</span> Install Antigravity IDE &amp; Hub</div>
+                    <button class="copy-btn" onclick="copyCode(this)" aria-label="Copy to clipboard" title="Copy to clipboard">
+                        <svg class="copy-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
+                        <svg class="check-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#34d399" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
                     </button>
+                </div>
+                <div class="code-block">
                     <code>sudo dnf install antigravity-ide antigravity</code>
                 </div>
 
-                <div class="step-label"><span class="step-num">3</span> Launch from terminal</div>
-                <div class="code-block">
-                    <button class="copy-btn" onclick="copyCode(this)">
-                        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
-                        <span>Copy</span>
+                <div class="step-header">
+                    <div class="step-label"><span class="step-num">3</span> Launch from terminal</div>
+                    <button class="copy-btn" onclick="copyCode(this)" aria-label="Copy to clipboard" title="Copy to clipboard">
+                        <svg class="copy-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
+                        <svg class="check-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#34d399" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
                     </button>
+                </div>
+                <div class="code-block">
                     <code>antigravity-ide ./myproject</code>
                 </div>
             </div>
 
             <!-- DEB Tab -->
             <div id="deb" class="tab-content">
-                <div class="step-label"><span class="step-num">1</span> Add GPG Key &amp; Sources</div>
-                <div class="code-block">
-                    <button class="copy-btn" onclick="copyCode(this)">
-                        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
-                        <span>Copy</span>
+                <div class="step-header">
+                    <div class="step-label"><span class="step-num">1</span> Add GPG Key &amp; Sources</div>
+                    <button class="copy-btn" onclick="copyCode(this)" aria-label="Copy to clipboard" title="Copy to clipboard">
+                        <svg class="copy-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
+                        <svg class="check-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#34d399" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
                     </button>
+                </div>
+                <div class="code-block">
                     <code>sudo mkdir -p /etc/apt/keyrings
 sudo curl -fsSL https://x3m-industries.github.io/antigravity-packages/deb/antigravity.gpg -o /etc/apt/keyrings/antigravity.gpg
 sudo curl -fsSL https://x3m-industries.github.io/antigravity-packages/deb/antigravity.sources -o /etc/apt/sources.list.d/antigravity.sources</code>
                 </div>
 
-                <div class="step-label"><span class="step-num">2</span> Install via APT</div>
-                <div class="code-block">
-                    <button class="copy-btn" onclick="copyCode(this)">
-                        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
-                        <span>Copy</span>
+                <div class="step-header">
+                    <div class="step-label"><span class="step-num">2</span> Install via APT</div>
+                    <button class="copy-btn" onclick="copyCode(this)" aria-label="Copy to clipboard" title="Copy to clipboard">
+                        <svg class="copy-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
+                        <svg class="check-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#34d399" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
                     </button>
+                </div>
+                <div class="code-block">
                     <code>sudo apt update &amp;&amp; sudo apt install antigravity-ide antigravity</code>
                 </div>
 
-                <div class="step-label"><span class="step-num">3</span> Launch from terminal</div>
-                <div class="code-block">
-                    <button class="copy-btn" onclick="copyCode(this)">
-                        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
-                        <span>Copy</span>
+                <div class="step-header">
+                    <div class="step-label"><span class="step-num">3</span> Launch from terminal</div>
+                    <button class="copy-btn" onclick="copyCode(this)" aria-label="Copy to clipboard" title="Copy to clipboard">
+                        <svg class="copy-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
+                        <svg class="check-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#34d399" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
                     </button>
+                </div>
+                <div class="code-block">
                     <code>antigravity-ide ./myproject</code>
                 </div>
             </div>
@@ -1097,20 +1124,31 @@ sudo curl -fsSL https://x3m-industries.github.io/antigravity-packages/deb/antigr
         }
 
         function copyCode(btn) {
-            const container = btn.closest('.code-block') || btn.closest('.terminal-body');
-            const codeEl = container ? container.querySelector('code') : null;
+            let codeEl = null;
+            const stepHeader = btn.closest('.step-header');
+            if (stepHeader && stepHeader.nextElementSibling) {
+                codeEl = stepHeader.nextElementSibling.querySelector('code') || stepHeader.nextElementSibling;
+            } else {
+                const container = btn.closest('.code-block') || btn.closest('.terminal-body');
+                codeEl = container ? container.querySelector('code') : null;
+            }
+
             const code = codeEl ? codeEl.innerText.trim() : '';
             if (!code) return;
 
             navigator.clipboard.writeText(code).then(() => {
-                const span = btn.querySelector('span') || btn;
-                const originalText = span.innerText;
-                span.innerText = 'Copied!';
                 btn.classList.add('copied');
+                const origAria = btn.getAttribute('aria-label') || 'Copy to clipboard';
+                const origTitle = btn.getAttribute('title') || 'Copy to clipboard';
+                btn.setAttribute('aria-label', 'Copied to clipboard!');
+                btn.setAttribute('title', 'Copied!');
                 setTimeout(() => {
-                    span.innerText = originalText;
                     btn.classList.remove('copied');
+                    btn.setAttribute('aria-label', origAria);
+                    btn.setAttribute('title', origTitle);
                 }, 2000);
+            }).catch(err => {
+                console.error('Failed to copy: ', err);
             });
         }
 
