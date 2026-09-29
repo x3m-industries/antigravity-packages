@@ -137,14 +137,14 @@
     <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap"></noscript>
     <style>
         :root {
-            --bg-color: #080c16;
-            --card-bg: rgba(15, 23, 42, 0.72);
-            --card-border: rgba(255, 255, 255, 0.08);
-            --card-hover-border: rgba(99, 102, 241, 0.35);
-            --primary: #6366f1;
-            --primary-glow: rgba(99, 102, 241, 0.28);
+            --bg-color: #0f172a;
+            --card-bg: rgba(22, 33, 56, 0.75);
+            --card-border: rgba(255, 255, 255, 0.11);
+            --card-hover-border: rgba(99, 102, 241, 0.45);
+            --primary: #4f46e5;
+            --primary-glow: rgba(79, 70, 229, 0.35);
             --accent: #38bdf8;
-            --accent-glow: rgba(56, 189, 248, 0.2);
+            --accent-glow: rgba(56, 189, 248, 0.25);
             --text-main: #f8fafc;
             --text-muted: #94a3b8;
             --code-bg: #030712;
@@ -182,9 +182,9 @@
             min-height: 100vh;
             overflow-x: hidden;
             background-image: 
-                radial-gradient(circle at 50% 0%, rgba(99, 102, 241, 0.16) 0%, transparent 50%),
-                radial-gradient(circle at 10% 20%, rgba(56, 189, 248, 0.1) 0%, transparent 40%),
-                radial-gradient(circle at 90% 30%, rgba(168, 85, 247, 0.1) 0%, transparent 45%);
+                radial-gradient(circle at 50% 0%, rgba(99, 102, 241, 0.22) 0%, transparent 60%),
+                radial-gradient(circle at 10% 20%, rgba(56, 189, 248, 0.14) 0%, transparent 45%),
+                radial-gradient(circle at 90% 30%, rgba(168, 85, 247, 0.14) 0%, transparent 50%);
             background-attachment: fixed;
         }
 
@@ -328,11 +328,11 @@
 
         /* Terminal One-Line Installer */
         .terminal-card {
-            background: linear-gradient(180deg, rgba(17, 24, 39, 0.85) 0%, rgba(10, 15, 26, 0.95) 100%);
-            border: 1px solid rgba(99, 102, 241, 0.25);
+            background: linear-gradient(180deg, rgba(24, 36, 62, 0.95) 0%, rgba(14, 20, 36, 0.98) 100%);
+            border: 1px solid rgba(99, 102, 241, 0.35);
             border-radius: 16px;
             overflow: hidden;
-            box-shadow: 0 16px 36px -10px rgba(0, 0, 0, 0.6), 0 0 0 1px rgba(255, 255, 255, 0.05);
+            box-shadow: 0 24px 50px -12px rgba(0, 0, 0, 0.8), 0 0 0 1px rgba(255, 255, 255, 0.08);
             margin-bottom: 36px;
             backdrop-filter: blur(14px);
         }
@@ -342,8 +342,8 @@
             align-items: center;
             justify-content: space-between;
             padding: 12px 18px;
-            background: rgba(0, 0, 0, 0.35);
-            border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+            background: rgba(8, 14, 28, 0.55);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
             flex-wrap: wrap;
             gap: 8px;
         }
@@ -393,6 +393,7 @@
             gap: 16px;
             font-family: 'JetBrains Mono', monospace;
             background: var(--code-bg);
+            box-shadow: inset 0 2px 6px rgba(0, 0, 0, 0.55);
         }
 
         .terminal-prompt {
@@ -432,7 +433,7 @@
             border-radius: 18px;
             padding: 28px;
             backdrop-filter: blur(14px);
-            box-shadow: 0 20px 40px -15px rgba(0, 0, 0, 0.5);
+            box-shadow: 0 24px 48px -15px rgba(0, 0, 0, 0.65), 0 0 0 1px rgba(255, 255, 255, 0.05);
             margin-bottom: 40px;
         }
 
@@ -652,13 +653,14 @@
             border-radius: 16px;
             padding: 24px;
             backdrop-filter: blur(12px);
+            box-shadow: 0 14px 28px -8px rgba(0, 0, 0, 0.55);
             transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.25s ease, box-shadow 0.25s ease;
         }
 
         .feature-card:hover {
             transform: translateY(-3px);
             border-color: var(--card-hover-border);
-            box-shadow: 0 16px 32px -10px rgba(0, 0, 0, 0.6);
+            box-shadow: 0 20px 40px -10px rgba(0, 0, 0, 0.75);
         }
 
         .feature-card h3 {
@@ -684,6 +686,7 @@
             border-radius: 16px;
             padding: 30px 24px;
             backdrop-filter: blur(12px);
+            box-shadow: 0 16px 36px -12px rgba(0, 0, 0, 0.55);
             margin-bottom: 40px;
             text-align: center;
         }
@@ -744,7 +747,8 @@
             border-radius: 14px;
             margin-bottom: 12px;
             overflow: hidden;
-            transition: border-color 0.2s ease;
+            box-shadow: 0 4px 14px -2px rgba(0, 0, 0, 0.4);
+            transition: border-color 0.2s ease, box-shadow 0.2s ease;
         }
 
         .faq-item[open] {
