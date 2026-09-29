@@ -133,7 +133,8 @@
     </script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+    <link rel="preload" href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" as="style" onload="this.onload=null;this.rel='stylesheet'">
+    <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap"></noscript>
     <style>
         :root {
             --bg-color: #080c16;
@@ -452,9 +453,9 @@
         }
 
         .tab-btn.active {
-            background: var(--primary);
+            background: #4f46e5;
             color: #ffffff;
-            box-shadow: 0 4px 16px var(--primary-glow);
+            box-shadow: 0 4px 16px rgba(79, 70, 229, 0.4);
         }
 
         .tab-btn .detected-tag {
@@ -599,6 +600,18 @@
         }
 
         /* Feature Grid */
+        .features-section {
+            margin-bottom: 40px;
+        }
+
+        .section-title {
+            font-size: 1.35rem;
+            font-weight: 700;
+            color: #fff;
+            margin-bottom: 22px;
+            text-align: center;
+        }
+
         .grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
@@ -792,7 +805,10 @@
         <header>
             <div class="logo-container">
                 <div class="logo-glow" aria-hidden="true"></div>
-                <img src="assets/icon.png" alt="Google Antigravity Logo" class="brand-logo" width="96" height="96" fetchpriority="high">
+                <picture>
+                    <source srcset="assets/logo.webp" type="image/webp">
+                    <img src="assets/logo.png" alt="Google Antigravity Logo" class="brand-logo" width="96" height="96" fetchpriority="high">
+                </picture>
             </div>
             <div>
                 <div class="logo-badge">
@@ -808,11 +824,12 @@
                 <span class="badge">x86_64 &amp; aarch64</span>
                 <span class="badge">GPG Signed</span>
                 <span class="badge">Native .desktop &amp; CLI</span>
-                <a href="https://github.com/x3m-industries/antigravity-packages/releases" target="_blank" style="text-decoration:none;display:inline-flex;align-items:center;"><img src="https://img.shields.io/github/downloads/x3m-industries/antigravity-packages/total?color=8b5cf6&logo=github&label=Downloads&style=flat-square" alt="Total Downloads" style="border-radius:6px;vertical-align:middle;height:26px;"></a>
+                <a href="https://github.com/x3m-industries/antigravity-packages/releases" target="_blank" style="text-decoration:none;display:inline-flex;align-items:center;"><img src="https://img.shields.io/github/downloads/x3m-industries/antigravity-packages/total?color=8b5cf6&logo=github&label=Downloads&style=flat-square" alt="Total Downloads" width="155" height="26" style="border-radius:6px;vertical-align:middle;height:26px;"></a>
             </div>
         </header>
 
-        <!-- Terminal Universal One-Line Installer -->
+        <main id="main-content">
+            <!-- Terminal Universal One-Line Installer -->
         <div class="terminal-card">
             <div class="terminal-header">
                 <div class="terminal-dots">
@@ -912,25 +929,28 @@ sudo curl -fsSL https://x3m-industries.github.io/antigravity-packages/deb/antigr
             </div>
         </div>
 
-        <!-- 4-Card Feature Grid -->
-        <div class="grid">
-            <div class="feature-card">
-                <h3>⚡ Zero Maintenance</h3>
-                <p>Tracked daily against Google's download CDN. Whenever a new version is published, our automated CI builds, signs, and updates the repositories automatically.</p>
+        <!-- Features Section -->
+        <section class="features-section">
+            <h2 class="section-title">Key Repository Features</h2>
+            <div class="grid">
+                <div class="feature-card">
+                    <h3>⚡ Zero Maintenance</h3>
+                    <p>Tracked daily against Google's download CDN. Whenever a new version is published, our automated CI builds, signs, and updates the repositories automatically.</p>
+                </div>
+                <div class="feature-card">
+                    <h3>🖥️ Native .desktop &amp; CLI</h3>
+                    <p>Includes official 1024px high-res icons, desktop entries for GNOME, KDE, and XFCE, full CLI commands, and pre-registered <code>antigravity-ide://</code> browser OAuth handlers.</p>
+                </div>
+                <div class="feature-card">
+                    <h3>🔐 Cryptographically Signed</h3>
+                    <p>Every RPM repodata, DEB Release, and package is signed with the official <code>X3M Antigravity Packagers</code> GPG key (Fingerprint: <code>E83A 23BC 57FE 6953 E4B5 F465 7A48 CA4D 7E7B 6601</code>).</p>
+                </div>
+                <div class="feature-card">
+                    <h3>🔄 Native System Upgrades</h3>
+                    <p>Seamlessly receive future updates through your standard package manager via <code>sudo dnf update</code> or <code>sudo apt upgrade</code> without background daemons.</p>
+                </div>
             </div>
-            <div class="feature-card">
-                <h3>🖥️ Native .desktop &amp; CLI</h3>
-                <p>Includes official 1024px high-res icons, desktop entries for GNOME, KDE, and XFCE, full CLI commands, and pre-registered <code>antigravity-ide://</code> browser OAuth handlers.</p>
-            </div>
-            <div class="feature-card">
-                <h3>🔐 Cryptographically Signed</h3>
-                <p>Every RPM repodata, DEB Release, and package is signed with the official <code>X3M Antigravity Packagers</code> GPG key (Fingerprint: <code>E83A 23BC 57FE 6953 E4B5 F465 7A48 CA4D 7E7B 6601</code>).</p>
-            </div>
-            <div class="feature-card">
-                <h3>🔄 Native System Upgrades</h3>
-                <p>Seamlessly receive future updates through your standard package manager via <code>sudo dnf update</code> or <code>sudo apt upgrade</code> without background daemons.</p>
-            </div>
-        </div>
+        </section>
 
         <!-- Supported Distros -->
         <div class="distros-card">
@@ -1002,6 +1022,7 @@ sudo curl -fsSL https://x3m-industries.github.io/antigravity-packages/deb/antigr
                 </div>
             </details>
         </section>
+        </main>
 
         <!-- Footer -->
         <footer>
