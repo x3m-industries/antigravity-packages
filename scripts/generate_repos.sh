@@ -37,7 +37,10 @@ if compgen -G "${PKG_DIR}/*.deb" > /dev/null; then
         for ARCH in amd64 arm64; do
             DISTS_ARCH="${DEB_DIR}/dists/stable/main/binary-${ARCH}"
             mkdir -p "${DISTS_ARCH}"
-            (cd "${DEB_DIR}" && dpkg-scanpackages --arch "${ARCH}" --multiversion pool/main > "dists/stable/main/binary-${ARCH}/Packages" 2>/dev/null || true)
+            (
+                cd "${DEB_DIR}" || exit 1
+                dpkg-scanpackages --arch "${ARCH}" --multiversion pool/main > "dists/stable/main/binary-${ARCH}/Packages" 2>/dev/null || true
+            )
             if [ -s "${DISTS_ARCH}/Packages" ]; then
                 gzip -9c "${DISTS_ARCH}/Packages" > "${DISTS_ARCH}/Packages.gz"
             fi

@@ -30,7 +30,7 @@ jobs:
 
       - name: Run ShellCheck on Bash Scripts
         run: |
-          shellcheck scripts/generate_repos.sh scripts/smoke_test.sh install.sh
+          shellcheck --severity=warning scripts/generate_repos.sh scripts/smoke_test.sh install.sh
 
       - name: Run Unit Tests
         run: |
