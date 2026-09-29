@@ -154,6 +154,26 @@
 
         * { box-sizing: border-box; margin: 0; padding: 0; }
 
+        /* Sleek subtle scrollbars */
+        ::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: rgba(0, 0, 0, 0.2);
+        }
+        ::-webkit-scrollbar-thumb {
+            background: rgba(255, 255, 255, 0.14);
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: rgba(255, 255, 255, 0.28);
+        }
+        * {
+            scrollbar-width: thin;
+            scrollbar-color: rgba(255, 255, 255, 0.14) transparent;
+        }
+
         body {
             font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
             background-color: var(--bg-color);
@@ -382,6 +402,12 @@
             overflow-x: auto;
             flex: 1;
             padding-right: 12px;
+            scrollbar-width: none;
+            -ms-overflow-style: none;
+        }
+
+        .terminal-prompt::-webkit-scrollbar {
+            display: none;
         }
 
         .prompt-symbol {
@@ -389,11 +415,12 @@
             font-weight: 700;
             user-select: none;
             font-size: 0.95rem;
+            flex-shrink: 0;
         }
 
         .terminal-body code {
             color: #f8fafc;
-            font-size: 0.92rem;
+            font-size: clamp(0.78rem, 1.6vw, 0.90rem);
             white-space: nowrap;
             letter-spacing: -0.01em;
         }
