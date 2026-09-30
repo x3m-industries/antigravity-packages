@@ -75,7 +75,7 @@
               "name": "What is the difference between the antigravity-ide and antigravity packages?",
               "acceptedAnswer": {
                 "@type": "Answer",
-                "text": "Google Antigravity is delivered as two independent, coordinated packages: 'antigravity-ide' is the AI-first desktop graphical IDE with code editor, diff viewer, desktop launcher, and browser OAuth handlers; 'antigravity' is the agent hub and platform daemon providing the 'antigravity' and 'agy' CLI tools, background agent runner, and MCP server orchestrator."
+                "text": "Google provides two separate official applications: 'antigravity-ide' is the official Google desktop IDE with code editor, diff viewer, and launcher; 'antigravity' is the official Google Agent Hub (Antigravity 2.0). X3M Industries packages both natively for Linux distributions with automatic daily updates. For full product details, visit Google's official site at antigravity.google."
               }
             },
             {
@@ -1105,23 +1105,55 @@
             flex-shrink: 0;
         }
 
+        .package-card-footer {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+            margin-top: 20px;
+            padding-top: 16px;
+            border-top: 1px solid rgba(255, 255, 255, 0.08);
+            flex-wrap: wrap;
+        }
+
         .package-cmd {
             background: #020617;
             border: 1px solid rgba(255, 255, 255, 0.1);
             border-radius: 10px;
-            padding: 10px 14px;
+            padding: 8px 12px;
             font-family: 'JetBrains Mono', monospace;
-            font-size: 0.82rem;
+            font-size: 0.8rem;
             color: #94a3b8;
-            display: flex;
+            display: inline-flex;
             align-items: center;
-            justify-content: space-between;
             gap: 8px;
         }
 
         .package-cmd code {
             color: #38bdf8;
             word-break: break-all;
+        }
+
+        .package-official-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            color: #38bdf8;
+            text-decoration: none;
+            padding: 7px 12px;
+            border-radius: 8px;
+            background: rgba(56, 189, 248, 0.1);
+            border: 1px solid rgba(56, 189, 248, 0.25);
+            transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        .package-official-link:hover {
+            color: #fff;
+            background: rgba(56, 189, 248, 0.22);
+            border-color: rgba(56, 189, 248, 0.5);
+            transform: translateY(-1px);
         }
 
         /* Star on GitHub CTA Card */
@@ -1249,18 +1281,18 @@
             </div>
             <div>
                 <div class="logo-badge">
-                    <span>✦</span> X3M Industries Community Distribution
+                    <span>✦</span> Packaged by Steven Ceuppens · X3M Industries
                 </div>
             </div>
             <h1>Google Antigravity for Linux</h1>
             <p class="subtitle">
-                Automated native RPM and DEB repositories delivering both the <strong>Antigravity IDE</strong> (AI Code Editor) and <strong>Antigravity Agent Hub</strong> (CLI &amp; Platform Runtime), packaged natively with desktop menu integration and Google OAuth support.
+                Automated native RPM and DEB repositories delivering Google's official <strong>Antigravity IDE</strong> and <strong>Antigravity Hub</strong>, packaged natively for Linux with desktop application menus and automatic daily updates.
             </p>
             <div class="badges-group">
                 <div class="badges-row">
                     <span class="badge highlight"><span class="badge-dot"></span> Daily Upstream Sync</span>
                     <span class="badge badge-dual">📦 Dual Packages: IDE &amp; Hub</span>
-                    <span class="badge">Native .desktop &amp; CLI</span>
+                    <span class="badge">Native Desktop &amp; Shell</span>
                 </div>
                 <div class="badges-row">
                     <span class="badge">x86_64 &amp; aarch64</span>
@@ -1302,8 +1334,8 @@
         <!-- Dual Package Architecture Showcase -->
         <section class="packages-section" aria-labelledby="packages-section-title">
             <div class="packages-intro">
-                <h2 id="packages-section-title">Two Native Packages. One Complete AI Suite.</h2>
-                <p>Google Antigravity is architected into two separate, coordinated components. Install both together for the full developer experience, or install the agent hub standalone on headless servers and CI/CD pipelines.</p>
+                <h2 id="packages-section-title">Official Google Applications. Native Linux Repositories.</h2>
+                <p>Google releases official Linux binaries for both <strong>Antigravity IDE</strong> and <strong>Antigravity (Hub)</strong> as standalone archives without native system repositories. <strong>Steven Ceuppens</strong> at <strong>X3M Industries</strong> maintains these automated daily RPM and DEB repositories for clean, hassle-free Linux installation and updates. For official app details and documentation, explore Google's product links below.</p>
             </div>
             <div class="packages-grid">
                 <!-- Card 1: Antigravity IDE -->
@@ -1317,24 +1349,30 @@
                                 </picture>
                                 <div>
                                     <div class="package-name">antigravity-ide</div>
-                                    <div class="package-tagline">AI-First Desktop Code Editor</div>
+                                    <div class="package-tagline">Google Antigravity IDE</div>
                                 </div>
                             </div>
-                            <span class="package-badge">GUI &amp; Editor</span>
+                            <span class="package-badge">Official Desktop IDE</span>
                         </div>
                         <p class="package-desc">
-                            The full-featured graphical development environment with native Google DeepMind agent pair programming, syntax tools, and workspace management.
+                            Google's official AI-first desktop code editor with agent pair programming, syntax tools, and workspace management.
                         </p>
                         <ul class="package-features">
-                            <li><span class="bullet">✦</span> <span><strong>Desktop Integration:</strong> GNOME, KDE, and XFCE menus with 1024px official icons</span></li>
-                            <li><span class="bullet">✦</span> <span><strong>OAuth Protocol:</strong> Pre-registered <code>antigravity-ide://</code> browser redirects for instant sign-in</span></li>
-                            <li><span class="bullet">✦</span> <span><strong>Visual Diff Viewer:</strong> Compare files and review agent code edits (<code>antigravity-ide --diff</code>)</span></li>
-                            <li><span class="bullet">✦</span> <span><strong>CLI Launcher:</strong> Open projects from your shell with <code>antigravity-ide ./path</code></span></li>
+                            <li><span class="bullet">✦</span> <span><strong>Convenient Native Packaging:</strong> Automated RPM &amp; DEB builds synced daily directly from Google's CDN</span></li>
+                            <li><span class="bullet">✦</span> <span><strong>Desktop Launcher:</strong> Registered in GNOME, KDE, and XFCE application menus with high-res icon</span></li>
+                            <li><span class="bullet">✦</span> <span><strong>Shell Command:</strong> Launch projects directly from your terminal using <code>antigravity-ide ./path</code></span></li>
+                            <li><span class="bullet">✦</span> <span><strong>OAuth Protocol Handler:</strong> Pre-registered <code>antigravity-ide://</code> handler for smooth Google sign-in</span></li>
                         </ul>
                     </div>
-                    <div class="package-cmd">
-                        <span>Package:</span>
-                        <code>antigravity-ide</code>
+                    <div class="package-card-footer">
+                        <div class="package-cmd">
+                            <span>Package:</span>
+                            <code>antigravity-ide</code>
+                        </div>
+                        <a href="https://antigravity.google/product/antigravity-ide" target="_blank" rel="noopener noreferrer" class="package-official-link" title="Official Google Antigravity IDE Product Details">
+                            <span>Google Product Details</span>
+                            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg>
+                        </a>
                     </div>
                 </div>
 
@@ -1349,24 +1387,30 @@
                                 </picture>
                                 <div>
                                     <div class="package-name">antigravity</div>
-                                    <div class="package-tagline">Agent Platform &amp; CLI Hub</div>
+                                    <div class="package-tagline">Google Antigravity Hub (2.0)</div>
                                 </div>
                             </div>
-                            <span class="package-badge hub-badge">CLI &amp; Daemon</span>
+                            <span class="package-badge hub-badge">Official Agent Hub</span>
                         </div>
                         <p class="package-desc">
-                            The background autonomous agent engine and command-line platform that powers agent workflows, headless task runners, and local integrations.
+                            Google's official agent hub and workspace interface for configuring, running, and orchestrating autonomous coding agents.
                         </p>
                         <ul class="package-features">
-                            <li><span class="bullet">✦</span> <span><strong>Dual CLI Commands:</strong> Full <code>antigravity</code> and <code>agy</code> tools linked into <code>/usr/bin</code></span></li>
-                            <li><span class="bullet">✦</span> <span><strong>Background Agent Daemon:</strong> Coordinates subagents, process tasks, and async execution</span></li>
-                            <li><span class="bullet">✦</span> <span><strong>Headless &amp; Server-Ready:</strong> Perfect for CI/CD runners, Docker, and remote dev servers</span></li>
-                            <li><span class="bullet">✦</span> <span><strong>Tool &amp; MCP Runner:</strong> Native process manager for MCP servers, skills, and sidecars</span></li>
+                            <li><span class="bullet">✦</span> <span><strong>Convenient Native Packaging:</strong> Ready-to-install RPM &amp; DEB packages with standard package manager updates</span></li>
+                            <li><span class="bullet">✦</span> <span><strong>System App Integration:</strong> Linked to <code>/usr/bin/antigravity</code> with native desktop application launcher</span></li>
+                            <li><span class="bullet">✦</span> <span><strong>Effortless Maintenance:</strong> Updates seamlessly with standard <code>sudo dnf update</code> or <code>sudo apt upgrade</code></span></li>
+                            <li><span class="bullet">✦</span> <span><strong>Standalone or Paired:</strong> Install independently on workstations or pair with the IDE</span></li>
                         </ul>
                     </div>
-                    <div class="package-cmd">
-                        <span>Package:</span>
-                        <code>antigravity</code>
+                    <div class="package-card-footer">
+                        <div class="package-cmd">
+                            <span>Package:</span>
+                            <code>antigravity</code>
+                        </div>
+                        <a href="https://antigravity.google/product/antigravity-2" target="_blank" rel="noopener noreferrer" class="package-official-link" title="Official Google Antigravity 2.0 Product Details">
+                            <span>Google Product Details</span>
+                            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg>
+                        </a>
                     </div>
                 </div>
             </div>
@@ -1522,12 +1566,12 @@ sudo curl -fsSL https://x3m-industries.github.io/antigravity-packages/deb/antigr
             <details class="faq-item" open>
                 <summary>What is the difference between antigravity-ide and antigravity?</summary>
                 <div class="faq-answer">
-                    Google Antigravity is delivered as two independent, coordinated packages:
+                    Google provides two separate official applications for Linux:
                     <ul style="margin: 8px 0 12px 20px; line-height: 1.6;">
-                        <li><strong><code>antigravity-ide</code></strong>: The AI-first desktop graphical IDE with code editor, visual diff viewer, terminal, application menu launcher, and <code>antigravity-ide://</code> browser OAuth handlers.</li>
-                        <li><strong><code>antigravity</code></strong>: The agent hub and platform daemon providing the <code>antigravity</code> and <code>agy</code> CLI tools, background agent runner, and MCP server orchestrator for local workstations and headless servers.</li>
+                        <li><strong><code>antigravity-ide</code></strong>: The official Google desktop code editor with visual diff viewer, terminal integration, application menu launcher, and <code>antigravity-ide://</code> browser OAuth handlers. Learn more at <a href="https://antigravity.google/product/antigravity-ide" target="_blank" style="color:var(--accent);">antigravity.google/product/antigravity-ide</a>.</li>
+                        <li><strong><code>antigravity</code></strong>: The official Google Agent Hub (Antigravity 2.0) interface and desktop application for configuring and running autonomous AI coding agents. Learn more at <a href="https://antigravity.google/product/antigravity-2" target="_blank" style="color:var(--accent);">antigravity.google/product/antigravity-2</a>.</li>
                     </ul>
-                    Because Google develops and versions them separately (e.g. IDE 2.5.5 vs Hub 2.18.1), you can install both together (<code>sudo dnf install antigravity-ide antigravity</code>) for the complete experience, or install only the <code>antigravity</code> hub on headless cloud VMs, Docker containers, and CI pipelines.
+                    Because Google develops and versions them separately (e.g. IDE 2.5.5 vs Hub 2.18.1), X3M Industries packages them as two independent native packages so you can install both together or install them individually. <em>Note: Google's standalone terminal CLI (<code>agy</code>) is installed separately via Google's CLI tool.</em>
                 </div>
             </details>
             <details class="faq-item">
@@ -1590,7 +1634,7 @@ sudo curl -fsSL https://x3m-industries.github.io/antigravity-packages/deb/antigr
 
         <!-- Footer -->
         <footer>
-            <p>Maintained with pride by <a href="https://github.com/x3m-industries" target="_blank">X3M Industries</a> · <a href="https://github.com/x3m-industries/antigravity-packages" target="_blank">View GitHub Repository</a> · Open Source Community Packaging</p>
+            <p>Packaged &amp; maintained by <strong>Steven Ceuppens</strong> at <a href="https://github.com/x3m-industries" target="_blank">X3M Industries</a> · <a href="https://github.com/x3m-industries/antigravity-packages" target="_blank">GitHub Repository</a> · Community packaging for Google's official Linux binaries</p>
         </footer>
     </div>
 

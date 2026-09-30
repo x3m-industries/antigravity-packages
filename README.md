@@ -14,20 +14,23 @@
 </p>
 
 > **Community RPM (DNF) and DEB (APT) repositories for Google Antigravity & Antigravity IDE.**  
-> Automatically synchronized with Google's official release CDN, packaged natively for Linux with full CLI, high-resolution desktop icons, and browser OAuth redirect integration.
+> Packaged & maintained by **Steven Ceuppens** at **X3M Industries**.  
+> Automatically synchronized with Google's official release CDN, packaged natively for Linux with desktop application menus, high-resolution icons, and browser OAuth redirect integration.
 
 ---
 
-## 📦 Two First-Class Packages Delivered
+## 📦 Two Official Google Packages Delivered
 
-Google Antigravity is architected as two coordinated components, packaged independently:
+Google publishes official Linux binaries for both apps as standalone archives without native package repositories. This repository packages them into standard RPM and DEB packages for easy installation and ongoing updates:
 
-| Icon | Package | Component | Description | Included Features & Binaries |
+| Icon | Package | Official Google App | Packaging Highlights & System Integration | Official Product Info |
 | :---: | :--- | :--- | :--- | :--- |
-| <img src="assets/logo.png" width="36" height="36" alt="Antigravity IDE" style="border-radius:8px;"> | **`antigravity-ide`** | **AI Code Editor (GUI)** | Desktop development environment with DeepMind agent pair programming | `antigravity-ide` CLI, GNOME/KDE `.desktop` launcher, 1024px icon, `antigravity-ide://` browser OAuth handler, visual diff viewer |
-| <img src="assets/hub-logo.png" width="36" height="36" alt="Antigravity HUB" style="border-radius:8px;"> | **`antigravity`** | **Agent Platform (Hub & CLI)** | Background autonomous agent engine, runner daemon, and CLI platform | `antigravity` & `agy` CLI tools, async agent daemon, MCP server runner, headless server/CI-ready |
+| <img src="assets/logo.png" width="36" height="36" alt="Antigravity IDE" style="border-radius:8px;"> | **`antigravity-ide`** | **[Google Antigravity IDE](https://antigravity.google/product/antigravity-ide)**<br>AI-first desktop code editor | `antigravity-ide` command in `/usr/bin`, GNOME/KDE `.desktop` launcher, 1024px icon, `antigravity-ide://` OAuth browser handler | [antigravity.google/product/antigravity-ide](https://antigravity.google/product/antigravity-ide) |
+| <img src="assets/hub-logo.png" width="36" height="36" alt="Antigravity HUB" style="border-radius:8px;"> | **`antigravity`** | **[Google Antigravity Hub](https://antigravity.google/product/antigravity-2)**<br>Agent platform & workspace (2.0) | `antigravity` command in `/usr/bin`, `.desktop` launcher, seamless `dnf`/`apt` updates | [antigravity.google/product/antigravity-2](https://antigravity.google/product/antigravity-2) |
 
-> 💡 **Install together or standalone:** Run `sudo dnf install antigravity-ide antigravity` (or `apt install ...`) for the full suite, or install `antigravity` standalone on headless servers and cloud VMs.
+> ℹ️ **Note on `agy`:** The standalone terminal CLI tool (`agy`) is distributed separately by Google via its own CLI installer.
+
+> 💡 **Install together or standalone:** Run `sudo dnf install antigravity-ide antigravity` (or `apt install ...`) for both applications, or install `antigravity` standalone.
 
 ---
 
@@ -179,5 +182,5 @@ Track real-time downloads across packages, architectures, and distro formats:
 ---
 
 <p align="center">
-  Maintained by <a href="https://github.com/x3m-industries"><strong>X3M Industries</strong></a>
+  Packaged &amp; maintained by <strong>Steven Ceuppens</strong> at <a href="https://github.com/x3m-industries"><strong>X3M Industries</strong></a>
 </p>
