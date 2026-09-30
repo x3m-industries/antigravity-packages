@@ -15,8 +15,8 @@
 </p>
 
 > **Community RPM (DNF) and DEB (APT) repositories for Google Antigravity & Antigravity IDE.**  
-> Packaged & maintained by **Steven Ceuppens** at **X3M Industries**.  
-> Automatically synchronized daily with Google's official release CDN, packaged natively for Linux with desktop application menus, high-resolution icons, and browser OAuth redirect integration.
+> Architected & maintained by [**Steven Ceuppens**](https://github.com/stevenceuppens) at [**X3M Industries**](https://x3m.industries).  
+> Automatically synchronized daily directly from Google's official release page, packaged natively for Linux with desktop application menus, high-resolution icons, and browser OAuth redirect integration.
 
 ```bash
 # ⚡ Universal 1-Click Installation (Auto-detects Fedora, Ubuntu, Debian, openSUSE, Arch)
@@ -170,7 +170,7 @@ antigravity
 
 We understand that installing developer tools and configuring software repositories requires trust. Here is how this project guarantees safety:
 
-1. **100% Upstream Google Binaries:** All applications are directly downloaded from official Google CDN endpoints (`storage.googleapis.com` & `edgedl.me.gvt1.com`).
+1. **100% Upstream Google Binaries:** All applications are directly sourced from Google's official release page and verified download endpoints (`storage.googleapis.com` & `edgedl.me.gvt1.com`).
 2. **Zero Telemetry or Binary Alteration:** We do not recompile, inject, or tamper with any Google executables. We package them cleanly with standard FHS filesystem layouts (`/usr/share`, `/usr/bin`), FreeDesktop menu entries, and icons.
 3. **Auditable CI/CD:** Every single package is built, smoke-tested, and signed in public via [GitHub Actions](https://github.com/x3m-industries/antigravity-packages/actions) using transparent, reproducible Python scripts.
 4. **Cryptographically Signed:** Every release and repository index is signed with our maintainer GPG key:
@@ -218,5 +218,5 @@ Track real-time downloads across packages, architectures, and distro formats:
 ---
 
 <p align="center">
-  Packaged &amp; maintained by <strong>Steven Ceuppens</strong> at <a href="https://github.com/x3m-industries"><strong>X3M Industries</strong></a>
+  Architected &amp; maintained by <a href="https://github.com/stevenceuppens"><strong>Steven Ceuppens</strong></a> at <a href="https://x3m.industries"><strong>X3M Industries</strong></a>
 </p>
