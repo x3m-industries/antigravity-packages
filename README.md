@@ -13,6 +13,19 @@
 
 ---
 
+## 📦 Two First-Class Packages Delivered
+
+Google Antigravity is architected as two coordinated components, packaged independently:
+
+| Package | Component | Description | Included Features & Binaries |
+| :--- | :--- | :--- | :--- |
+| **`antigravity-ide`** | **AI Code Editor (GUI)** | Desktop development environment with DeepMind agent pair programming | `antigravity-ide` CLI, GNOME/KDE `.desktop` launcher, 1024px icon, `antigravity-ide://` browser OAuth handler, visual diff viewer |
+| **`antigravity`** | **Agent Platform (Hub & CLI)** | Background autonomous agent engine, runner daemon, and CLI platform | `antigravity` & `agy` CLI tools, async agent daemon, MCP server runner, headless server/CI-ready |
+
+> 💡 **Install together or standalone:** Run `sudo dnf install antigravity-ide antigravity` (or `apt install ...`) for the full suite, or install `antigravity` standalone on headless servers and cloud VMs.
+
+---
+
 ## 🚀 Quick Installation
 
 ### ⚡ Universal One-Line Installer (Recommended)

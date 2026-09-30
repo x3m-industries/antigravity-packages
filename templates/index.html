@@ -72,6 +72,14 @@
           "mainEntity": [
             {
               "@type": "Question",
+              "name": "What is the difference between the antigravity-ide and antigravity packages?",
+              "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "Google Antigravity is delivered as two independent, coordinated packages: 'antigravity-ide' is the AI-first desktop graphical IDE with code editor, diff viewer, desktop launcher, and browser OAuth handlers; 'antigravity' is the agent hub and platform daemon providing the 'antigravity' and 'agy' CLI tools, background agent runner, and MCP server orchestrator."
+              }
+            },
+            {
+              "@type": "Question",
               "name": "How do I install Google Antigravity on Fedora, RHEL, or Rocky Linux?",
               "acceptedAnswer": {
                 "@type": "Answer",
@@ -846,12 +854,209 @@
             text-decoration: underline;
         }
 
+        /* Packages Showcase Section */
+        .packages-section {
+            margin-bottom: 40px;
+        }
+
+        .packages-intro {
+            text-align: center;
+            max-width: 720px;
+            margin: 0 auto 24px;
+        }
+
+        .packages-intro h2 {
+            font-size: 1.45rem;
+            font-weight: 800;
+            color: #fff;
+            margin-bottom: 8px;
+            letter-spacing: -0.01em;
+        }
+
+        .packages-intro p {
+            font-size: 0.95rem;
+            color: var(--text-muted);
+            line-height: 1.55;
+        }
+
+        .packages-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 20px;
+            margin-bottom: 16px;
+        }
+
+        .package-card {
+            background: var(--card-bg);
+            border: 1px solid var(--card-border);
+            border-radius: 18px;
+            padding: 26px;
+            backdrop-filter: blur(14px);
+            box-shadow: 0 16px 36px -10px rgba(0, 0, 0, 0.6), inset 0 1px 0 rgba(255, 255, 255, 0.1);
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.25s ease, box-shadow 0.25s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .package-card:hover {
+            transform: translateY(-3px);
+            border-color: rgba(99, 102, 241, 0.45);
+            box-shadow: 0 22px 48px -12px rgba(0, 0, 0, 0.75), 0 0 24px -6px rgba(99, 102, 241, 0.2);
+        }
+
+        .package-card-header {
+            display: flex;
+            align-items: flex-start;
+            justify-content: space-between;
+            gap: 12px;
+            margin-bottom: 12px;
+        }
+
+        .package-card-title {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .package-icon {
+            font-size: 1.8rem;
+            line-height: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .package-name {
+            font-size: 1.25rem;
+            font-weight: 800;
+            color: #fff;
+            letter-spacing: -0.01em;
+            font-family: 'JetBrains Mono', monospace;
+        }
+
+        .package-tagline {
+            font-size: 0.86rem;
+            font-weight: 600;
+            color: var(--accent);
+            margin-top: 2px;
+        }
+
+        .package-badge {
+            font-size: 0.72rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            padding: 4px 10px;
+            border-radius: 9999px;
+            background: rgba(99, 102, 241, 0.15);
+            border: 1px solid rgba(99, 102, 241, 0.35);
+            color: #a5b4fc;
+            white-space: nowrap;
+        }
+
+        .package-badge.hub-badge {
+            background: rgba(16, 185, 129, 0.15);
+            border-color: rgba(16, 185, 129, 0.35);
+            color: #6ee7b7;
+        }
+
+        .package-desc {
+            font-size: 0.9rem;
+            color: var(--text-muted);
+            line-height: 1.55;
+            margin-bottom: 16px;
+        }
+
+        .package-features {
+            list-style: none;
+            padding: 0;
+            margin: 0 0 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 9px;
+        }
+
+        .package-features li {
+            font-size: 0.86rem;
+            color: #cbd5e1;
+            display: flex;
+            align-items: flex-start;
+            gap: 8px;
+            line-height: 1.45;
+        }
+
+        .package-features li strong {
+            color: #f1f5f9;
+        }
+
+        .package-features .bullet {
+            color: var(--accent);
+            font-weight: 700;
+            flex-shrink: 0;
+        }
+
+        .package-cmd {
+            background: #020617;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            padding: 10px 14px;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.82rem;
+            color: #94a3b8;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 8px;
+        }
+
+        .package-cmd code {
+            color: #38bdf8;
+            word-break: break-all;
+        }
+
+        .packages-combo-banner {
+            background: linear-gradient(90deg, rgba(99, 102, 241, 0.14), rgba(56, 189, 248, 0.14));
+            border: 1px solid rgba(99, 102, 241, 0.32);
+            border-radius: 14px;
+            padding: 14px 20px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 16px;
+            flex-wrap: wrap;
+        }
+
+        .combo-text {
+            font-size: 0.9rem;
+            color: #e2e8f0;
+        }
+
+        .combo-text strong {
+            color: #fff;
+        }
+
+        .combo-cmd {
+            font-family: 'JetBrains Mono', monospace;
+            background: #020617;
+            border: 1px solid rgba(255, 255, 255, 0.14);
+            border-radius: 8px;
+            padding: 6px 12px;
+            font-size: 0.84rem;
+            color: #34d399;
+        }
+
         @media (max-width: 640px) {
             .container { padding: 36px 16px 64px; }
             .terminal-body { flex-direction: column; align-items: stretch; }
             .terminal-copy { align-self: flex-start; }
             .tab-btn { font-size: 0.85rem; padding: 10px 12px; }
             .brand-logo { width: 80px; height: 80px; }
+            .packages-grid { grid-template-columns: 1fr; }
+            .packages-combo-banner { flex-direction: column; align-items: flex-start; gap: 10px; }
+            .combo-cmd { width: 100%; word-break: break-all; }
         }
     </style>
 </head>
@@ -873,10 +1078,11 @@
             </div>
             <h1>Google Antigravity for Linux</h1>
             <p class="subtitle">
-                Automated native RPM and DEB repositories for Google Antigravity IDE &amp; Agent Hub, packaged natively with desktop menu integration and Google OAuth support.
+                Automated native RPM and DEB repositories delivering both the <strong>Antigravity IDE</strong> (AI Code Editor) and <strong>Antigravity Agent Hub</strong> (CLI &amp; Platform Runtime), packaged natively with desktop menu integration and Google OAuth support.
             </p>
             <div class="badges-row">
                 <span class="badge highlight"><span class="badge-dot"></span> Daily Upstream Sync</span>
+                <span class="badge" style="border-color: rgba(99, 102, 241, 0.4); background: rgba(99, 102, 241, 0.15); color: #c7d2fe;">📦 Dual Packages: IDE &amp; Hub</span>
                 <span class="badge">x86_64 &amp; aarch64</span>
                 <span class="badge">GPG Signed</span>
                 <span class="badge">Native .desktop &amp; CLI</span>
@@ -907,6 +1113,82 @@
                 </button>
             </div>
         </div>
+
+        <!-- Dual Package Architecture Showcase -->
+        <section class="packages-section" aria-labelledby="packages-section-title">
+            <div class="packages-intro">
+                <h2 id="packages-section-title">Two Native Packages. One Complete AI Suite.</h2>
+                <p>Google Antigravity is architected into two separate, coordinated components. Install both together for the full developer experience, or install the agent hub standalone on headless servers and CI/CD pipelines.</p>
+            </div>
+            <div class="packages-grid">
+                <!-- Card 1: Antigravity IDE -->
+                <div class="package-card">
+                    <div>
+                        <div class="package-card-header">
+                            <div class="package-card-title">
+                                <span class="package-icon">🖥️</span>
+                                <div>
+                                    <div class="package-name">antigravity-ide</div>
+                                    <div class="package-tagline">AI-First Desktop Code Editor</div>
+                                </div>
+                            </div>
+                            <span class="package-badge">GUI &amp; Editor</span>
+                        </div>
+                        <p class="package-desc">
+                            The full-featured graphical development environment with native Google DeepMind agent pair programming, syntax tools, and workspace management.
+                        </p>
+                        <ul class="package-features">
+                            <li><span class="bullet">✦</span> <span><strong>Desktop Integration:</strong> GNOME, KDE, and XFCE menus with 1024px official icons</span></li>
+                            <li><span class="bullet">✦</span> <span><strong>OAuth Protocol:</strong> Pre-registered <code>antigravity-ide://</code> browser redirects for instant sign-in</span></li>
+                            <li><span class="bullet">✦</span> <span><strong>Visual Diff Viewer:</strong> Compare files and review agent code edits (<code>antigravity-ide --diff</code>)</span></li>
+                            <li><span class="bullet">✦</span> <span><strong>CLI Launcher:</strong> Open projects from your shell with <code>antigravity-ide ./path</code></span></li>
+                        </ul>
+                    </div>
+                    <div class="package-cmd">
+                        <span>Package:</span>
+                        <code>antigravity-ide</code>
+                    </div>
+                </div>
+
+                <!-- Card 2: Antigravity Hub -->
+                <div class="package-card">
+                    <div>
+                        <div class="package-card-header">
+                            <div class="package-card-title">
+                                <span class="package-icon">🤖</span>
+                                <div>
+                                    <div class="package-name">antigravity</div>
+                                    <div class="package-tagline">Agent Platform &amp; CLI Hub</div>
+                                </div>
+                            </div>
+                            <span class="package-badge hub-badge">CLI &amp; Daemon</span>
+                        </div>
+                        <p class="package-desc">
+                            The background autonomous agent engine and command-line platform that powers agent workflows, headless task runners, and local integrations.
+                        </p>
+                        <ul class="package-features">
+                            <li><span class="bullet">✦</span> <span><strong>Dual CLI Commands:</strong> Full <code>antigravity</code> and <code>agy</code> tools linked into <code>/usr/bin</code></span></li>
+                            <li><span class="bullet">✦</span> <span><strong>Background Agent Daemon:</strong> Coordinates subagents, process tasks, and async execution</span></li>
+                            <li><span class="bullet">✦</span> <span><strong>Headless &amp; Server-Ready:</strong> Perfect for CI/CD runners, Docker, and remote dev servers</span></li>
+                            <li><span class="bullet">✦</span> <span><strong>Tool &amp; MCP Runner:</strong> Native process manager for MCP servers, skills, and sidecars</span></li>
+                        </ul>
+                    </div>
+                    <div class="package-cmd">
+                        <span>Package:</span>
+                        <code>antigravity</code>
+                    </div>
+                </div>
+            </div>
+
+            <div class="packages-combo-banner">
+                <div class="combo-text">
+                    ✨ <strong>Complete Developer Experience:</strong> Install both packages together with your standard package manager:
+                </div>
+                <div class="combo-cmd">
+                    sudo dnf install antigravity-ide antigravity
+                </div>
+            </div>
+        </section>
 
         <!-- Manual Repository Tabs -->
         <div class="tabs-wrapper">
@@ -1041,6 +1323,17 @@ sudo curl -fsSL https://x3m-industries.github.io/antigravity-packages/deb/antigr
         <section class="faq-section">
             <h2>Frequently Asked Questions</h2>
             <details class="faq-item" open>
+                <summary>What is the difference between antigravity-ide and antigravity?</summary>
+                <div class="faq-answer">
+                    Google Antigravity is delivered as two independent, coordinated packages:
+                    <ul style="margin: 8px 0 12px 20px; line-height: 1.6;">
+                        <li><strong><code>antigravity-ide</code></strong>: The AI-first desktop graphical IDE with code editor, visual diff viewer, terminal, application menu launcher, and <code>antigravity-ide://</code> browser OAuth handlers.</li>
+                        <li><strong><code>antigravity</code></strong>: The agent hub and platform daemon providing the <code>antigravity</code> and <code>agy</code> CLI tools, background agent runner, and MCP server orchestrator for local workstations and headless servers.</li>
+                    </ul>
+                    Because Google develops and versions them separately (e.g. IDE 2.5.5 vs Hub 2.18.1), you can install both together (<code>sudo dnf install antigravity-ide antigravity</code>) for the complete experience, or install only the <code>antigravity</code> hub on headless cloud VMs, Docker containers, and CI pipelines.
+                </div>
+            </details>
+            <details class="faq-item">
                 <summary>How do updates work?</summary>
                 <div class="faq-answer">
                     Our pipeline monitors Google's official release CDN daily. When Google publishes a new release, packages are automatically compiled, GPG-signed, and deployed to this repository. You simply update your system via <code>sudo dnf update</code> or <code>sudo apt upgrade</code>.
@@ -1126,8 +1419,12 @@ sudo curl -fsSL https://x3m-industries.github.io/antigravity-packages/deb/antigr
         function copyCode(btn) {
             let codeEl = null;
             const stepHeader = btn.closest('.step-header');
-            if (stepHeader && stepHeader.nextElementSibling) {
-                codeEl = stepHeader.nextElementSibling.querySelector('code') || stepHeader.nextElementSibling;
+            if (stepHeader) {
+                let next = stepHeader.nextElementSibling;
+                while (next && !next.classList.contains('code-block') && !next.matches('code')) {
+                    next = next.nextElementSibling;
+                }
+                codeEl = next ? (next.matches('code') ? next : next.querySelector('code')) : null;
             } else {
                 const container = btn.closest('.code-block') || btn.closest('.terminal-body');
                 codeEl = container ? container.querySelector('code') : null;
