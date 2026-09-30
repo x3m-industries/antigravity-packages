@@ -3,9 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Google Antigravity for Linux — Download &amp; Install RPM &amp; DEB Packages</title>
-    <meta name="description" content="Download and install Google Antigravity &amp; Antigravity IDE on Linux. Native RPM &amp; DEB packages for Fedora, Ubuntu, Debian, RHEL, openSUSE, and Arch.">
-    <meta name="keywords" content="Google Antigravity, Antigravity Linux, Antigravity IDE, Antigravity RPM, Antigravity DEB, Fedora Antigravity, Ubuntu Antigravity, Debian Antigravity, Arch Linux Antigravity, RHEL Antigravity, google antigravity rpm, antigravity fedora, fedora antigravity, antigravity apt, how to update antigravity ide in ubuntu, download antigravity linux, google antigravity download linux, install google antigravity, AI code editor, DeepMind Antigravity, DNF repository, APT repository, x86_64, aarch64, arm64">
+    <title>Google Antigravity for Linux — Official IDE &amp; Hub Packages (DNF, APT)</title>
+    <meta name="description" content="Install Google's official Antigravity IDE &amp; Hub on Linux in 1 command. Native DNF &amp; APT repositories with automatic daily updates for Fedora, Ubuntu, Debian, Arch &amp; openSUSE.">
+    <meta name="keywords" content="Google Antigravity, Antigravity Linux, Antigravity IDE, Antigravity RPM, Antigravity DEB, Fedora Antigravity, Ubuntu Antigravity, Debian Antigravity, Arch Linux Antigravity, RHEL Antigravity, google antigravity rpm, antigravity fedora, fedora antigravity, antigravity apt, how to update antigravity ide in ubuntu, download antigravity linux, google antigravity download linux, install google antigravity, AI code editor, DeepMind Antigravity, DNF repository, APT repository, x86_64, aarch64, arm64, AUR antigravity">
     <meta name="author" content="X3M Industries">
     <link rel="canonical" href="https://x3m-industries.github.io/antigravity-packages/">
     <meta name="robots" content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1">
@@ -17,17 +17,22 @@
     <!-- Open Graph (Facebook, LinkedIn, Discord) -->
     <meta property="og:type" content="website">
     <meta property="og:site_name" content="Google Antigravity Linux Repositories">
-    <meta property="og:title" content="Google Antigravity for Linux — Download &amp; Install RPM &amp; DEB">
-    <meta property="og:description" content="Download and install Google Antigravity &amp; Antigravity IDE on Linux. Native RPM &amp; DEB packages for Fedora, Ubuntu, Debian, RHEL, and Arch.">
+    <meta property="og:title" content="Google Antigravity for Linux — Official IDE &amp; Hub Packages">
+    <meta property="og:description" content="Install Google's official Antigravity IDE &amp; Hub on Linux in 1 command. Native DNF &amp; APT repositories with automatic daily updates for Fedora, Ubuntu, Debian, Arch &amp; openSUSE.">
     <meta property="og:url" content="https://x3m-industries.github.io/antigravity-packages/">
-    <meta property="og:image" content="https://x3m-industries.github.io/antigravity-packages/assets/icon.png">
+    <meta property="og:image" content="https://x3m-industries.github.io/antigravity-packages/assets/og-banner.png">
+    <meta property="og:image:secure_url" content="https://x3m-industries.github.io/antigravity-packages/assets/og-banner.png">
+    <meta property="og:image:type" content="image/png">
+    <meta property="og:image:width" content="1200">
+    <meta property="og:image:height" content="630">
+    <meta property="og:image:alt" content="Google Antigravity and Antigravity IDE for Linux — Native Packages">
     <meta property="og:locale" content="en_US">
 
     <!-- Twitter / X Cards -->
-    <meta name="twitter:card" content="summary">
-    <meta name="twitter:title" content="Google Antigravity for Linux — Download &amp; Install RPM &amp; DEB">
-    <meta name="twitter:description" content="Native RPM &amp; DEB packages for Google Antigravity and Antigravity IDE on Fedora, Ubuntu, Debian, RHEL, and Arch.">
-    <meta name="twitter:image" content="https://x3m-industries.github.io/antigravity-packages/assets/icon.png">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Google Antigravity for Linux — Official IDE &amp; Hub Packages">
+    <meta name="twitter:description" content="Install Google's official Antigravity IDE &amp; Hub on Linux in 1 command. Native DNF &amp; APT repositories with automatic daily updates for Fedora, Ubuntu, Debian, Arch &amp; openSUSE.">
+    <meta name="twitter:image" content="https://x3m-industries.github.io/antigravity-packages/assets/og-banner.png">
 
     <!-- Schema.org JSON-LD Structured Data -->
     <script type="application/ld+json">
@@ -141,6 +146,84 @@
                 "@type": "Answer",
                 "text": "The repository checks daily for upstream releases from Google. Once installed, normal system updates ('sudo dnf update' or 'sudo apt upgrade') will automatically upgrade Antigravity to the newest version."
               }
+            }
+          ]
+        },
+        {
+          "@type": "HowTo",
+          "name": "How to Install Google Antigravity & Antigravity IDE on Linux",
+          "description": "Step-by-step instructions to install Google Antigravity IDE and Hub on Linux using the universal one-line installer.",
+          "totalTime": "PT1M",
+          "step": [
+            {
+              "@type": "HowToStep",
+              "name": "Open Terminal",
+              "text": "Open your preferred Linux terminal emulator (GNOME Terminal, Konsole, Alacritty, Kitty).",
+              "position": 1
+            },
+            {
+              "@type": "HowToStep",
+              "name": "Run Universal Installer",
+              "text": "Run the one-line command: curl -fsSL https://x3m-industries.github.io/antigravity-packages/install.sh | bash",
+              "position": 2
+            },
+            {
+              "@type": "HowToStep",
+              "name": "Launch Antigravity",
+              "text": "Launch Antigravity IDE using 'antigravity-ide' or Antigravity Hub using 'antigravity' from your terminal or desktop applications menu.",
+              "position": 3
+            }
+          ]
+        },
+        {
+          "@type": "HowTo",
+          "name": "How to Install and Update Antigravity on Fedora & RHEL (DNF)",
+          "description": "Instructions to add the native RPM repository and install Google Antigravity on Fedora, RHEL, and Rocky Linux.",
+          "totalTime": "PT1M",
+          "step": [
+            {
+              "@type": "HowToStep",
+              "name": "Add RPM Repository",
+              "text": "Add the repository configuration: sudo curl -fsSL https://x3m-industries.github.io/antigravity-packages/rpm/antigravity.repo -o /etc/yum.repos.d/antigravity.repo",
+              "position": 1
+            },
+            {
+              "@type": "HowToStep",
+              "name": "Install Packages",
+              "text": "Install Antigravity IDE & Hub: sudo dnf install antigravity-ide antigravity",
+              "position": 2
+            },
+            {
+              "@type": "HowToStep",
+              "name": "Automatic Updates",
+              "text": "Receive daily automated updates using standard: sudo dnf update antigravity-ide",
+              "position": 3
+            }
+          ]
+        },
+        {
+          "@type": "HowTo",
+          "name": "How to Install and Update Google Antigravity on Ubuntu & Debian (APT)",
+          "description": "Instructions to add the APT repository and install Google Antigravity IDE & Hub on Ubuntu, Debian, Linux Mint, and Pop!_OS.",
+          "totalTime": "PT1M",
+          "step": [
+            {
+              "@type": "HowToStep",
+              "name": "Add GPG Key and APT Sources",
+              "text": "Download the GPG key to /etc/apt/keyrings and the DEB822 sources list to /etc/apt/sources.list.d/antigravity.sources.",
+              "position": 1
+            },
+            {
+              "@type": "HowToStep",
+              "name": "Update APT and Install",
+              "text": "Run: sudo apt update && sudo apt install antigravity-ide antigravity",
+              "position": 2
+            },
+            {
+              "@type": "HowToStep",
+              "name": "Update Antigravity in Ubuntu",
+              "text": "Upgrade Antigravity anytime: sudo apt update && sudo apt install --only-upgrade antigravity-ide antigravity",
+              "position": 3
             }
           ]
         }
@@ -1266,6 +1349,122 @@
             .badges-group { gap: 8px; margin-bottom: 24px; }
             .badges-row { gap: 8px; }
         }
+
+        /* Installer Section Headings & Direct Downloads */
+        .installer-heading-wrapper {
+            text-align: center;
+            margin-bottom: 16px;
+        }
+
+        .installer-section-title {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: #fff;
+            margin-bottom: 6px;
+            letter-spacing: -0.01em;
+        }
+
+        .installer-section-subtitle {
+            font-size: 0.9rem;
+            color: var(--text-muted);
+            max-width: 620px;
+            margin: 0 auto;
+        }
+
+        .direct-downloads-row {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            margin-top: -24px;
+            margin-bottom: 38px;
+            font-size: 0.84rem;
+            color: var(--text-muted);
+            flex-wrap: wrap;
+        }
+
+        .direct-download-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            color: var(--accent);
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        .direct-download-link:hover {
+            color: #fff;
+            transform: translateX(2px);
+        }
+
+        /* Trust & Security Guarantee Bar */
+        .trust-bar {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 12px;
+            margin: 0 0 34px;
+        }
+
+        @media (max-width: 860px) {
+            .trust-bar {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (max-width: 520px) {
+            .trust-bar {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .trust-pill {
+            background: rgba(30, 41, 67, 0.65);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 12px;
+            padding: 12px 14px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 0.82rem;
+            color: #cbd5e1;
+            line-height: 1.4;
+            backdrop-filter: blur(8px);
+        }
+
+        .trust-pill strong {
+            color: #f1f5f9;
+            font-weight: 600;
+        }
+
+        .trust-pill-icon {
+            font-size: 1.15rem;
+            flex-shrink: 0;
+        }
+
+        .tabs-heading {
+            font-size: 1.15rem;
+            font-weight: 700;
+            color: #fff;
+            margin-bottom: 14px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .aur-status-note {
+            background: rgba(14, 165, 233, 0.1);
+            border: 1px solid rgba(14, 165, 233, 0.25);
+            border-radius: 12px;
+            padding: 14px 18px;
+            font-size: 0.88rem;
+            color: #bae6fd;
+            line-height: 1.5;
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+            margin-top: 10px;
+        }
     </style>
 </head>
 <body>
@@ -1321,28 +1520,61 @@
         </header>
 
         <main id="main-content">
+            <!-- Trust & Security Guarantee Bar -->
+            <div class="trust-bar" role="region" aria-label="Security and verification highlights">
+                <div class="trust-pill">
+                    <span class="trust-pill-icon">🛡️</span>
+                    <div><strong>100% Upstream</strong><br>Direct from Google's CDN</div>
+                </div>
+                <div class="trust-pill">
+                    <span class="trust-pill-icon">🔍</span>
+                    <div><strong>Auditable Builds</strong><br>Public GitHub Actions CI/CD</div>
+                </div>
+                <div class="trust-pill">
+                    <span class="trust-pill-icon">✍️</span>
+                    <div><strong>GPG Signed</strong><br>Cryptographically verified</div>
+                </div>
+                <div class="trust-pill">
+                    <span class="trust-pill-icon">⚡</span>
+                    <div><strong>Daily Synced</strong><br>Automated zero-lag releases</div>
+                </div>
+            </div>
+
             <!-- Terminal Universal One-Line Installer -->
-        <div class="terminal-card">
-            <div class="terminal-header">
-                <div class="terminal-dots">
-                    <span class="dot dot-red"></span>
-                    <span class="dot dot-yellow"></span>
-                    <span class="dot dot-green"></span>
-                </div>
-                <span class="terminal-title">⚡ Universal One-Line Install (Auto-Detects Distro &amp; Installs Both)</span>
-                <span class="terminal-distros">Fedora · Ubuntu · Debian · Arch · openSUSE</span>
+            <div class="installer-heading-wrapper">
+                <h2 class="installer-section-title">⚡ 1-Click Universal Linux Installer</h2>
+                <p class="installer-section-subtitle">Automatically detects your Linux distribution (Fedora, Ubuntu, Debian, openSUSE), configures GPG keys, and installs both Antigravity IDE and Hub.</p>
             </div>
-            <div class="terminal-body">
-                <div class="terminal-prompt">
-                    <span class="prompt-symbol">$</span>
-                    <code>curl -fsSL https://x3m-industries.github.io/antigravity-packages/install.sh | bash</code>
+            <div class="terminal-card">
+                <div class="terminal-header">
+                    <div class="terminal-dots">
+                        <span class="dot dot-red"></span>
+                        <span class="dot dot-yellow"></span>
+                        <span class="dot dot-green"></span>
+                    </div>
+                    <span class="terminal-title">⚡ Universal One-Line Install (Auto-Detects Distro &amp; Installs Both)</span>
+                    <span class="terminal-distros">Fedora · Ubuntu · Debian · Arch · openSUSE</span>
                 </div>
-                <button class="copy-btn terminal-copy" onclick="copyCode(this)" aria-label="Copy installation command" title="Copy to clipboard">
-                    <svg class="copy-icon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
-                    <svg class="check-icon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#34d399" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
-                </button>
+                <div class="terminal-body">
+                    <div class="terminal-prompt">
+                        <span class="prompt-symbol">$</span>
+                        <code>curl -fsSL https://x3m-industries.github.io/antigravity-packages/install.sh | bash</code>
+                    </div>
+                    <button class="copy-btn terminal-copy" onclick="copyCode(this)" aria-label="Copy installation command" title="Copy to clipboard">
+                        <svg class="copy-icon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
+                        <svg class="check-icon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#34d399" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                    </button>
+                </div>
             </div>
-        </div>
+
+            <!-- Direct Package Downloads Callout -->
+            <div class="direct-downloads-row">
+                <span class="direct-downloads-label">Need standalone binaries without adding repositories?</span>
+                <a href="https://github.com/x3m-industries/antigravity-packages/releases/latest" target="_blank" rel="noopener noreferrer" class="direct-download-link" title="Download standalone RPM and DEB packages from GitHub Releases">
+                    <span>Download Latest .RPM &amp; .DEB Packages on GitHub Releases</span>
+                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg>
+                </a>
+            </div>
 
         <!-- Dual Package Architecture Showcase -->
         <section class="packages-section" aria-labelledby="packages-section-title">
@@ -1444,15 +1676,18 @@
 
         <!-- Manual Repository Tabs -->
         <div class="tabs-wrapper">
-            <div class="tabs-header-label">
-                <span>📦</span> Or configure repositories manually:
-            </div>
+            <h2 class="tabs-heading">
+                <span>📦</span> Configure Native Package Repositories Manually
+            </h2>
             <div class="tab-buttons">
                 <button class="tab-btn active" data-tab="rpm" onclick="switchTab('rpm', this)">
                     Fedora / RHEL / Rocky (DNF)
                 </button>
                 <button class="tab-btn" data-tab="deb" onclick="switchTab('deb', this)">
                     Ubuntu / Debian / Mint (APT)
+                </button>
+                <button class="tab-btn" data-tab="arch" onclick="switchTab('arch', this)">
+                    Arch Linux / Manjaro (Pacman)
                 </button>
             </div>
 
@@ -1527,6 +1762,45 @@ sudo curl -fsSL https://x3m-industries.github.io/antigravity-packages/deb/antigr
                 </div>
                 <div class="code-block">
                     <code>antigravity-ide ./myproject</code>
+                </div>
+            </div>
+
+            <!-- Arch Linux Tab -->
+            <div id="arch" class="tab-content">
+                <div class="step-header">
+                    <div class="step-label"><span class="step-num">1</span> Option A: Convert &amp; Install with debtap (Recommended)</div>
+                    <button class="copy-btn" onclick="copyCode(this)" aria-label="Copy to clipboard" title="Copy to clipboard">
+                        <svg class="copy-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
+                        <svg class="check-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#34d399" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                    </button>
+                </div>
+                <div class="code-block">
+                    <code># 1. Download latest .deb from GitHub Releases
+curl -fsSLO https://github.com/x3m-industries/antigravity-packages/releases/latest/download/antigravity-ide_latest_amd64.deb
+# 2. Convert and install using pacman
+debtap -u &amp;&amp; debtap antigravity-ide_latest_amd64.deb
+sudo pacman -U antigravity-ide-*.pkg.tar.zst</code>
+                </div>
+
+                <div class="step-header">
+                    <div class="step-label"><span class="step-num">2</span> Option B: Extract RPM Natively with rpmextract</div>
+                    <button class="copy-btn" onclick="copyCode(this)" aria-label="Copy to clipboard" title="Copy to clipboard">
+                        <svg class="copy-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
+                        <svg class="check-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#34d399" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                    </button>
+                </div>
+                <div class="code-block">
+                    <code>sudo pacman -S --needed rpmextract
+curl -fsSLO https://github.com/x3m-industries/antigravity-packages/releases/latest/download/antigravity-ide-latest.x86_64.rpm
+cd / &amp;&amp; sudo rpmextract ~/antigravity-ide-latest.x86_64.rpm</code>
+                </div>
+
+                <div class="step-header">
+                    <div class="step-label"><span class="step-num">3</span> Official AUR Status</div>
+                </div>
+                <div class="aur-status-note">
+                    <span style="font-size:1.3rem;">🚀</span>
+                    <div><strong>Arch User Repository (AUR) PKGBUILDs in Progress:</strong> We are finalizing native <code>antigravity-bin</code> and <code>antigravity-ide-bin</code> packages for the AUR so you can install directly via <code>yay -S antigravity-ide-bin</code>. Star the repository to be notified the moment they launch!</div>
                 </div>
             </div>
         </div>
@@ -1702,7 +1976,7 @@ sudo curl -fsSL https://x3m-industries.github.io/antigravity-packages/deb/antigr
         }
 
         function detectOSAndInitTabs() {
-            // 1. Check URL hash (#deb, #apt, #ubuntu, #rpm, #dnf, #fedora, etc.)
+            // 1. Check URL hash (#deb, #apt, #ubuntu, #rpm, #dnf, #fedora, #arch, etc.)
             const hash = (window.location.hash || '').toLowerCase().replace('#', '');
             if (['deb', 'apt', 'ubuntu', 'debian', 'mint', 'pop'].includes(hash)) {
                 switchTab('deb', null, false);
@@ -1712,11 +1986,15 @@ sudo curl -fsSL https://x3m-industries.github.io/antigravity-packages/deb/antigr
                 switchTab('rpm', null, false);
                 return;
             }
+            if (['arch', 'manjaro', 'endeavouros', 'pacman', 'aur'].includes(hash)) {
+                switchTab('arch', null, false);
+                return;
+            }
 
             // 2. Check localStorage for previous user preference
             try {
                 const saved = localStorage.getItem('preferred_distro_tab');
-                if (saved === 'deb' || saved === 'rpm') {
+                if (saved === 'deb' || saved === 'rpm' || saved === 'arch') {
                     switchTab(saved, null, false);
                     return;
                 }
@@ -1740,6 +2018,9 @@ sudo curl -fsSL https://x3m-industries.github.io/antigravity-packages/deb/antigr
             else if (/rocky/.test(ua)) { detected = 'Rocky'; targetTab = 'rpm'; }
             else if (/alma/.test(ua)) { detected = 'AlmaLinux'; targetTab = 'rpm'; }
             else if (/suse/.test(ua)) { detected = 'openSUSE'; targetTab = 'rpm'; }
+            else if (/arch/.test(ua)) { detected = 'Arch Linux'; targetTab = 'arch'; }
+            else if (/manjaro/.test(ua)) { detected = 'Manjaro'; targetTab = 'arch'; }
+            else if (/endeavouros/.test(ua)) { detected = 'EndeavourOS'; targetTab = 'arch'; }
 
             if (targetTab) {
                 switchTab(targetTab, null, false);
