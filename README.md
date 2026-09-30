@@ -1,6 +1,11 @@
 # Google Antigravity & Antigravity IDE Linux Packages
 
 <p align="center">
+  <img src="assets/logo.png" width="76" height="76" alt="Google Antigravity IDE (Black Icon)" title="Antigravity IDE" style="border-radius: 18px; margin-right: 12px; vertical-align: middle;" />
+  <img src="assets/hub-logo.png" width="76" height="76" alt="Google Antigravity Hub (White Icon)" title="Antigravity Hub" style="border-radius: 18px; vertical-align: middle;" />
+</p>
+
+<p align="center">
   <a href="https://github.com/x3m-industries/antigravity-packages/actions/workflows/build-and-publish.yml"><img src="https://github.com/x3m-industries/antigravity-packages/actions/workflows/build-and-publish.yml/badge.svg" alt="Build Status" /></a>
   <a href="https://github.com/x3m-industries/antigravity-packages/releases"><img src="https://img.shields.io/github/downloads/x3m-industries/antigravity-packages/total?color=8b5cf6&logo=github&label=Downloads" alt="Total Downloads" /></a>
   <a href="https://x3m-industries.github.io/antigravity-packages/"><img src="https://img.shields.io/badge/Repository-Online-10b981" alt="Repository Status" /></a>
@@ -17,10 +22,10 @@
 
 Google Antigravity is architected as two coordinated components, packaged independently:
 
-| Package | Component | Description | Included Features & Binaries |
-| :--- | :--- | :--- | :--- |
-| **`antigravity-ide`** | **AI Code Editor (GUI)** | Desktop development environment with DeepMind agent pair programming | `antigravity-ide` CLI, GNOME/KDE `.desktop` launcher, 1024px icon, `antigravity-ide://` browser OAuth handler, visual diff viewer |
-| **`antigravity`** | **Agent Platform (Hub & CLI)** | Background autonomous agent engine, runner daemon, and CLI platform | `antigravity` & `agy` CLI tools, async agent daemon, MCP server runner, headless server/CI-ready |
+| Icon | Package | Component | Description | Included Features & Binaries |
+| :---: | :--- | :--- | :--- | :--- |
+| <img src="assets/logo.png" width="36" height="36" alt="Antigravity IDE Black Icon" style="border-radius:8px;"> | **`antigravity-ide`** | **AI Code Editor (GUI)** | Desktop development environment with DeepMind agent pair programming | `antigravity-ide` CLI, GNOME/KDE `.desktop` launcher, 1024px icon, `antigravity-ide://` browser OAuth handler, visual diff viewer |
+| <img src="assets/hub-logo.png" width="36" height="36" alt="Antigravity Hub White Icon" style="border-radius:8px;"> | **`antigravity`** | **Agent Platform (Hub & CLI)** | Background autonomous agent engine, runner daemon, and CLI platform | `antigravity` & `agy` CLI tools, async agent daemon, MCP server runner, headless server/CI-ready |
 
 > 💡 **Install together or standalone:** Run `sudo dnf install antigravity-ide antigravity` (or `apt install ...`) for the full suite, or install `antigravity` standalone on headless servers and cloud VMs.
 

@@ -217,7 +217,7 @@
             position: relative;
         }
 
-        .logo-container {
+        .dual-logo-container {
             position: relative;
             display: inline-flex;
             align-items: center;
@@ -227,10 +227,10 @@
 
         .logo-glow {
             position: absolute;
-            width: 140px;
+            width: 240px;
             height: 140px;
             border-radius: 50%;
-            background: radial-gradient(circle, rgba(99, 102, 241, 0.5) 0%, rgba(56, 189, 248, 0.35) 45%, transparent 70%);
+            background: radial-gradient(ellipse, rgba(99, 102, 241, 0.45) 0%, rgba(56, 189, 248, 0.3) 45%, transparent 70%);
             filter: blur(28px);
             z-index: 0;
             pointer-events: none;
@@ -242,27 +242,84 @@
             100% { transform: scale(1.18); opacity: 0.95; }
         }
 
+        .logo-pair {
+            position: relative;
+            z-index: 1;
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .logo-wrapper {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .logo-caption {
+            font-size: 0.72rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            color: #cbd5e1;
+            background: rgba(255, 255, 255, 0.08);
+            border: 1px solid rgba(255, 255, 255, 0.16);
+            padding: 2px 10px;
+            border-radius: 9999px;
+        }
+
+        .logo-connector {
+            font-size: 1.25rem;
+            color: rgba(255, 255, 255, 0.35);
+            user-select: none;
+            margin-top: -24px;
+        }
+
         .brand-logo {
             position: relative;
             z-index: 1;
-            width: 96px;
-            height: 96px;
-            border-radius: 22px;
-            border: 1px solid rgba(255, 255, 255, 0.16);
+            width: 84px;
+            height: 84px;
+            border-radius: 20px;
             box-shadow: 
                 0 16px 36px -8px rgba(0, 0, 0, 0.8),
-                0 0 0 1px rgba(255, 255, 255, 0.1),
-                0 0 40px rgba(99, 102, 241, 0.35);
+                0 0 0 1px rgba(255, 255, 255, 0.12),
+                0 0 32px rgba(99, 102, 241, 0.3);
             transition: transform 0.35s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.35s ease;
             cursor: pointer;
         }
 
+        .brand-logo.hub-logo {
+            box-shadow: 
+                0 16px 36px -8px rgba(0, 0, 0, 0.65),
+                0 0 0 1px rgba(255, 255, 255, 0.22),
+                0 0 32px rgba(56, 189, 248, 0.3);
+        }
+
         .brand-logo:hover {
-            transform: translateY(-5px) scale(1.05);
+            transform: translateY(-4px) scale(1.06);
             box-shadow: 
                 0 22px 44px -10px rgba(0, 0, 0, 0.9),
-                0 0 0 1px rgba(255, 255, 255, 0.25),
-                0 0 50px rgba(56, 189, 248, 0.45);
+                0 0 0 1px rgba(255, 255, 255, 0.3),
+                0 0 46px rgba(56, 189, 248, 0.45);
+        }
+
+        .package-card-logo {
+            width: 46px;
+            height: 46px;
+            border-radius: 12px;
+            box-shadow: 0 6px 16px -2px rgba(0, 0, 0, 0.6), 0 0 0 1px rgba(255, 255, 255, 0.12);
+            flex-shrink: 0;
+            transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        .package-card-logo.white-card-logo {
+            box-shadow: 0 6px 16px -2px rgba(0, 0, 0, 0.5), 0 0 0 1px rgba(255, 255, 255, 0.25);
+        }
+
+        .package-card:hover .package-card-logo {
+            transform: scale(1.08);
         }
 
         .logo-badge {
@@ -1064,12 +1121,25 @@
     <div class="container">
         <!-- Hero Header -->
         <header>
-            <div class="logo-container">
+            <div class="dual-logo-container">
                 <div class="logo-glow" aria-hidden="true"></div>
-                <picture>
-                    <source srcset="assets/logo.webp" type="image/webp">
-                    <img src="assets/logo.png" alt="Google Antigravity Logo" class="brand-logo" width="96" height="96" fetchpriority="high">
-                </picture>
+                <div class="logo-pair">
+                    <div class="logo-wrapper">
+                        <picture>
+                            <source srcset="assets/logo.webp" type="image/webp">
+                            <img src="assets/logo.png" alt="Google Antigravity IDE Icon (Black)" class="brand-logo ide-logo" width="84" height="84" fetchpriority="high">
+                        </picture>
+                        <span class="logo-caption">IDE (Black)</span>
+                    </div>
+                    <div class="logo-connector">✦</div>
+                    <div class="logo-wrapper">
+                        <picture>
+                            <source srcset="assets/hub-logo.webp" type="image/webp">
+                            <img src="assets/hub-logo.png" alt="Google Antigravity Hub Icon (White)" class="brand-logo hub-logo" width="84" height="84" fetchpriority="high">
+                        </picture>
+                        <span class="logo-caption">Hub (White)</span>
+                    </div>
+                </div>
             </div>
             <div>
                 <div class="logo-badge">
@@ -1126,7 +1196,10 @@
                     <div>
                         <div class="package-card-header">
                             <div class="package-card-title">
-                                <span class="package-icon">🖥️</span>
+                                <picture>
+                                    <source srcset="assets/logo.webp" type="image/webp">
+                                    <img src="assets/logo.png" alt="Antigravity IDE Icon (Black)" class="package-card-logo" width="46" height="46" loading="lazy">
+                                </picture>
                                 <div>
                                     <div class="package-name">antigravity-ide</div>
                                     <div class="package-tagline">AI-First Desktop Code Editor</div>
@@ -1155,7 +1228,10 @@
                     <div>
                         <div class="package-card-header">
                             <div class="package-card-title">
-                                <span class="package-icon">🤖</span>
+                                <picture>
+                                    <source srcset="assets/hub-logo.webp" type="image/webp">
+                                    <img src="assets/hub-logo.png" alt="Antigravity Hub Icon (White)" class="package-card-logo white-card-logo" width="46" height="46" loading="lazy">
+                                </picture>
                                 <div>
                                     <div class="package-name">antigravity</div>
                                     <div class="package-tagline">Agent Platform &amp; CLI Hub</div>
