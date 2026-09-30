@@ -991,7 +991,6 @@
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
             gap: 20px;
-            margin-bottom: 16px;
         }
 
         .package-card {
@@ -1125,69 +1124,6 @@
             word-break: break-all;
         }
 
-        .packages-combo-banner {
-            background: linear-gradient(90deg, rgba(99, 102, 241, 0.16), rgba(56, 189, 248, 0.16));
-            border: 1px solid rgba(99, 102, 241, 0.35);
-            border-radius: 14px;
-            padding: 16px 20px;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            gap: 16px;
-            flex-wrap: wrap;
-        }
-
-        .combo-info {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            flex: 1;
-            min-width: 280px;
-        }
-
-        .combo-tag {
-            font-size: 0.72rem;
-            font-weight: 700;
-            text-transform: uppercase;
-            letter-spacing: 0.06em;
-            padding: 4px 10px;
-            border-radius: 9999px;
-            background: rgba(16, 185, 129, 0.2);
-            border: 1px solid rgba(16, 185, 129, 0.4);
-            color: #34d399;
-            white-space: nowrap;
-            flex-shrink: 0;
-        }
-
-        .combo-text {
-            font-size: 0.9rem;
-            color: #e2e8f0;
-            line-height: 1.45;
-        }
-
-        .combo-text strong {
-            color: #fff;
-        }
-
-        .combo-subtext {
-            display: block;
-            font-size: 0.82rem;
-            color: var(--text-muted);
-            margin-top: 2px;
-        }
-
-        .combo-cmd {
-            font-family: 'JetBrains Mono', monospace;
-            background: #020617;
-            border: 1px solid rgba(255, 255, 255, 0.16);
-            border-radius: 8px;
-            padding: 8px 14px;
-            font-size: 0.85rem;
-            color: #34d399;
-            box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.5);
-            white-space: nowrap;
-        }
-
         /* Star on GitHub CTA Card */
         .star-cta-card {
             background: linear-gradient(135deg, rgba(30, 41, 67, 0.9) 0%, rgba(20, 29, 48, 0.95) 100%);
@@ -1280,9 +1216,6 @@
             .tab-btn { font-size: 0.85rem; padding: 10px 12px; }
             .brand-logo { width: 72px; height: 72px; border-radius: 16px; }
             .packages-grid { grid-template-columns: 1fr; }
-            .packages-combo-banner { flex-direction: column; align-items: flex-start; gap: 12px; }
-            .combo-info { flex-direction: column; align-items: flex-start; gap: 8px; }
-            .combo-cmd { width: 100%; word-break: break-all; white-space: normal; }
             .star-cta-card { flex-direction: column; align-items: flex-start; gap: 14px; padding: 18px; }
             .star-btn { width: 100%; justify-content: center; }
             .badges-group { gap: 8px; margin-bottom: 24px; }
@@ -1435,19 +1368,6 @@
                         <span>Package:</span>
                         <code>antigravity</code>
                     </div>
-                </div>
-            </div>
-
-            <div class="packages-combo-banner">
-                <div class="combo-info">
-                    <span class="combo-tag">💡 Included in 1-Liner</span>
-                    <div class="combo-text">
-                        The <strong>Universal One-Line Installer</strong> above automatically installs both packages.
-                        <span class="combo-subtext">If configuring manually via DNF/APT, install both with a single command:</span>
-                    </div>
-                </div>
-                <div class="combo-cmd">
-                    sudo dnf install antigravity-ide antigravity
                 </div>
             </div>
         </section>
