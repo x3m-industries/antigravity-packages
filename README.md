@@ -1,8 +1,8 @@
 # Google Antigravity & Antigravity IDE Linux Packages
 
 <p align="center">
-  <img src="assets/logo.png" width="76" height="76" alt="Google Antigravity IDE (Black Icon)" title="Antigravity IDE" style="border-radius: 18px; margin-right: 12px; vertical-align: middle;" />
-  <img src="assets/hub-logo.png" width="76" height="76" alt="Google Antigravity Hub (White Icon)" title="Antigravity Hub" style="border-radius: 18px; vertical-align: middle;" />
+  <img src="assets/logo.png" width="76" height="76" alt="Google Antigravity IDE" title="Antigravity IDE" style="border-radius: 18px; margin-right: 12px; vertical-align: middle;" />
+  <img src="assets/hub-logo.png" width="76" height="76" alt="Google Antigravity Hub" title="Antigravity HUB" style="border-radius: 18px; vertical-align: middle;" />
 </p>
 
 <p align="center">
@@ -24,8 +24,8 @@ Google Antigravity is architected as two coordinated components, packaged indepe
 
 | Icon | Package | Component | Description | Included Features & Binaries |
 | :---: | :--- | :--- | :--- | :--- |
-| <img src="assets/logo.png" width="36" height="36" alt="Antigravity IDE Black Icon" style="border-radius:8px;"> | **`antigravity-ide`** | **AI Code Editor (GUI)** | Desktop development environment with DeepMind agent pair programming | `antigravity-ide` CLI, GNOME/KDE `.desktop` launcher, 1024px icon, `antigravity-ide://` browser OAuth handler, visual diff viewer |
-| <img src="assets/hub-logo.png" width="36" height="36" alt="Antigravity Hub White Icon" style="border-radius:8px;"> | **`antigravity`** | **Agent Platform (Hub & CLI)** | Background autonomous agent engine, runner daemon, and CLI platform | `antigravity` & `agy` CLI tools, async agent daemon, MCP server runner, headless server/CI-ready |
+| <img src="assets/logo.png" width="36" height="36" alt="Antigravity IDE" style="border-radius:8px;"> | **`antigravity-ide`** | **AI Code Editor (GUI)** | Desktop development environment with DeepMind agent pair programming | `antigravity-ide` CLI, GNOME/KDE `.desktop` launcher, 1024px icon, `antigravity-ide://` browser OAuth handler, visual diff viewer |
+| <img src="assets/hub-logo.png" width="36" height="36" alt="Antigravity HUB" style="border-radius:8px;"> | **`antigravity`** | **Agent Platform (Hub & CLI)** | Background autonomous agent engine, runner daemon, and CLI platform | `antigravity` & `agy` CLI tools, async agent daemon, MCP server runner, headless server/CI-ready |
 
 > 💡 **Install together or standalone:** Run `sudo dnf install antigravity-ide antigravity` (or `apt install ...`) for the full suite, or install `antigravity` standalone on headless servers and cloud VMs.
 
