@@ -113,7 +113,7 @@ Arch users can install packages natively through either conversion or extraction
 ---
 
 ### 🔄 Updating Antigravity
-The repositories synchronize daily with Google's CDN. To update your installation:
+The repositories synchronize daily with Google's release page. To update your installation:
 * **Fedora / RHEL / Rocky:** `sudo dnf update antigravity-ide antigravity`
 * **Ubuntu / Debian / Mint:** `sudo apt update && sudo apt install --only-upgrade antigravity-ide antigravity`
 
@@ -218,5 +218,5 @@ Track real-time downloads across packages, architectures, and distro formats:
 ---
 
 <p align="center">
-  Architected &amp; maintained by <a href="https://github.com/stevenceuppens"><strong>Steven Ceuppens</strong></a> at <a href="https://x3m.industries"><strong>X3M Industries</strong></a>
+  Architected &amp; maintained by <a href="https://www.linkedin.com/in/stevenceuppens/"><strong>Steven Ceuppens</strong></a> at <a href="https://x3m.industries"><strong>X3M Industries</strong></a>
 </p>
