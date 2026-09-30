@@ -115,6 +115,7 @@ class TestPackagingLogic(unittest.TestCase):
         self.assertIn("X3M Antigravity Packagers", html)
         self.assertIn("E83A 23BC", html)
         self.assertIn("install.sh", html)
+        self.assertIn("G-XXTD2B1XB0", html)
 
 
 if __name__ == "__main__":
