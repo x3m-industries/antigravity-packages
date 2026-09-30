@@ -1664,7 +1664,7 @@
             <!-- Direct Package Downloads Callout -->
             <div class="direct-downloads-row">
                 <span class="direct-downloads-label">Need standalone binaries without adding repositories?</span>
-                <a href="https://github.com/x3m-industries/antigravity-packages/releases/latest" target="_blank" rel="noopener noreferrer" class="direct-download-link" title="Download standalone RPM and DEB packages from GitHub Releases">
+                <a href="https://github.com/x3m-industries/antigravity-packages/releases/latest" target="_blank" rel="noopener noreferrer" class="direct-download-link" title="Download standalone RPM and DEB packages from GitHub Releases" onclick="if(typeof gtag==='function') gtag('event', 'click_standalone_releases', { event_category: 'outbound', event_label: 'GitHub Releases Standalone Packages' });">
                     <span>Download Latest .RPM &amp; .DEB Packages on GitHub Releases</span>
                     <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg>
                 </a>
@@ -1707,7 +1707,7 @@
                             <span>Package:</span>
                             <code>antigravity-ide</code>
                         </div>
-                        <a href="https://antigravity.google/product/antigravity-ide" target="_blank" rel="noopener noreferrer" class="package-official-link" title="Official Google Antigravity IDE Product Details">
+                        <a href="https://antigravity.google/product/antigravity-ide" target="_blank" rel="noopener noreferrer" class="package-official-link" title="Official Google Antigravity IDE Product Details" onclick="if(typeof gtag==='function') gtag('event', 'click_google_details', { event_category: 'outbound', product: 'antigravity-ide' });">
                             <span>Google Product Details</span>
                             <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg>
                         </a>
@@ -1744,7 +1744,7 @@
                             <span>Package:</span>
                             <code>antigravity</code>
                         </div>
-                        <a href="https://antigravity.google/product/antigravity-2" target="_blank" rel="noopener noreferrer" class="package-official-link" title="Official Google Antigravity Hub Product Details">
+                        <a href="https://antigravity.google/product/antigravity-2" target="_blank" rel="noopener noreferrer" class="package-official-link" title="Official Google Antigravity Hub Product Details" onclick="if(typeof gtag==='function') gtag('event', 'click_google_details', { event_category: 'outbound', product: 'antigravity-hub' });">
                             <span>Google Product Details</span>
                             <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg>
                         </a>
@@ -1762,7 +1762,7 @@
                     <p>Star the project on GitHub to support our automated daily sync and help fellow Linux developers discover native RPM &amp; DEB packages!</p>
                 </div>
             </div>
-            <a href="https://github.com/x3m-industries/antigravity-packages" target="_blank" rel="noopener noreferrer" class="star-btn" aria-label="Star on GitHub">
+            <a href="https://github.com/x3m-industries/antigravity-packages" target="_blank" rel="noopener noreferrer" class="star-btn" aria-label="Star on GitHub" onclick="if(typeof gtag==='function') gtag('event', 'click_star_github', { event_category: 'engagement', event_label: 'Star Callout' });">
                 <svg width="18" height="18" viewBox="0 0 24 24" fill="#fbbf24" stroke="#fbbf24" stroke-width="1"><path d="M12 .587l3.668 7.431 8.2 1.192-5.934 5.784 1.399 8.163L12 18.896l-7.333 3.861 1.399-8.163-5.934-5.784 8.2-1.192zm0 5.702l-2.231 4.522-4.991.725 3.612 3.521-.852 4.968L12 17.653l4.462 2.348-.852-4.968 3.612-3.521-4.991-.725L12 6.289z"/></svg>
                 <span>Star on GitHub</span>
             </a>
@@ -2033,6 +2033,15 @@ cd / &amp;&amp; sudo rpmextract ~/antigravity-ide-latest.x86_64.rpm</code>
                 try {
                     localStorage.setItem('preferred_distro_tab', tabId);
                 } catch (e) {}
+
+                // Track GA4 distro tab selection
+                if (typeof gtag === 'function') {
+                    gtag('event', 'select_distro_tab', {
+                        event_category: 'navigation',
+                        distro: tabId,
+                        event_label: tabId
+                    });
+                }
             }
         }
 
@@ -2059,6 +2068,20 @@ cd / &amp;&amp; sudo rpmextract ~/antigravity-ide-latest.x86_64.rpm</code>
                 const origTitle = btn.getAttribute('title') || 'Copy to clipboard';
                 btn.setAttribute('aria-label', 'Copied to clipboard!');
                 btn.setAttribute('title', 'Copied!');
+
+                // Track GA4 conversion event
+                if (typeof gtag === 'function') {
+                    const isUniversal = btn.closest('.terminal-body') !== null;
+                    const tabContainer = btn.closest('.tab-content');
+                    const tabId = tabContainer ? tabContainer.id : (isUniversal ? 'universal' : 'general');
+                    gtag('event', isUniversal ? 'copy_universal_installer' : 'copy_install_command', {
+                        event_category: isUniversal ? 'conversion' : 'engagement',
+                        distro: tabId,
+                        command_preview: code.substring(0, 60),
+                        event_label: isUniversal ? 'Universal 1-Click Installer' : `${tabId} - ${code.substring(0, 40)}`
+                    });
+                }
+
                 setTimeout(() => {
                     btn.classList.remove('copied');
                     btn.setAttribute('aria-label', origAria);

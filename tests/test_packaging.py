@@ -116,6 +116,8 @@ class TestPackagingLogic(unittest.TestCase):
         self.assertIn("E83A 23BC", html)
         self.assertIn("install.sh", html)
         self.assertIn("G-XXTD2B1XB0", html)
+        self.assertIn("copy_universal_installer", html)
+        self.assertIn("select_distro_tab", html)
 
 
 if __name__ == "__main__":
