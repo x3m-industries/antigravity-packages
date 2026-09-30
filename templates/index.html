@@ -1022,33 +1022,31 @@
             margin-bottom: 12px;
         }
 
-        .package-card-title {
+        .package-header-top {
             display: flex;
             align-items: center;
-            gap: 12px;
+            justify-content: space-between;
+            margin-bottom: 16px;
         }
 
-        .package-icon {
-            font-size: 1.8rem;
-            line-height: 1;
-            display: flex;
-            align-items: center;
-            justify-content: center;
+        .package-header-titles {
+            margin-bottom: 12px;
         }
 
         .package-name {
-            font-size: 1.25rem;
+            font-size: 1.35rem;
             font-weight: 800;
             color: #fff;
             letter-spacing: -0.01em;
             font-family: 'JetBrains Mono', monospace;
+            white-space: nowrap;
         }
 
         .package-tagline {
-            font-size: 0.86rem;
+            font-size: 0.88rem;
             font-weight: 600;
             color: var(--accent);
-            margin-top: 2px;
+            margin-top: 4px;
         }
 
         .package-badge {
@@ -1056,7 +1054,7 @@
             font-weight: 700;
             text-transform: uppercase;
             letter-spacing: 0.05em;
-            padding: 4px 10px;
+            padding: 5px 12px;
             border-radius: 9999px;
             background: rgba(99, 102, 241, 0.15);
             border: 1px solid rgba(99, 102, 241, 0.35);
@@ -1071,10 +1069,11 @@
         }
 
         .package-desc {
-            font-size: 0.9rem;
+            font-size: 0.92rem;
             color: var(--text-muted);
             line-height: 1.55;
-            margin-bottom: 16px;
+            margin-bottom: 18px;
+            min-height: 44px;
         }
 
         .package-features {
@@ -1083,7 +1082,7 @@
             margin: 0 0 20px;
             display: flex;
             flex-direction: column;
-            gap: 9px;
+            gap: 10px;
         }
 
         .package-features li {
@@ -1105,13 +1104,24 @@
             flex-shrink: 0;
         }
 
+        .package-features code {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.8rem;
+            background: rgba(0, 0, 0, 0.45);
+            border: 1px solid rgba(255, 255, 255, 0.12);
+            padding: 1px 6px;
+            border-radius: 5px;
+            color: #38bdf8;
+            white-space: nowrap;
+        }
+
         .package-card-footer {
             display: flex;
             align-items: center;
             justify-content: space-between;
             gap: 12px;
-            margin-top: 20px;
-            padding-top: 16px;
+            margin-top: auto;
+            padding-top: 18px;
             border-top: 1px solid rgba(255, 255, 255, 0.08);
             flex-wrap: wrap;
         }
@@ -1248,6 +1258,9 @@
             .tab-btn { font-size: 0.85rem; padding: 10px 12px; }
             .brand-logo { width: 72px; height: 72px; border-radius: 16px; }
             .packages-grid { grid-template-columns: 1fr; }
+            .package-card-footer { flex-direction: column; align-items: stretch; gap: 10px; }
+            .package-cmd { justify-content: space-between; }
+            .package-official-link { justify-content: center; }
             .star-cta-card { flex-direction: column; align-items: flex-start; gap: 14px; padding: 18px; }
             .star-btn { width: 100%; justify-content: center; }
             .badges-group { gap: 8px; margin-bottom: 24px; }
@@ -1341,27 +1354,25 @@
                 <!-- Card 1: Antigravity IDE -->
                 <div class="package-card">
                     <div>
-                        <div class="package-card-header">
-                            <div class="package-card-title">
-                                <picture>
-                                    <source srcset="assets/logo.webp" type="image/webp">
-                                    <img src="assets/logo.png" alt="Antigravity IDE" class="package-card-logo" width="52" height="52" loading="lazy">
-                                </picture>
-                                <div>
-                                    <div class="package-name">antigravity-ide</div>
-                                    <div class="package-tagline">Google Antigravity IDE</div>
-                                </div>
-                            </div>
+                        <div class="package-header-top">
+                            <picture>
+                                <source srcset="assets/logo.webp" type="image/webp">
+                                <img src="assets/logo.png" alt="Antigravity IDE" class="package-card-logo" width="52" height="52" loading="lazy">
+                            </picture>
                             <span class="package-badge">Official Desktop IDE</span>
+                        </div>
+                        <div class="package-header-titles">
+                            <div class="package-name">antigravity-ide</div>
+                            <div class="package-tagline">Google Antigravity IDE</div>
                         </div>
                         <p class="package-desc">
                             Google's official AI-first desktop code editor with agent pair programming, syntax tools, and workspace management.
                         </p>
                         <ul class="package-features">
                             <li><span class="bullet">✦</span> <span><strong>Convenient Native Packaging:</strong> Automated RPM &amp; DEB builds synced daily directly from Google's CDN</span></li>
-                            <li><span class="bullet">✦</span> <span><strong>Desktop Launcher:</strong> Registered in GNOME, KDE, and XFCE application menus with high-res icon</span></li>
+                            <li><span class="bullet">✦</span> <span><strong>Desktop App Launcher:</strong> Registered in GNOME, KDE, and XFCE application menus with high-res icon</span></li>
                             <li><span class="bullet">✦</span> <span><strong>Shell Command:</strong> Launch projects directly from your terminal using <code>antigravity-ide ./path</code></span></li>
-                            <li><span class="bullet">✦</span> <span><strong>OAuth Protocol Handler:</strong> Pre-registered <code>antigravity-ide://</code> handler for smooth Google sign-in</span></li>
+                            <li><span class="bullet">✦</span> <span><strong>OAuth Protocol Handler:</strong> Pre-registered <code>antigravity-ide://</code> browser handler for smooth sign-in</span></li>
                         </ul>
                     </div>
                     <div class="package-card-footer">
@@ -1379,27 +1390,25 @@
                 <!-- Card 2: Antigravity Hub -->
                 <div class="package-card">
                     <div>
-                        <div class="package-card-header">
-                            <div class="package-card-title">
-                                <picture>
-                                    <source srcset="assets/hub-logo.webp" type="image/webp">
-                                    <img src="assets/hub-logo.png" alt="Antigravity Hub" class="package-card-logo white-card-logo" width="52" height="52" loading="lazy">
-                                </picture>
-                                <div>
-                                    <div class="package-name">antigravity</div>
-                                    <div class="package-tagline">Google Antigravity Hub (2.0)</div>
-                                </div>
-                            </div>
+                        <div class="package-header-top">
+                            <picture>
+                                <source srcset="assets/hub-logo.webp" type="image/webp">
+                                <img src="assets/hub-logo.png" alt="Antigravity Hub" class="package-card-logo white-card-logo" width="52" height="52" loading="lazy">
+                            </picture>
                             <span class="package-badge hub-badge">Official Agent Hub</span>
+                        </div>
+                        <div class="package-header-titles">
+                            <div class="package-name">antigravity</div>
+                            <div class="package-tagline">Google Antigravity Hub</div>
                         </div>
                         <p class="package-desc">
                             Google's official agent hub and workspace interface for configuring, running, and orchestrating autonomous coding agents.
                         </p>
                         <ul class="package-features">
                             <li><span class="bullet">✦</span> <span><strong>Convenient Native Packaging:</strong> Ready-to-install RPM &amp; DEB packages with standard package manager updates</span></li>
-                            <li><span class="bullet">✦</span> <span><strong>System App Integration:</strong> Linked to <code>/usr/bin/antigravity</code> with native desktop application launcher</span></li>
+                            <li><span class="bullet">✦</span> <span><strong>Desktop App Launcher:</strong> Registered in GNOME, KDE, and XFCE application menus with high-res icon</span></li>
+                            <li><span class="bullet">✦</span> <span><strong>Shell Command:</strong> Launch the workspace directly from your terminal using <code>antigravity</code></span></li>
                             <li><span class="bullet">✦</span> <span><strong>Effortless Maintenance:</strong> Updates seamlessly with standard <code>sudo dnf update</code> or <code>sudo apt upgrade</code></span></li>
-                            <li><span class="bullet">✦</span> <span><strong>Standalone or Paired:</strong> Install independently on workstations or pair with the IDE</span></li>
                         </ul>
                     </div>
                     <div class="package-card-footer">
@@ -1407,7 +1416,7 @@
                             <span>Package:</span>
                             <code>antigravity</code>
                         </div>
-                        <a href="https://antigravity.google/product/antigravity-2" target="_blank" rel="noopener noreferrer" class="package-official-link" title="Official Google Antigravity 2.0 Product Details">
+                        <a href="https://antigravity.google/product/antigravity-2" target="_blank" rel="noopener noreferrer" class="package-official-link" title="Official Google Antigravity Hub Product Details">
                             <span>Google Product Details</span>
                             <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg>
                         </a>
