@@ -1365,6 +1365,52 @@
             transform: translateY(-1px);
         }
 
+        /* Shared Packages Banner */
+        .packages-shared-banner {
+            margin-top: 20px;
+            background: rgba(99, 102, 241, 0.08);
+            border: 1px solid rgba(99, 102, 241, 0.25);
+            border-radius: 14px;
+            padding: 14px 20px;
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            font-size: 0.92rem;
+            color: var(--text-color);
+            line-height: 1.5;
+            backdrop-filter: blur(8px);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+        }
+
+        .packages-shared-icon {
+            font-size: 1.3rem;
+            flex-shrink: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .packages-shared-text {
+            flex: 1;
+        }
+
+        .packages-shared-text strong {
+            color: #fff;
+            font-weight: 700;
+        }
+
+        .packages-shared-text code {
+            font-family: 'JetBrains Mono', monospace;
+            background: rgba(0, 0, 0, 0.4);
+            padding: 2px 7px;
+            border-radius: 5px;
+            font-size: 0.85rem;
+            color: #38bdf8;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            white-space: nowrap;
+            display: inline-block;
+        }
+
         /* Star on GitHub CTA Card */
         .star-cta-card {
             background: linear-gradient(135deg, rgba(30, 41, 67, 0.9) 0%, rgba(20, 29, 48, 0.95) 100%);
@@ -1758,6 +1804,18 @@
                 justify-content: center;
                 font-size: 0.84rem;
             }
+            .packages-shared-banner {
+                margin-top: 14px;
+                padding: 13px 14px;
+                font-size: 0.85rem;
+                gap: 12px;
+                border-radius: 12px;
+                align-items: flex-start;
+            }
+            .packages-shared-icon {
+                font-size: 1.2rem;
+                margin-top: 2px;
+            }
 
             /* Star CTA Card */
             .star-cta-card {
@@ -2079,8 +2137,6 @@
                             <li><span class="bullet">✦</span> <span><strong>Convenient Native Packaging:</strong> Automated RPM &amp; DEB builds synced daily directly from Google's Release page</span></li>
                             <li><span class="bullet">✦</span> <span><strong>Desktop App Launcher:</strong> Registered in GNOME, KDE, and XFCE application menus with high-res icon</span></li>
                             <li><span class="bullet">✦</span> <span><strong>Shell Command:</strong> Launch projects directly from your terminal using <code>antigravity-ide ./path</code></span></li>
-                            <li><span class="bullet">✦</span> <span><strong>OAuth Protocol Handler:</strong> Pre-registered <code>antigravity-ide://</code> browser handler for smooth sign-in</span></li>
-                            <li><span class="bullet">✦</span> <span><strong>Effortless Maintenance:</strong> Updates seamlessly with standard <code>sudo dnf update</code> or <code>sudo apt upgrade</code></span></li>
                         </ul>
                     </div>
                     <div class="package-card-footer">
@@ -2116,8 +2172,6 @@
                             <li><span class="bullet">✦</span> <span><strong>Convenient Native Packaging:</strong> Automated RPM &amp; DEB builds synced daily directly from Google's Release page</span></li>
                             <li><span class="bullet">✦</span> <span><strong>Desktop App Launcher:</strong> Registered in GNOME, KDE, and XFCE application menus with high-res icon</span></li>
                             <li><span class="bullet">✦</span> <span><strong>Shell Command:</strong> Launch the workspace directly from your terminal using <code>antigravity</code></span></li>
-                            <li><span class="bullet">✦</span> <span><strong>OAuth Protocol Handler:</strong> Pre-registered <code>antigravity://</code> browser handler for smooth sign-in</span></li>
-                            <li><span class="bullet">✦</span> <span><strong>Effortless Maintenance:</strong> Updates seamlessly with standard <code>sudo dnf update</code> or <code>sudo apt upgrade</code></span></li>
                         </ul>
                     </div>
                     <div class="package-card-footer">
@@ -2131,6 +2185,10 @@
                         </a>
                     </div>
                 </div>
+            </div>
+            <div class="packages-shared-banner">
+                <span class="packages-shared-icon">🔄</span>
+                <div class="packages-shared-text"><strong>Effortless Maintenance:</strong> Updates seamlessly with standard <code>sudo dnf update</code> or <code>sudo apt upgrade</code></div>
             </div>
         </section>
 
