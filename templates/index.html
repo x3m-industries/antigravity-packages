@@ -11,7 +11,7 @@
       gtag('config', 'G-XXTD2B1XB0');
     </script>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
     <title>Google Antigravity for Linux — Official IDE &amp; Hub Packages (DNF, APT)</title>
     <meta name="description" content="Install Google's official Antigravity IDE &amp; Hub on Linux in 1 command. Native DNF &amp; APT repositories with automatic daily updates for Fedora, Ubuntu, Debian, Arch &amp; openSUSE.">
     <meta name="keywords" content="Google Antigravity, Antigravity Linux, Antigravity IDE, Antigravity RPM, Antigravity DEB, Fedora Antigravity, Ubuntu Antigravity, Debian Antigravity, Arch Linux Antigravity, RHEL Antigravity, google antigravity rpm, antigravity fedora, fedora antigravity, antigravity apt, how to update antigravity ide in ubuntu, download antigravity linux, google antigravity download linux, install google antigravity, AI code editor, DeepMind Antigravity, DNF repository, APT repository, x86_64, aarch64, arm64, AUR antigravity">
@@ -403,6 +403,9 @@
             max-width: 920px;
             margin: 0 auto;
             padding: 56px 24px 88px;
+            padding-left: max(24px, env(safe-area-inset-left, 24px));
+            padding-right: max(24px, env(safe-area-inset-right, 24px));
+            padding-bottom: max(88px, env(safe-area-inset-bottom, 88px));
         }
 
         /* Hero Header */
@@ -524,11 +527,11 @@
 
 
         h1 {
-            font-size: clamp(2.3rem, 5.5vw, 3.4rem);
+            font-size: clamp(1.75rem, 6vw, 3.4rem);
             font-weight: 800;
-            line-height: 1.25;
+            line-height: 1.2;
             letter-spacing: -0.035em;
-            margin: 0 auto 16px;
+            margin: 0 auto 14px;
             text-wrap: balance;
             background: linear-gradient(135deg, #ffffff 20%, #cbd5e1 60%, #94a3b8 100%);
             -webkit-background-clip: text;
@@ -536,12 +539,12 @@
         }
 
         .subtitle {
-            font-size: 1.15rem;
+            font-size: clamp(0.95rem, 2.8vw, 1.15rem);
             color: var(--text-muted);
             max-width: 660px;
-            margin: 0 auto 26px;
+            margin: 0 auto 22px;
             text-wrap: balance;
-            line-height: 1.65;
+            line-height: 1.6;
         }
 
         .badges-group {
@@ -645,6 +648,13 @@
             border-bottom: 1px solid rgba(255, 255, 255, 0.1);
             flex-wrap: wrap;
             gap: 8px;
+        }
+
+        .terminal-header-title-group {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            flex-wrap: wrap;
         }
 
         .terminal-dots {
@@ -828,16 +838,10 @@
 
         .tab-content {
             display: none;
-            animation: fadeIn 0.25s ease;
         }
 
         .tab-content.active {
             display: block;
-        }
-
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(4px); }
-            to { opacity: 1; transform: translateY(0); }
         }
 
         .step-header {
@@ -889,8 +893,17 @@
         .code-block code {
             display: block;
             white-space: pre-wrap;
-            word-break: break-all;
+            overflow-wrap: anywhere;
+            word-break: break-word;
             line-height: 1.6;
+        }
+
+        .tab-label-short {
+            display: none;
+        }
+
+        .tab-label-full {
+            display: inline;
         }
 
         .copy-btn {
@@ -907,6 +920,7 @@
             align-items: center;
             justify-content: center;
             flex-shrink: 0;
+            -webkit-tap-highlight-color: transparent;
         }
 
         .terminal-copy {
@@ -915,6 +929,10 @@
             background: rgba(255, 255, 255, 0.12);
             border-color: rgba(255, 255, 255, 0.22);
             color: #fff;
+        }
+
+        .terminal-copy .btn-text {
+            display: none;
         }
 
         .copy-btn:hover {
@@ -1413,41 +1431,6 @@
             box-shadow: 0 6px 18px rgba(245, 158, 11, 0.3);
         }
 
-        @media (max-width: 640px) {
-            .container { padding: 32px 14px 56px; }
-            .terminal-body {
-                flex-direction: column;
-                align-items: stretch;
-                gap: 12px;
-                padding: 14px;
-            }
-            .terminal-prompt {
-                overflow-x: visible;
-                flex-wrap: wrap;
-                align-items: flex-start;
-                padding-right: 0;
-            }
-            .terminal-body code {
-                white-space: pre-wrap;
-                word-break: break-all;
-                font-size: 0.82rem;
-                line-height: 1.45;
-            }
-            .terminal-copy {
-                align-self: flex-end;
-            }
-            .tab-btn { font-size: 0.85rem; padding: 10px 12px; }
-            .brand-logo { width: 72px; height: 72px; border-radius: 16px; }
-            .packages-grid { grid-template-columns: 1fr; }
-            .package-card-footer { flex-direction: column; align-items: stretch; gap: 10px; }
-            .package-cmd { justify-content: space-between; }
-            .package-official-link { justify-content: center; }
-            .star-cta-card { flex-direction: column; align-items: flex-start; gap: 14px; padding: 18px; }
-            .star-btn { width: 100%; justify-content: center; }
-            .badges-group { gap: 8px; margin-bottom: 24px; }
-            .badges-row { gap: 8px; }
-        }
-
         /* Installer Section Headings & Direct Downloads */
         .installer-heading-wrapper {
             text-align: center;
@@ -1504,18 +1487,6 @@
             margin: 0 0 34px;
         }
 
-        @media (max-width: 860px) {
-            .trust-bar {
-                grid-template-columns: repeat(2, 1fr);
-            }
-        }
-
-        @media (max-width: 520px) {
-            .trust-bar {
-                grid-template-columns: 1fr;
-            }
-        }
-
         .trust-pill {
             background: rgba(30, 41, 67, 0.65);
             border: 1px solid rgba(255, 255, 255, 0.08);
@@ -1562,6 +1533,413 @@
             align-items: flex-start;
             gap: 12px;
             margin-top: 10px;
+            overflow-wrap: anywhere;
+            word-break: break-word;
+        }
+
+        /* Touch interaction optimizations */
+        @media (hover: none) {
+            .brand-logo:hover,
+            .package-card:hover,
+            .package-card:hover .package-card-logo,
+            .feature-card:hover,
+            .distro-tag:hover,
+            .star-btn:hover {
+                transform: none;
+            }
+        }
+
+        .tab-btn:active,
+        .copy-btn:active,
+        .star-btn:active,
+        .package-official-link:active,
+        .brand-logo:active {
+            transform: scale(0.97);
+            opacity: 0.88;
+        }
+
+        /* Responsive Breakpoints */
+        @media (max-width: 860px) {
+            .trust-bar {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 10px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .terminal-body {
+                flex-direction: column;
+                align-items: stretch;
+                gap: 12px;
+                padding: 14px;
+            }
+            .terminal-prompt {
+                overflow-x: visible;
+                flex-wrap: wrap;
+                align-items: flex-start;
+                padding-right: 0;
+            }
+            .terminal-body code {
+                white-space: pre-wrap;
+                overflow-wrap: anywhere;
+                word-break: break-word;
+                font-size: 0.82rem;
+                line-height: 1.5;
+            }
+            .copy-btn.terminal-copy {
+                width: 100%;
+                height: 44px;
+                min-height: 44px;
+                border-radius: 10px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                gap: 8px;
+                font-size: 0.86rem;
+                font-weight: 700;
+                font-family: inherit;
+                background: rgba(99, 102, 241, 0.2);
+                border-color: rgba(99, 102, 241, 0.45);
+                color: #f8fafc;
+                margin-top: 4px;
+            }
+            .copy-btn.terminal-copy .btn-text {
+                display: inline;
+            }
+            .packages-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 640px) {
+            .container {
+                padding: 28px 14px max(56px, env(safe-area-inset-bottom, 56px));
+                padding-left: max(14px, env(safe-area-inset-left, 14px));
+                padding-right: max(14px, env(safe-area-inset-right, 14px));
+            }
+
+            /* Header & Logos */
+            .dual-logo-container {
+                margin-bottom: 16px;
+            }
+            .logo-pair {
+                gap: 12px;
+            }
+            .brand-logo {
+                width: 68px;
+                height: 68px;
+                border-radius: 16px;
+            }
+            .logo-caption {
+                font-size: 0.68rem;
+                padding: 2px 8px;
+            }
+            .logo-connector {
+                margin-top: -18px;
+                font-size: 1rem;
+            }
+
+            /* Badges */
+            .badges-group {
+                gap: 8px;
+                margin-bottom: 22px;
+            }
+            .badges-row {
+                gap: 6px;
+            }
+            .badge {
+                font-size: 0.75rem;
+                padding: 4px 10px;
+                height: 26px;
+            }
+            .badge-shield-link, .badge-shield-link img {
+                height: 24px;
+            }
+
+            /* Terminal Header */
+            .terminal-header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 8px;
+                padding: 10px 14px;
+            }
+            .terminal-header-title-group {
+                width: 100%;
+                gap: 10px;
+            }
+            .terminal-title {
+                font-size: 0.8rem;
+            }
+            .terminal-distros {
+                font-size: 0.72rem;
+                padding: 2px 8px;
+                align-self: flex-start;
+            }
+
+            /* Direct Downloads */
+            .direct-downloads-row {
+                flex-direction: column;
+                gap: 6px;
+                text-align: center;
+                margin-top: -18px;
+                margin-bottom: 28px;
+                font-size: 0.8rem;
+            }
+            .direct-download-link {
+                padding: 6px 12px;
+                border-radius: 8px;
+                background: rgba(56, 189, 248, 0.08);
+                border: 1px solid rgba(56, 189, 248, 0.2);
+                min-height: 40px;
+            }
+
+            /* Trust bar (compact 2x2 on mobile) */
+            .trust-bar {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 8px;
+                margin-bottom: 26px;
+            }
+            .trust-pill {
+                padding: 10px 8px;
+                gap: 8px;
+                font-size: 0.76rem;
+                border-radius: 10px;
+            }
+            .trust-pill-icon {
+                font-size: 1rem;
+            }
+
+            /* Package Showcase Cards */
+            .packages-intro h2 { font-size: 1.25rem; }
+            .packages-intro p { font-size: 0.88rem; }
+            .package-card {
+                padding: 18px 16px;
+                border-radius: 16px;
+            }
+            .package-name {
+                font-size: 1.15rem;
+            }
+            .package-tagline {
+                font-size: 0.82rem;
+            }
+            .package-badge {
+                font-size: 0.68rem;
+                padding: 4px 9px;
+            }
+            .package-desc {
+                font-size: 0.88rem;
+                min-height: auto;
+                margin-bottom: 14px;
+            }
+            .package-features {
+                gap: 8px;
+                margin-bottom: 16px;
+            }
+            .package-features li {
+                font-size: 0.82rem;
+            }
+            .package-features code {
+                white-space: normal;
+                overflow-wrap: anywhere;
+                word-break: break-word;
+            }
+            .package-card-footer {
+                flex-direction: column;
+                align-items: stretch;
+                gap: 10px;
+            }
+            .package-cmd {
+                justify-content: space-between;
+                padding: 8px 12px;
+                font-size: 0.78rem;
+            }
+            .package-official-link {
+                min-height: 44px;
+                justify-content: center;
+                font-size: 0.84rem;
+            }
+
+            /* Star CTA Card */
+            .star-cta-card {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 14px;
+                padding: 18px 16px;
+                border-radius: 14px;
+            }
+            .star-cta-content {
+                gap: 12px;
+            }
+            .star-badge-icon {
+                font-size: 1.6rem;
+            }
+            .star-cta-text h3 {
+                font-size: 0.98rem;
+            }
+            .star-cta-text p {
+                font-size: 0.82rem;
+            }
+            .star-btn {
+                width: 100%;
+                min-height: 44px;
+                justify-content: center;
+                font-size: 0.88rem;
+            }
+
+            /* Tabs & Code Blocks */
+            .tabs-wrapper {
+                padding: 18px 14px;
+                border-radius: 16px;
+                margin-bottom: 28px;
+            }
+            .tabs-heading {
+                font-size: 1.02rem;
+                margin-bottom: 12px;
+            }
+            .tab-buttons {
+                gap: 4px;
+                padding: 4px;
+                margin-bottom: 18px;
+            }
+            .tab-btn {
+                font-size: 0.8rem;
+                padding: 8px 4px;
+                min-height: 46px;
+                flex-direction: column;
+                justify-content: center;
+                gap: 2px;
+                text-align: center;
+                line-height: 1.25;
+            }
+            .tab-label-full {
+                display: none;
+            }
+            .tab-label-short {
+                display: inline;
+                font-weight: 700;
+            }
+            .tab-btn .detected-tag {
+                margin-left: 0;
+                margin-top: 2px;
+                padding: 1px 6px;
+                font-size: 0.65rem;
+            }
+
+            .step-header {
+                align-items: center;
+                margin-bottom: 6px;
+            }
+            .step-label {
+                font-size: 0.8rem;
+                gap: 6px;
+            }
+            .step-num {
+                width: 20px;
+                height: 20px;
+                font-size: 0.7rem;
+            }
+            .step-header .copy-btn {
+                width: 44px;
+                height: 44px;
+                min-width: 44px;
+                min-height: 44px;
+                border-radius: 8px;
+            }
+            .code-block {
+                padding: 12px 14px;
+                font-size: 0.82rem;
+                border-radius: 10px;
+                margin-bottom: 16px;
+            }
+            .aur-status-note {
+                padding: 12px 14px;
+                font-size: 0.82rem;
+                gap: 10px;
+            }
+
+            /* Features & Distros */
+            .features-section {
+                margin-bottom: 28px;
+            }
+            .section-title {
+                font-size: 1.2rem;
+                margin-bottom: 16px;
+            }
+            .feature-card {
+                padding: 18px 16px;
+                border-radius: 14px;
+            }
+            .feature-card h3 {
+                font-size: 0.98rem;
+                margin-bottom: 6px;
+            }
+            .feature-card p {
+                font-size: 0.85rem;
+            }
+            .distros-card {
+                padding: 22px 14px;
+                border-radius: 14px;
+                margin-bottom: 28px;
+            }
+            .distros-card h2 {
+                font-size: 1.05rem;
+                margin-bottom: 14px;
+            }
+            .distro-tags {
+                gap: 6px;
+            }
+            .distro-tag {
+                font-size: 0.76rem;
+                padding: 5px 10px;
+                border-radius: 7px;
+            }
+
+            /* FAQ */
+            .faq-section {
+                margin-bottom: 32px;
+            }
+            .faq-section h2 {
+                font-size: 1.2rem;
+                margin-bottom: 16px;
+            }
+            .faq-item summary {
+                padding: 14px 16px;
+                font-size: 0.88rem;
+                min-height: 48px;
+                gap: 12px;
+            }
+            .faq-answer {
+                padding: 0 16px 16px;
+                font-size: 0.85rem;
+            }
+
+            footer {
+                font-size: 0.8rem;
+                padding-top: 22px;
+                line-height: 1.5;
+            }
+        }
+
+        @media (max-width: 360px) {
+            h1 {
+                font-size: 1.65rem;
+            }
+            .brand-logo {
+                width: 62px;
+                height: 62px;
+            }
+            .trust-pill {
+                padding: 8px 6px;
+                font-size: 0.72rem;
+                line-height: 1.3;
+            }
+            .trust-pill-icon {
+                font-size: 0.95rem;
+            }
+            .tab-btn {
+                font-size: 0.75rem;
+                padding: 6px 2px;
+            }
         }
     </style>
 </head>
@@ -1641,12 +2019,14 @@
             </div>
             <div class="terminal-card">
                 <div class="terminal-header">
-                    <div class="terminal-dots">
-                        <span class="dot dot-red"></span>
-                        <span class="dot dot-yellow"></span>
-                        <span class="dot dot-green"></span>
+                    <div class="terminal-header-title-group">
+                        <div class="terminal-dots">
+                            <span class="dot dot-red"></span>
+                            <span class="dot dot-yellow"></span>
+                            <span class="dot dot-green"></span>
+                        </div>
+                        <span class="terminal-title">⚡ Universal One-Line Install (Auto-Detects Distro &amp; Installs Both)</span>
                     </div>
-                    <span class="terminal-title">⚡ Universal One-Line Install (Auto-Detects Distro &amp; Installs Both)</span>
                     <span class="terminal-distros">Fedora · Ubuntu · Debian · Arch · openSUSE</span>
                 </div>
                 <div class="terminal-body">
@@ -1657,6 +2037,7 @@
                     <button class="copy-btn terminal-copy" onclick="copyCode(this)" aria-label="Copy installation command" title="Copy to clipboard">
                         <svg class="copy-icon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
                         <svg class="check-icon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#34d399" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                        <span class="btn-text">Copy Command</span>
                     </button>
                 </div>
             </div>
@@ -1775,13 +2156,16 @@
             </h2>
             <div class="tab-buttons">
                 <button class="tab-btn active" data-tab="rpm" onclick="switchTab('rpm', this)">
-                    Fedora / RHEL / Rocky (DNF)
+                    <span class="tab-label-full">Fedora / RHEL / Rocky (DNF)</span>
+                    <span class="tab-label-short">Fedora (DNF)</span>
                 </button>
                 <button class="tab-btn" data-tab="deb" onclick="switchTab('deb', this)">
-                    Ubuntu / Debian / Mint (APT)
+                    <span class="tab-label-full">Ubuntu / Debian / Mint (APT)</span>
+                    <span class="tab-label-short">Ubuntu (APT)</span>
                 </button>
                 <button class="tab-btn" data-tab="arch" onclick="switchTab('arch', this)">
-                    Arch Linux / Manjaro (Pacman)
+                    <span class="tab-label-full">Arch Linux / Manjaro (Pacman)</span>
+                    <span class="tab-label-short">Arch (Pacman)</span>
                 </button>
             </div>
 
@@ -2066,8 +2450,11 @@ cd / &amp;&amp; sudo rpmextract ~/antigravity-ide-latest.x86_64.rpm</code>
                 btn.classList.add('copied');
                 const origAria = btn.getAttribute('aria-label') || 'Copy to clipboard';
                 const origTitle = btn.getAttribute('title') || 'Copy to clipboard';
+                const btnText = btn.querySelector('.btn-text');
+                const origText = btnText ? btnText.textContent : '';
                 btn.setAttribute('aria-label', 'Copied to clipboard!');
                 btn.setAttribute('title', 'Copied!');
+                if (btnText) btnText.textContent = 'Copied to Clipboard!';
 
                 // Track GA4 conversion event
                 if (typeof gtag === 'function') {
@@ -2086,6 +2473,7 @@ cd / &amp;&amp; sudo rpmextract ~/antigravity-ide-latest.x86_64.rpm</code>
                     btn.classList.remove('copied');
                     btn.setAttribute('aria-label', origAria);
                     btn.setAttribute('title', origTitle);
+                    if (btnText) btnText.textContent = origText || 'Copy Command';
                 }, 2000);
             }).catch(err => {
                 console.error('Failed to copy: ', err);
