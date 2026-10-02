@@ -58,6 +58,17 @@ Description: Apt repository for Google Antigravity & Antigravity IDE
 Date: $(date -Ru)
 REL_EOF
 
+        # Append SHA256 hashes of all index files
+        echo "SHA256:" >> "${DEB_DIR}/dists/stable/Release"
+        (
+            cd "${DEB_DIR}/dists/stable" || exit 1
+            find main -type f | sort | while read -r file; do
+                size=$(wc -c < "${file}")
+                hash=$(sha256sum "${file}" | cut -d' ' -f1)
+                printf " %s %16d %s\n" "${hash}" "${size}" "${file}" >> Release
+            done
+        )
+
         # Sign Release file if GPG is available
         if gpg --list-secret-keys "packaging@x3m.industries" > /dev/null 2>&1; then
             gpg --batch --yes -u "packaging@x3m.industries" --armor --detach-sign --output "${DEB_DIR}/dists/stable/Release.gpg" "${DEB_DIR}/dists/stable/Release"

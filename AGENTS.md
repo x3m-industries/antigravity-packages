@@ -8,9 +8,10 @@ This document provides a comprehensive technical overview and operational guide 
 
 The **`antigravity-packages`** repository provides automated community packaging and distribution infrastructure for Google Antigravity on Linux. Google publishes standalone Linux tarballs without official package manager repositories; this project bridges that gap by providing native **RPM** (DNF/YUM) and **DEB** (APT) repositories with daily upstream synchronization.
 
-### Applications Packaged
-1. **`antigravity-ide`** — Google's official AI-first desktop code editor (based on Code OSS). Installed into `/usr/share/antigravity-ide`, symlinked to `/usr/bin/antigravity-ide`, with `antigravity-ide://` OAuth URL handling and FreeDesktop desktop menu entries.
-2. **`antigravity`** — Google's official agent platform and hub (Antigravity 2.0). Installed into `/usr/share/antigravity`, symlinked to `/usr/bin/antigravity`, with `antigravity://` OAuth URL handling and FreeDesktop desktop menu entries.
+### Applications Managed
+1. **`antigravity-ide`** — Google's official AI-first desktop code editor (based on Code OSS). Packaged natively as RPM and DEB, installed into `/usr/share/antigravity-ide`, symlinked to `/usr/bin/antigravity-ide`, with `antigravity-ide://` OAuth URL handling and FreeDesktop desktop menu entries.
+2. **`antigravity`** — Google's official agent platform and hub (Antigravity 2.0). Packaged natively as RPM and DEB, installed into `/usr/share/antigravity`, symlinked to `/usr/bin/antigravity`, with `antigravity://` OAuth URL handling and FreeDesktop desktop menu entries.
+3. **`agy` (Antigravity CLI)** — Google's official terminal agent. Seamlessly orchestrated via `install.sh` into `$HOME/.local/bin/agy` (user-space). Preserves Google's native background self-updating (every 15 min), requires zero root privileges for CLI-only installs, avoids filename collisions with `/usr/bin/antigravity` (Hub), and completely prevents `$PATH` shadowing conflicts with Google's canonical installer.
 
 ### Supported Architectures
 - **`x86_64`** (`amd64` in Debian nomenclature)

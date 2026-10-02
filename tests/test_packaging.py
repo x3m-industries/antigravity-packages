@@ -96,14 +96,42 @@ class TestPackagingLogic(unittest.TestCase):
             self.assertEqual(res.returncode, 0, f"desktop-file-validate failed: {res.stderr}")
 
     def test_installer_script(self):
+        import subprocess
         install_sh = repo_root / "install.sh"
         self.assertTrue(install_sh.exists())
         content = install_sh.read_text(encoding="utf-8")
         self.assertIn("#!/usr/bin/env bash", content)
         self.assertIn("install_rpm", content)
         self.assertIn("install_deb", content)
+        self.assertIn("install_cli", content)
         self.assertIn("antigravity.repo", content)
         self.assertIn("antigravity.sources", content)
+        self.assertIn("--cli-only", content)
+        self.assertIn("--ide-only", content)
+        self.assertIn("--hub-only", content)
+        self.assertIn("--all", content)
+        self.assertIn("--dry-run", content)
+        self.assertIn("TARGET_USER", content)
+        self.assertIn("TARGET_HOME", content)
+        self.assertIn("EXISTING_CLI_PATH", content)
+
+        # Validate syntax
+        res_syntax = subprocess.run(["bash", "-n", str(install_sh)], capture_output=True, text=True)
+        self.assertEqual(res_syntax.returncode, 0, f"bash -n failed: {res_syntax.stderr}")
+
+        # Validate --help execution
+        res_help = subprocess.run([str(install_sh), "--help"], capture_output=True, text=True)
+        self.assertEqual(res_help.returncode, 0)
+        self.assertIn("--cli-only", res_help.stdout)
+        self.assertIn("--ide-only", res_help.stdout)
+        self.assertIn("--hub-only", res_help.stdout)
+        self.assertIn("--all", res_help.stdout)
+        self.assertIn("--dry-run", res_help.stdout)
+
+        # Validate --dry-run execution
+        res_dry = subprocess.run([str(install_sh), "--dry-run"], capture_output=True, text=True)
+        self.assertEqual(res_dry.returncode, 0)
+        self.assertIn("Dry run complete", res_dry.stdout)
 
     def test_html_template(self):
         template_file = repo_root / "templates" / "index.html"
@@ -122,6 +150,9 @@ class TestPackagingLogic(unittest.TestCase):
         self.assertIn('data-version="hub-semver"', html)
         self.assertIn("header-version-pill", html)
         self.assertIn("card-version-pill", html)
+        self.assertIn('data-tab="cli"', html)
+        self.assertIn("Antigravity CLI", html)
+        self.assertIn("agy", html)
 
     def test_version_tag_injection(self):
         import sys

@@ -32,22 +32,22 @@
     <meta property="og:type" content="website">
     <meta property="og:site_name" content="Google Antigravity Linux Repositories">
     <meta property="og:title" content="Google Antigravity for Linux — Official IDE &amp; Hub Packages">
-    <meta property="og:description" content="Install Google's official Antigravity IDE &amp; Hub on Linux in 1 command. Native DNF &amp; APT repositories with automatic daily updates for Fedora, Ubuntu, Debian, Arch &amp; openSUSE.">
+    <meta property="og:description" content="Install Google's official Antigravity IDE, Hub, and CLI on Linux in 1 command. Native DNF &amp; APT repositories with automatic daily updates for Fedora, Ubuntu, Debian, Arch &amp; openSUSE.">
     <meta property="og:url" content="https://x3m-industries.github.io/antigravity-packages/">
     <meta property="og:image" content="https://x3m-industries.github.io/antigravity-packages/assets/og-banner.png">
     <meta property="og:image:secure_url" content="https://x3m-industries.github.io/antigravity-packages/assets/og-banner.png">
     <meta property="og:image:type" content="image/png">
     <meta property="og:image:width" content="1200">
     <meta property="og:image:height" content="630">
-    <meta property="og:image:alt" content="Google Antigravity and Antigravity IDE for Linux — Native Packages">
+    <meta property="og:image:alt" content="Google Antigravity IDE, Hub, and CLI for Linux — Native Packages">
     <meta property="og:locale" content="en_US">
 
     <!-- Twitter / X Cards -->
     <meta name="twitter:card" content="summary_large_image">
     <meta name="twitter:creator" content="@stevenceuppens">
     <meta name="twitter:site" content="@stevenceuppens">
-    <meta name="twitter:title" content="Google Antigravity for Linux — Official IDE &amp; Hub Packages">
-    <meta name="twitter:description" content="Install Google's official Antigravity IDE &amp; Hub on Linux in 1 command. Native DNF &amp; APT repositories with automatic daily updates for Fedora, Ubuntu, Debian, Arch &amp; openSUSE.">
+    <meta name="twitter:title" content="Google Antigravity for Linux — Official IDE, Hub &amp; CLI Packages">
+    <meta name="twitter:description" content="Install Google's official Antigravity IDE, Hub, and CLI on Linux in 1 command. Native DNF &amp; APT repositories with automatic daily updates for Fedora, Ubuntu, Debian, Arch &amp; openSUSE.">
     <meta name="twitter:image" content="https://x3m-industries.github.io/antigravity-packages/assets/og-banner.png">
 
     <!-- Schema.org JSON-LD Structured Data -->
@@ -118,8 +118,47 @@
           }
         },
         {
+          "@type": "SoftwareApplication",
+          "name": "Google Antigravity CLI",
+          "applicationCategory": "DeveloperApplication",
+          "operatingSystem": "Linux (Fedora, RHEL, Ubuntu, Debian, Rocky Linux, openSUSE, Arch Linux, Linux Mint, Pop!_OS)",
+          "offers": {
+            "@type": "Offer",
+            "price": "0",
+            "priceCurrency": "USD"
+          },
+          "description": "Google Antigravity command line interface ('agy') with background auto-updating.",
+          "url": "https://x3m-industries.github.io/antigravity-packages/",
+          "downloadUrl": "https://x3m-industries.github.io/antigravity-packages/",
+          "author": {
+            "@type": "Person",
+            "@id": "https://x3m-industries.github.io/antigravity-packages/#steven-ceuppens",
+            "name": "Steven Ceuppens",
+            "jobTitle": "Lead Software Architect & Cloud Technologist",
+            "url": "https://www.linkedin.com/in/stevenceuppens/"
+          },
+          "maintainer": {
+            "@type": "Person",
+            "@id": "https://x3m-industries.github.io/antigravity-packages/#steven-ceuppens"
+          },
+          "publisher": {
+            "@type": "Organization",
+            "@id": "https://x3m-industries.github.io/antigravity-packages/#x3m-industries",
+            "name": "X3M Industries",
+            "url": "https://x3m.industries"
+          }
+        },
+        {
           "@type": "FAQPage",
           "mainEntity": [
+            {
+              "@type": "Question",
+              "name": "Can I install the Antigravity CLI ('agy') with the universal installer?",
+              "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "Yes! The universal installer provides an interactive prompt with Antigravity IDE, Hub, and CLI selected by default. You can install all three by pressing Enter, deselect components, or run silently in CI using flags such as --all, --cli-only, or --no-cli."
+              }
+            },
             {
               "@type": "Question",
               "name": "What is the difference between the antigravity-ide and antigravity packages?",
@@ -2161,8 +2200,8 @@
 
             <!-- Terminal Universal One-Line Installer -->
             <div class="installer-heading-wrapper">
-                <h2 class="installer-section-title">⚡ 1-Click Universal Linux Installer</h2>
-                <p class="installer-section-subtitle">Automatically detects your Linux distribution (Fedora, Ubuntu, Debian, openSUSE), configures GPG keys, and installs both Antigravity IDE and Hub.</p>
+                <h2 class="installer-section-title">⚡ Interactive Universal Linux Installer</h2>
+                <p class="installer-section-subtitle">Automatically detects your Linux distribution, prompts to install IDE, Hub, and CLI with smart defaults, or runs silently with automated flags.</p>
             </div>
             <div class="terminal-card">
                 <div class="terminal-header">
@@ -2172,7 +2211,7 @@
                             <span class="dot dot-yellow"></span>
                             <span class="dot dot-green"></span>
                         </div>
-                        <span class="terminal-title">⚡ Universal One-Line Install (Auto-Detects Distro &amp; Installs Both)</span>
+                        <span class="terminal-title">⚡ Universal Installer (Interactive Menu &amp; Automated Flags)</span>
                     </div>
                     <span class="terminal-distros">Fedora · Ubuntu · Debian · Arch · openSUSE</span>
                 </div>
@@ -2186,6 +2225,13 @@
                         <svg class="check-icon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#34d399" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
                         <span class="btn-text">Copy Command</span>
                     </button>
+                </div>
+                <div style="padding: 10px 18px 14px; font-size: 0.8rem; color: var(--text-muted); border-top: 1px solid var(--border-color); display: flex; flex-wrap: wrap; gap: 12px; align-items: center;">
+                    <span style="font-weight: 600; color: var(--text-primary);">Automated / CI Flags:</span>
+                    <code>-y</code> (silent install)
+                    <code>--cli-only</code> (CLI only, no sudo)
+                    <code>--no-cli</code> (desktop apps only)
+                    <code>--help</code>
                 </div>
             </div>
 
@@ -2286,6 +2332,47 @@
                         </a>
                     </div>
                 </div>
+
+                <!-- Card 3: Antigravity CLI -->
+                <div class="package-card">
+                    <div>
+                        <div class="package-header-top">
+                            <picture>
+                                <source srcset="assets/antigravity.png" type="image/png">
+                                <img src="assets/antigravity.png" alt="Antigravity CLI" class="package-card-logo" width="52" height="52" loading="lazy">
+                            </picture>
+                            <div class="package-header-badges">
+                                <span class="version-pill card-version-pill cli-version" title="Auto-updating in background via Google">
+                                    <span class="version-dot"></span>
+                                    <span class="version-num">Self-Updating</span>
+                                </span>
+                                <span class="package-badge">Official Terminal CLI</span>
+                            </div>
+                        </div>
+                        <div class="package-header-titles">
+                            <div class="package-name">agy</div>
+                            <div class="package-tagline">Google Antigravity CLI</div>
+                        </div>
+                        <p class="package-desc">
+                            Google's official terminal interface for running AI coding agents, slash commands, and background automation directly in your shell.
+                        </p>
+                        <ul class="package-features">
+                            <li><span class="bullet">✦</span> <span><strong>Interactive Installer:</strong> Included in our universal installer with interactive selection or <code>--cli-only</code></span></li>
+                            <li><span class="bullet">✦</span> <span><strong>Native Self-Updating:</strong> Installs into <code>~/.local/bin/agy</code> to preserve Google's background auto-updates</span></li>
+                            <li><span class="bullet">✦</span> <span><strong>No Root Required:</strong> Can be installed and executed entirely in user-space without sudo</span></li>
+                        </ul>
+                    </div>
+                    <div class="package-card-footer">
+                        <div class="package-cmd">
+                            <span>Command:</span>
+                            <code>agy</code>
+                        </div>
+                        <a href="https://antigravity.google/docs/cli/reference" target="_blank" rel="noopener noreferrer" class="package-official-link" title="Official Google Antigravity CLI Documentation" onclick="if(typeof gtag==='function') gtag('event', 'click_google_details', { event_category: 'outbound', product: 'antigravity-cli' });">
+                            <span>Google CLI Reference</span>
+                            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg>
+                        </a>
+                    </div>
+                </div>
             </div>
             <div class="packages-shared-banner">
                 <span class="packages-shared-icon">🔄</span>
@@ -2325,6 +2412,10 @@
                 <button class="tab-btn" data-tab="arch" onclick="switchTab('arch', this)">
                     <span class="tab-label-full">Arch Linux / Manjaro (Pacman)</span>
                     <span class="tab-label-short">Arch (Pacman)</span>
+                </button>
+                <button class="tab-btn" data-tab="cli" onclick="switchTab('cli', this)">
+                    <span class="tab-label-full">Antigravity CLI ('agy')</span>
+                    <span class="tab-label-short">CLI ('agy')</span>
                 </button>
             </div>
 
@@ -2438,6 +2529,46 @@ cd / &amp;&amp; sudo rpmextract ~/antigravity-ide-latest.x86_64.rpm</code>
                 <div class="aur-status-note">
                     <span style="font-size:1.3rem;">🚀</span>
                     <div><strong>Arch User Repository (AUR) PKGBUILDs in Progress:</strong> We are finalizing native <code>antigravity-bin</code> and <code>antigravity-ide-bin</code> packages for the AUR so you can install directly via <code>yay -S antigravity-ide-bin</code>. Star the repository to be notified the moment they launch!</div>
+                </div>
+            </div>
+
+            <!-- CLI Tab -->
+            <div id="cli" class="tab-content">
+                <div class="step-header">
+                    <div class="step-label"><span class="step-num">1</span> Option A: Install via Universal Installer (CLI Only)</div>
+                    <button class="copy-btn" onclick="copyCode(this)" aria-label="Copy to clipboard" title="Copy to clipboard">
+                        <svg class="copy-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
+                        <svg class="check-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#34d399" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                    </button>
+                </div>
+                <div class="code-block">
+                    <code>curl -fsSL https://x3m-industries.github.io/antigravity-packages/install.sh | bash -s -- --cli-only</code>
+                </div>
+
+                <div class="step-header">
+                    <div class="step-label"><span class="step-num">2</span> Option B: Install via Google Canonical Script</div>
+                    <button class="copy-btn" onclick="copyCode(this)" aria-label="Copy to clipboard" title="Copy to clipboard">
+                        <svg class="copy-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
+                        <svg class="check-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#34d399" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                    </button>
+                </div>
+                <div class="code-block">
+                    <code>curl -fsSL https://antigravity.google/cli/install.sh | bash</code>
+                </div>
+
+                <div class="step-header">
+                    <div class="step-label"><span class="step-num">3</span> Launch from terminal</div>
+                    <button class="copy-btn" onclick="copyCode(this)" aria-label="Copy to clipboard" title="Copy to clipboard">
+                        <svg class="copy-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
+                        <svg class="check-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#34d399" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                    </button>
+                </div>
+                <div class="code-block">
+                    <code>agy</code>
+                </div>
+                <div class="aur-status-note" style="margin-top:14px;">
+                    <span style="font-size:1.3rem;">🔄</span>
+                    <div><strong>Seamless Background Auto-Updates:</strong> The CLI installs into <code>~/.local/bin/agy</code> (user-space) without requiring root/sudo permissions, and automatically checks for and applies new updates in the background during active sessions.</div>
                 </div>
             </div>
         </div>

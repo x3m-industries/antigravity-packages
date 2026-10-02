@@ -2,7 +2,8 @@
 
 <p align="center">
   <img src="assets/logo.png" width="76" height="76" alt="Google Antigravity IDE" title="Antigravity IDE" style="border-radius: 18px; margin-right: 12px; vertical-align: middle;" />
-  <img src="assets/hub-logo.png" width="76" height="76" alt="Google Antigravity Hub" title="Antigravity HUB" style="border-radius: 18px; vertical-align: middle;" />
+  <img src="assets/hub-logo.png" width="76" height="76" alt="Google Antigravity Hub" title="Antigravity HUB" style="border-radius: 18px; margin-right: 12px; vertical-align: middle;" />
+  <img src="assets/antigravity.png" width="76" height="76" alt="Google Antigravity CLI" title="Antigravity CLI" style="border-radius: 18px; vertical-align: middle;" />
 </p>
 
 <p align="center">
@@ -14,44 +15,57 @@
   <img src="https://img.shields.io/badge/Signatures-GPG%20Signed-38bdf8" alt="GPG Signed" />
 </p>
 
-> **Community RPM (DNF) and DEB (APT) repositories for Google Antigravity & Antigravity IDE.**  
+> **Community RPM (DNF) and DEB (APT) packaging & universal installation infrastructure for Google Antigravity (IDE, Hub & CLI).**  
 > Architected & maintained by [**Steven Ceuppens**](https://github.com/stevenceuppens) at [**X3M Industries**](https://x3m.industries).  
 > Automatically synchronized daily directly from Google's official release page, packaged natively for Linux with desktop application menus, high-resolution icons, and browser OAuth redirect integration.
 
 ```bash
-# ⚡ Universal 1-Click Installation (Auto-detects Fedora, Ubuntu, Debian, openSUSE, Arch)
+# ⚡ Interactive Universal Installation (Prompts for IDE, Hub & CLI with smart defaults)
 curl -fsSL https://x3m-industries.github.io/antigravity-packages/install.sh | bash
 ```
 
 > ⭐ **If this project saves you time on Linux, please star the repository!** It helps fellow developers discover native packages and supports our automated packaging infrastructure.
 
 **Quick Navigation:**
-[⚡ Quick Install](#-quick-installation) · [Fedora / RHEL (DNF)](#fedora--rhel--centos-stream--rocky--almalinux-dnf) · [Ubuntu / Debian (APT)](#ubuntu--debian--pop_os--linux-mint-apt) · [Arch Linux](#arch-linux--manjaro--endeavouros) · [Standalone Downloads](#-standalone-package-downloads) · [🛡️ Security & Trust](#-gpg-security--package-verification)
+[⚡ Quick Install](#-quick-installation) · [Fedora / RHEL (DNF)](#fedora--rhel--centos-stream--rocky--almalinux-dnf) · [Ubuntu / Debian (APT)](#ubuntu--debian--pop_os--linux-mint-apt) · [Arch Linux](#arch-linux--manjaro--endeavouros) · [CLI Integration](#-antigravity-cli-agy-integration) · [Standalone Downloads](#-standalone-package-downloads) · [🛡️ Security & Trust](#-gpg-security--package-verification)
 
 ---
 
-## 📦 Two Official Google Packages Delivered
+## 📦 The Complete Google Antigravity Suite
 
-Google publishes official Linux binaries for both apps as standalone archives without native package repositories. This repository packages them into standard RPM and DEB packages for easy installation and ongoing updates:
+Google publishes official Linux binaries for both apps as standalone archives without native package repositories. This repository packages them into standard RPM and DEB packages and provides an interactive installer for the complete suite:
 
-| Icon | Package | Official Google App | Packaging Highlights & System Integration | Official Product Info |
+| Icon | App / Package | Component | Description & Integration Highlights | Official Google Docs |
 | :---: | :--- | :--- | :--- | :--- |
-| <img src="assets/logo.png" width="36" height="36" alt="Antigravity IDE" style="border-radius:8px;"> | **`antigravity-ide`** | **[Google Antigravity IDE](https://antigravity.google/product/antigravity-ide)**<br>AI-first desktop code editor | `antigravity-ide` command in `/usr/bin`, GNOME/KDE `.desktop` launcher, `antigravity-ide://` OAuth handler, seamless `dnf`/`apt` updates | [antigravity.google/product/antigravity-ide](https://antigravity.google/product/antigravity-ide) |
-| <img src="assets/hub-logo.png" width="36" height="36" alt="Antigravity Hub" style="border-radius:8px;"> | **`antigravity`** | **[Google Antigravity Hub](https://antigravity.google/product/antigravity-2)**<br>Agent platform & workspace | `antigravity` command in `/usr/bin`, GNOME/KDE `.desktop` launcher, `antigravity://` OAuth handler, seamless `dnf`/`apt` updates | [antigravity.google/product/antigravity-2](https://antigravity.google/product/antigravity-2) |
-
-> ℹ️ **Note on `agy`:** The standalone terminal CLI tool (`agy`) is distributed separately by Google via its own CLI installer.
-
-> 💡 **Install together or standalone:** Run `sudo dnf install antigravity-ide antigravity` (or `apt install ...`) for both applications, or install `antigravity` standalone.
+| <img src="assets/logo.png" width="36" height="36" alt="Antigravity IDE" style="border-radius:8px;"> | **`antigravity-ide`** | **[Google Antigravity IDE](https://antigravity.google/product/antigravity-ide)** | Official AI-first desktop code editor. Native RPM/DEB, desktop launcher, `antigravity-ide://` OAuth handler. | [Google IDE Details](https://antigravity.google/product/antigravity-ide) |
+| <img src="assets/hub-logo.png" width="36" height="36" alt="Antigravity Hub" style="border-radius:8px;"> | **`antigravity`** | **[Google Antigravity Hub](https://antigravity.google/product/antigravity-2)** | Official agent platform & workspace. Native RPM/DEB, desktop launcher, `antigravity://` OAuth handler. | [Google Hub Details](https://antigravity.google/product/antigravity-2) |
+| <img src="assets/antigravity.png" width="36" height="36" alt="Antigravity CLI" style="border-radius:8px;"> | **`agy`** | **[Google Antigravity CLI](https://antigravity.google/docs/cli/reference)** | Official terminal coding agent. Seamlessly installed into `~/.local/bin/agy` with native background auto-updates. | [Google CLI Reference](https://antigravity.google/docs/cli/reference) |
 
 ---
 
 ## 🚀 Quick Installation
 
-### ⚡ Universal One-Line Installer (Recommended)
-Automatically detects your Linux distribution (Fedora, RHEL, CentOS, Ubuntu, Debian, Rocky, Alma, openSUSE), configures repository GPG keys, and installs Antigravity:
+### ⚡ Interactive Universal Installer (Recommended)
+Automatically detects your Linux distribution (Fedora, RHEL, CentOS, Ubuntu, Debian, Rocky, Alma, openSUSE), shows what is currently installed on your system, and prompts you to select components with **all three selected by default**:
 
 ```bash
 curl -fsSL https://x3m-industries.github.io/antigravity-packages/install.sh | bash
+```
+
+Simply press **ENTER** to install the complete suite (IDE + Hub + CLI), or type custom numbers (e.g. `1, 3` for IDE and CLI).
+
+#### Automated & Headless Execution (CI/CD, Docker, Scripts)
+Bypass interactive prompts using command-line arguments:
+
+```bash
+# Install everything silently without prompts
+curl -fsSL https://x3m-industries.github.io/antigravity-packages/install.sh | bash -s -- -y
+
+# Install only the CLI ('agy') — runs in user-space, NO sudo required!
+curl -fsSL https://x3m-industries.github.io/antigravity-packages/install.sh | bash -s -- --cli-only
+
+# Install only desktop packages (skip CLI)
+curl -fsSL https://x3m-industries.github.io/antigravity-packages/install.sh | bash -s -- --no-cli
 ```
 
 ---
@@ -116,6 +130,32 @@ Arch users can install packages natively through either conversion or extraction
 The repositories synchronize daily with Google's release page. To update your installation:
 * **Fedora / RHEL / Rocky:** `sudo dnf update antigravity-ide antigravity`
 * **Ubuntu / Debian / Mint:** `sudo apt update && sudo apt install --only-upgrade antigravity-ide antigravity`
+
+---
+
+## ⌨️ Antigravity CLI (`agy`) Integration
+
+Google's official CLI tool (`agy`) is designed for fast, terminal-first AI pair programming, slash commands, and background task execution.
+
+### Architecture & Auto-Updates
+- **Location:** Installed canonically to `$HOME/.local/bin/agy` (user-space, no `sudo` required).
+- **Native Auto-Updates:** Google's CLI binary includes a built-in background auto-updater that checks for releases every 15 minutes during normal CLI sessions and self-updates in place.
+- **Zero Conflict Guarantee:**
+  - If you already installed `agy`, our universal installer detects it, displays its current version, and skips re-downloading.
+  - If you run Google's official install script (`curl -fsSL https://antigravity.google/cli/install.sh | bash`) after using our installer, Google's script detects `~/.local/bin/agy` and exits cleanly.
+  - User-space isolation eliminates root-permission write errors and prevents `$PATH` shadowing issues.
+
+### CLI Usage
+```bash
+# Launch interactive terminal session
+agy
+
+# Launch in a specific project directory
+agy --add-dir ./my-project
+
+# Run a prompt non-interactively
+agy -p "Review this file for potential memory leaks"
+```
 
 ---
 
