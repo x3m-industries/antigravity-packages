@@ -2,8 +2,7 @@
 
 <p align="center">
   <img src="assets/logo.png" width="76" height="76" alt="Google Antigravity IDE" title="Antigravity IDE" style="border-radius: 18px; margin-right: 12px; vertical-align: middle;" />
-  <img src="assets/hub-logo.png" width="76" height="76" alt="Google Antigravity Hub" title="Antigravity HUB" style="border-radius: 18px; margin-right: 12px; vertical-align: middle;" />
-  <img src="assets/antigravity.png" width="76" height="76" alt="Google Antigravity CLI" title="Antigravity CLI" style="border-radius: 18px; vertical-align: middle;" />
+  <img src="assets/hub-logo.png" width="76" height="76" alt="Google Antigravity Hub" title="Antigravity HUB" style="border-radius: 18px; vertical-align: middle;" />
 </p>
 
 <p align="center">
