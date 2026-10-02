@@ -1267,6 +1267,79 @@
             color: #6ee7b7;
         }
 
+        /* Version Pills */
+        .version-pill {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 0.76rem;
+            font-weight: 600;
+            padding: 4px 10px;
+            border-radius: 9999px;
+            text-decoration: none;
+            transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+            white-space: nowrap;
+            box-sizing: border-box;
+            background: rgba(16, 185, 129, 0.12);
+            border: 1px solid rgba(16, 185, 129, 0.35);
+            color: #6ee7b7;
+        }
+
+        .version-pill:hover {
+            background: rgba(16, 185, 129, 0.22);
+            border-color: rgba(16, 185, 129, 0.6);
+            color: #a7f3d0;
+            transform: translateY(-1px);
+        }
+
+        .version-pill .version-dot {
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background: #10b981;
+            box-shadow: 0 0 8px #10b981;
+            flex-shrink: 0;
+        }
+
+        .version-pill .version-num {
+            font-family: 'JetBrains Mono', monospace;
+            font-weight: 700;
+            letter-spacing: -0.01em;
+        }
+
+        /* Header Version Pills */
+        .header-version-pill {
+            height: 26px;
+            padding: 3px 9px;
+            font-size: 0.74rem;
+        }
+
+        .header-version-pill .version-label {
+            color: #94a3b8;
+            font-weight: 600;
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            letter-spacing: 0.04em;
+        }
+
+        .header-version-pill .version-num {
+            color: #f1f5f9;
+        }
+
+        /* Card Version Badges */
+        .package-header-badges {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            flex-wrap: wrap;
+            justify-content: flex-end;
+        }
+
+        .card-version-pill {
+            font-size: 0.74rem;
+            padding: 4px 10px;
+        }
+
         .package-desc {
             font-size: 0.92rem;
             color: var(--text-muted);
@@ -1772,6 +1845,17 @@
                 font-size: 0.68rem;
                 padding: 4px 9px;
             }
+            .package-header-badges {
+                gap: 6px;
+            }
+            .card-version-pill {
+                font-size: 0.7rem;
+                padding: 3px 8px;
+            }
+            .header-version-pill {
+                font-size: 0.72rem;
+                padding: 2px 8px;
+            }
             .package-desc {
                 font-size: 0.88rem;
                 min-height: auto;
@@ -2039,6 +2123,16 @@
                 <div class="badges-row">
                     <span class="badge">x86_64 &amp; aarch64</span>
                     <span class="badge">GPG Signed</span>
+                    <a href="https://github.com/x3m-industries/antigravity-packages/releases/latest" class="version-pill header-version-pill" data-version-full="ide" title="Latest packaged release: 2.5.5-4923483625488384" target="_blank" rel="noopener noreferrer">
+                        <span class="version-dot"></span>
+                        <span class="version-label">IDE</span>
+                        <span class="version-num" data-version="ide-semver">v2.5.5</span>
+                    </a>
+                    <a href="https://github.com/x3m-industries/antigravity-packages/releases/latest" class="version-pill header-version-pill" data-version-full="hub" title="Latest packaged release: 2.19.1-6046815158665216" target="_blank" rel="noopener noreferrer">
+                        <span class="version-dot"></span>
+                        <span class="version-label">Hub</span>
+                        <span class="version-num" data-version="hub-semver">v2.19.1</span>
+                    </a>
                     <a href="https://github.com/x3m-industries/antigravity-packages" target="_blank" rel="noopener noreferrer" class="badge-shield-link" title="Star x3m-industries/antigravity-packages on GitHub">
                         <img src="https://img.shields.io/github/stars/x3m-industries/antigravity-packages?style=flat-square&logo=github&color=f59e0b&label=Star" alt="GitHub Stars" width="85" height="26">
                     </a>
@@ -2124,7 +2218,13 @@
                                 <source srcset="assets/logo.webp" type="image/webp">
                                 <img src="assets/logo.png" alt="Antigravity IDE" class="package-card-logo" width="52" height="52" loading="lazy">
                             </picture>
-                            <span class="package-badge">Official Desktop IDE</span>
+                            <div class="package-header-badges">
+                                <a href="https://github.com/x3m-industries/antigravity-packages/releases/latest" class="version-pill card-version-pill ide-version" data-version-full="ide" title="Latest packaged release: 2.5.5-4923483625488384" target="_blank" rel="noopener noreferrer">
+                                    <span class="version-dot"></span>
+                                    <span class="version-num" data-version="ide-semver">v2.5.5</span>
+                                </a>
+                                <span class="package-badge">Official Desktop IDE</span>
+                            </div>
                         </div>
                         <div class="package-header-titles">
                             <div class="package-name">antigravity-ide</div>
@@ -2159,7 +2259,13 @@
                                 <source srcset="assets/hub-logo.webp" type="image/webp">
                                 <img src="assets/hub-logo.png" alt="Antigravity Hub" class="package-card-logo white-card-logo" width="52" height="52" loading="lazy">
                             </picture>
-                            <span class="package-badge hub-badge">Official Agent Hub</span>
+                            <div class="package-header-badges">
+                                <a href="https://github.com/x3m-industries/antigravity-packages/releases/latest" class="version-pill card-version-pill hub-version" data-version-full="hub" title="Latest packaged release: 2.19.1-6046815158665216" target="_blank" rel="noopener noreferrer">
+                                    <span class="version-dot"></span>
+                                    <span class="version-num" data-version="hub-semver">v2.19.1</span>
+                                </a>
+                                <span class="package-badge hub-badge">Official Agent Hub</span>
+                            </div>
                         </div>
                         <div class="package-header-titles">
                             <div class="package-name">antigravity</div>

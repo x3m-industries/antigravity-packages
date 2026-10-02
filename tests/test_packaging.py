@@ -118,6 +118,40 @@ class TestPackagingLogic(unittest.TestCase):
         self.assertIn("G-XXTD2B1XB0", html)
         self.assertIn("copy_universal_installer", html)
         self.assertIn("select_distro_tab", html)
+        self.assertIn('data-version="ide-semver"', html)
+        self.assertIn('data-version="hub-semver"', html)
+        self.assertIn("header-version-pill", html)
+        self.assertIn("card-version-pill", html)
+
+    def test_version_tag_injection(self):
+        import sys
+        sys.path.insert(0, str(repo_root / "scripts"))
+        from inject_versions import parse_release_tag, inject_versions_into_html
+
+        # Test tag parsing
+        simulated_tag = "v2.6.0-1234567890123456_hub-2.20.0-9876543210987654"
+        parsed = parse_release_tag(simulated_tag)
+        self.assertIsNotNone(parsed)
+        ide_ver, ide_b, hub_ver, hub_b = parsed
+        self.assertEqual(ide_ver, "2.6.0")
+        self.assertEqual(ide_b, "1234567890123456")
+        self.assertEqual(hub_ver, "2.20.0")
+        self.assertEqual(hub_b, "9876543210987654")
+
+        # Test HTML injection
+        template_file = repo_root / "templates" / "index.html"
+        html = template_file.read_text(encoding="utf-8")
+        updated_html = inject_versions_into_html(html, simulated_tag)
+
+        self.assertIn(">v2.6.0<", updated_html)
+        self.assertIn(">v2.20.0<", updated_html)
+        self.assertIn("Latest packaged release: 2.6.0-1234567890123456", updated_html)
+        self.assertIn("Latest packaged release: 2.20.0-9876543210987654", updated_html)
+
+        # Test invalid or placeholder tags
+        self.assertIsNone(parse_release_tag("latest"))
+        self.assertIsNone(parse_release_tag("vlatest"))
+        self.assertEqual(inject_versions_into_html(html, "latest"), html)
 
 
 if __name__ == "__main__":

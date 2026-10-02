@@ -104,6 +104,13 @@ elif [ -f "templates/index.html" ]; then
     cp "templates/index.html" "${DIST_DIR}/index.html"
 fi
 
+# Inject dynamic release versions into dist/index.html based on RELEASE_TAG
+if [ -f "${DIST_DIR}/index.html" ] && [ -n "${RELEASE_TAG:-}" ] && [ "${RELEASE_TAG}" != "latest" ] && [ "${RELEASE_TAG}" != "vlatest" ]; then
+    if [ -f "${SCRIPT_DIR}/inject_versions.py" ]; then
+        python3 "${SCRIPT_DIR}/inject_versions.py" "${RELEASE_TAG}" "${DIST_DIR}/index.html" || true
+    fi
+fi
+
 # Copy universal installer script
 if [ -f "${REPO_ROOT}/install.sh" ]; then
     cp "${REPO_ROOT}/install.sh" "${DIST_DIR}/install.sh"

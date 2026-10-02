@@ -40,6 +40,7 @@ antigravity-packages/
 │   ├── build_packages.py          # Downloads upstream tarballs, normalizes permissions, extracts icons, and builds .rpm & .deb packages
 │   ├── check_upstream.py          # Scrapes Google's download page for new releases, compares against latest GitHub Release, and sets CI outputs
 │   ├── generate_repos.sh          # Generates RPM (createrepo_c) and APT (dpkg-scanpackages) repository metadata, signs releases, prepares Pages dist/
+│   ├── inject_versions.py         # Injects release versions from GitHub release tags into HTML landing pages during repo generation
 │   ├── smoke_test.sh              # Containerized end-to-end installation test for Fedora and Ubuntu (Docker / Podman)
 │   └── stats.py                   # CLI analytics tool querying GitHub Releases API to track package downloads across arch and formats
 ├── templates/
