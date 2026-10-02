@@ -1735,18 +1735,18 @@
             color: #38bdf8;
         }
 
-        .cli-examples-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-            gap: 16px;
-            margin-bottom: 24px;
+        .cli-examples-stack {
+            display: flex;
+            flex-direction: column;
+            gap: 14px;
+            margin-bottom: 28px;
         }
 
-        .cli-example-card {
+        .cli-example-item {
             background: rgba(15, 23, 42, 0.65);
             border: 1px solid var(--border-color);
-            border-radius: 14px;
-            padding: 18px;
+            border-radius: 12px;
+            padding: 14px 18px;
             display: flex;
             flex-direction: column;
             gap: 10px;
@@ -1754,16 +1754,23 @@
             transition: border-color 0.2s ease, transform 0.2s ease;
         }
 
-        .cli-example-card:hover {
+        .cli-example-item:hover {
             border-color: rgba(99, 102, 241, 0.45);
-            transform: translateY(-2px);
         }
 
         .cli-example-header {
             display: flex;
             align-items: center;
             justify-content: space-between;
-            gap: 8px;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+
+        .cli-example-meta {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            flex-wrap: wrap;
         }
 
         .cli-badge {
@@ -1800,22 +1807,22 @@
         }
 
         .cli-example-title {
-            font-size: 0.92rem;
+            font-size: 0.95rem;
             font-weight: 600;
             color: #f1f5f9;
         }
 
-        .cli-example-card .code-block {
+        .cli-example-item .code-block {
             margin: 0;
             background: #020617;
-            padding: 10px 12px;
+            padding: 11px 14px;
             border-radius: 8px;
             border: 1px solid rgba(255, 255, 255, 0.08);
             overflow-x: auto;
         }
 
-        .cli-example-card .code-block code {
-            font-size: 0.78rem;
+        .cli-example-item .code-block code {
+            font-size: 0.82rem;
             line-height: 1.45;
             color: #93c5fd;
             white-space: nowrap;
@@ -2833,59 +2840,71 @@ cd / &amp;&amp; sudo rpmextract ~/antigravity-ide-latest.x86_64.rpm</code>
                 </p>
             </div>
 
-            <!-- Common Automated Commands Grid -->
-            <div class="cli-examples-grid">
-                <div class="cli-example-card">
+            <!-- Common Automated Commands Stack (Full-Width List) -->
+            <div class="cli-examples-stack">
+                <div class="cli-example-item">
                     <div class="cli-example-header">
-                        <span class="cli-badge silent">Headless CI / Silent</span>
+                        <div class="cli-example-meta">
+                            <span class="cli-example-title">Silent / Headless Install (Complete Suite: IDE + Hub + CLI)</span>
+                            <span class="cli-badge silent">CI &amp; Docker</span>
+                        </div>
                         <button class="copy-btn" onclick="copyCode(this)" aria-label="Copy command" title="Copy to clipboard">
                             <svg class="copy-icon" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
                             <svg class="check-icon" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#34d399" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                            <span class="btn-text">Copy</span>
                         </button>
                     </div>
-                    <div class="cli-example-title">Install Complete Suite (IDE + Hub + CLI)</div>
                     <div class="code-block">
                         <code>curl -fsSL https://x3m-industries.github.io/antigravity-packages/install.sh | bash -s -- -y</code>
                     </div>
                 </div>
 
-                <div class="cli-example-card">
+                <div class="cli-example-item">
                     <div class="cli-example-header">
-                        <span class="cli-badge user">User-Space / No Sudo</span>
+                        <div class="cli-example-meta">
+                            <span class="cli-example-title">Antigravity CLI Only ('agy')</span>
+                            <span class="cli-badge user">User-Space / No Sudo</span>
+                        </div>
                         <button class="copy-btn" onclick="copyCode(this)" aria-label="Copy command" title="Copy to clipboard">
                             <svg class="copy-icon" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
                             <svg class="check-icon" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#34d399" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                            <span class="btn-text">Copy</span>
                         </button>
                     </div>
-                    <div class="cli-example-title">Install Antigravity CLI Only ('agy')</div>
                     <div class="code-block">
                         <code>curl -fsSL https://x3m-industries.github.io/antigravity-packages/install.sh | bash -s -- --cli-only</code>
                     </div>
                 </div>
 
-                <div class="cli-example-card">
+                <div class="cli-example-item">
                     <div class="cli-example-header">
-                        <span class="cli-badge dry-run">Safe Inspection</span>
+                        <div class="cli-example-meta">
+                            <span class="cli-example-title">Dry Run (Preview Installation Plan Without Changes)</span>
+                            <span class="cli-badge dry-run">Safe Inspection</span>
+                        </div>
                         <button class="copy-btn" onclick="copyCode(this)" aria-label="Copy command" title="Copy to clipboard">
                             <svg class="copy-icon" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
                             <svg class="check-icon" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#34d399" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                            <span class="btn-text">Copy</span>
                         </button>
                     </div>
-                    <div class="cli-example-title">Dry Run (Preview Plan Without Changes)</div>
                     <div class="code-block">
                         <code>curl -fsSL https://x3m-industries.github.io/antigravity-packages/install.sh | bash -s -- --dry-run</code>
                     </div>
                 </div>
 
-                <div class="cli-example-card">
+                <div class="cli-example-item">
                     <div class="cli-example-header">
-                        <span class="cli-badge desktop">Desktop Packages Only</span>
+                        <div class="cli-example-meta">
+                            <span class="cli-example-title">Desktop Packages Only (IDE &amp; Hub, Skip CLI)</span>
+                            <span class="cli-badge desktop">Desktop Only</span>
+                        </div>
                         <button class="copy-btn" onclick="copyCode(this)" aria-label="Copy command" title="Copy to clipboard">
                             <svg class="copy-icon" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
                             <svg class="check-icon" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#34d399" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                            <span class="btn-text">Copy</span>
                         </button>
                     </div>
-                    <div class="cli-example-title">Install IDE &amp; Hub (Skip Terminal CLI)</div>
                     <div class="code-block">
                         <code>curl -fsSL https://x3m-industries.github.io/antigravity-packages/install.sh | bash -s -- --no-cli</code>
                     </div>
@@ -3115,15 +3134,15 @@ cd / &amp;&amp; sudo rpmextract ~/antigravity-ide-latest.x86_64.rpm</code>
         function copyCode(btn) {
             let codeEl = null;
             const stepHeader = btn.closest('.step-header');
-            const exampleCard = btn.closest('.cli-example-card');
+            const exampleItem = btn.closest('.cli-example-item') || btn.closest('.cli-example-card');
             if (stepHeader) {
                 let next = stepHeader.nextElementSibling;
                 while (next && !next.classList.contains('code-block') && !next.matches('code')) {
                     next = next.nextElementSibling;
                 }
                 codeEl = next ? (next.matches('code') ? next : next.querySelector('code')) : null;
-            } else if (exampleCard) {
-                codeEl = exampleCard.querySelector('.code-block code') || exampleCard.querySelector('code');
+            } else if (exampleItem) {
+                codeEl = exampleItem.querySelector('.code-block code') || exampleItem.querySelector('code');
             } else {
                 const container = btn.closest('.code-block') || btn.closest('.terminal-body');
                 codeEl = container ? container.querySelector('code') : null;
@@ -3140,12 +3159,12 @@ cd / &amp;&amp; sudo rpmextract ~/antigravity-ide-latest.x86_64.rpm</code>
                 const origText = btnText ? btnText.textContent : '';
                 btn.setAttribute('aria-label', 'Copied to clipboard!');
                 btn.setAttribute('title', 'Copied!');
-                if (btnText) btnText.textContent = 'Copied to Clipboard!';
+                if (btnText) btnText.textContent = 'Copied!';
 
                 // Track GA4 conversion event
                 if (typeof gtag === 'function') {
                     const isUniversal = btn.closest('.terminal-body') !== null;
-                    const isCliRef = btn.closest('.cli-example-card') !== null;
+                    const isCliRef = btn.closest('.cli-example-item') !== null || btn.closest('.cli-example-card') !== null;
                     const tabContainer = btn.closest('.tab-content');
                     const tabId = tabContainer ? tabContainer.id : (isUniversal ? 'universal' : (isCliRef ? 'cli-reference' : 'general'));
                     gtag('event', isUniversal ? 'copy_universal_installer' : 'copy_install_command', {
