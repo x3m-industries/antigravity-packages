@@ -1690,6 +1690,251 @@
             word-break: break-word;
         }
 
+        /* Universal Installer Automation & CLI Options Reference */
+        .cli-reference-section {
+            margin-bottom: 48px;
+        }
+
+        .syntax-callout {
+            background: rgba(14, 165, 233, 0.08);
+            border: 1px solid rgba(14, 165, 233, 0.25);
+            border-radius: 14px;
+            padding: 18px 22px;
+            margin-bottom: 24px;
+            color: #bae6fd;
+            line-height: 1.6;
+            font-size: 0.9rem;
+        }
+
+        .syntax-callout-header {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 0.98rem;
+            color: #fff;
+            margin-bottom: 8px;
+        }
+
+        .syntax-callout-icon {
+            font-size: 1.25rem;
+            flex-shrink: 0;
+        }
+
+        .syntax-callout p {
+            margin: 0;
+            color: #cbd5e1;
+        }
+
+        .syntax-callout code {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.84rem;
+            background: rgba(0, 0, 0, 0.4);
+            border: 1px solid rgba(255, 255, 255, 0.12);
+            padding: 2px 6px;
+            border-radius: 5px;
+            color: #38bdf8;
+        }
+
+        .cli-examples-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 16px;
+            margin-bottom: 24px;
+        }
+
+        .cli-example-card {
+            background: rgba(15, 23, 42, 0.65);
+            border: 1px solid var(--border-color);
+            border-radius: 14px;
+            padding: 18px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
+            transition: border-color 0.2s ease, transform 0.2s ease;
+        }
+
+        .cli-example-card:hover {
+            border-color: rgba(99, 102, 241, 0.45);
+            transform: translateY(-2px);
+        }
+
+        .cli-example-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 8px;
+        }
+
+        .cli-badge {
+            font-size: 0.72rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            padding: 3px 8px;
+            border-radius: 6px;
+        }
+
+        .cli-badge.silent {
+            background: rgba(16, 185, 129, 0.15);
+            color: #6ee7b7;
+            border: 1px solid rgba(16, 185, 129, 0.3);
+        }
+
+        .cli-badge.user {
+            background: rgba(14, 165, 233, 0.15);
+            color: #38bdf8;
+            border: 1px solid rgba(14, 165, 233, 0.3);
+        }
+
+        .cli-badge.dry-run {
+            background: rgba(245, 158, 11, 0.15);
+            color: #fcd34d;
+            border: 1px solid rgba(245, 158, 11, 0.3);
+        }
+
+        .cli-badge.desktop {
+            background: rgba(168, 85, 247, 0.15);
+            color: #d8b4fe;
+            border: 1px solid rgba(168, 85, 247, 0.3);
+        }
+
+        .cli-example-title {
+            font-size: 0.92rem;
+            font-weight: 600;
+            color: #f1f5f9;
+        }
+
+        .cli-example-card .code-block {
+            margin: 0;
+            background: #020617;
+            padding: 10px 12px;
+            border-radius: 8px;
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            overflow-x: auto;
+        }
+
+        .cli-example-card .code-block code {
+            font-size: 0.78rem;
+            line-height: 1.45;
+            color: #93c5fd;
+            white-space: nowrap;
+        }
+
+        /* CLI Options Table */
+        .cli-table-card {
+            background: rgba(15, 23, 42, 0.65);
+            border: 1px solid var(--border-color);
+            border-radius: 14px;
+            padding: 22px;
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
+            overflow: hidden;
+        }
+
+        .cli-table-title {
+            font-size: 1.05rem;
+            font-weight: 700;
+            color: #fff;
+            margin-bottom: 16px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .cli-table-responsive {
+            overflow-x: auto;
+            margin-bottom: 14px;
+        }
+
+        .cli-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.86rem;
+            text-align: left;
+        }
+
+        .cli-table th {
+            padding: 10px 14px;
+            background: rgba(30, 41, 59, 0.5);
+            color: #94a3b8;
+            font-weight: 600;
+            font-size: 0.76rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            border-bottom: 1px solid var(--border-color);
+            white-space: nowrap;
+        }
+
+        .cli-table td {
+            padding: 12px 14px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+            color: #cbd5e1;
+            vertical-align: middle;
+        }
+
+        .cli-table tr:last-child td {
+            border-bottom: none;
+        }
+
+        .cli-table tr:hover td {
+            background: rgba(255, 255, 255, 0.02);
+        }
+
+        .cli-table code {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.82rem;
+            background: rgba(0, 0, 0, 0.45);
+            border: 1px solid rgba(255, 255, 255, 0.12);
+            padding: 2px 7px;
+            border-radius: 5px;
+            color: #38bdf8;
+            white-space: nowrap;
+        }
+
+        .scope-pill {
+            display: inline-block;
+            font-size: 0.72rem;
+            font-weight: 600;
+            padding: 2px 8px;
+            border-radius: 6px;
+            white-space: nowrap;
+        }
+
+        .scope-pill.root {
+            background: rgba(239, 68, 68, 0.12);
+            color: #fca5a5;
+            border: 1px solid rgba(239, 68, 68, 0.25);
+        }
+
+        .scope-pill.user {
+            background: rgba(14, 165, 233, 0.12);
+            color: #7dd3fc;
+            border: 1px solid rgba(14, 165, 233, 0.25);
+        }
+
+        .scope-pill.free {
+            background: rgba(16, 185, 129, 0.12);
+            color: #6ee7b7;
+            border: 1px solid rgba(16, 185, 129, 0.25);
+        }
+
+        .cli-table-footer {
+            font-size: 0.82rem;
+            color: #94a3b8;
+            padding-top: 10px;
+            border-top: 1px solid rgba(255, 255, 255, 0.06);
+            line-height: 1.5;
+        }
+
+        .cli-table-footer code {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.78rem;
+            color: #cbd5e1;
+            background: rgba(0, 0, 0, 0.35);
+            padding: 2px 6px;
+            border-radius: 4px;
+        }
+
         /* Touch interaction optimizations */
         @media (hover: none) {
             .brand-logo:hover,
@@ -2226,13 +2471,6 @@
                         <span class="btn-text">Copy Command</span>
                     </button>
                 </div>
-                <div style="padding: 10px 18px 14px; font-size: 0.8rem; color: var(--text-muted); border-top: 1px solid var(--border-color); display: flex; flex-wrap: wrap; gap: 12px; align-items: center;">
-                    <span style="font-weight: 600; color: var(--text-primary);">Automated / CI Flags:</span>
-                    <code>-y</code> (silent install)
-                    <code>--cli-only</code> (CLI only, no sudo)
-                    <code>--no-cli</code> (desktop apps only)
-                    <code>--help</code>
-                </div>
             </div>
 
             <!-- Direct Package Downloads Callout -->
@@ -2573,6 +2811,161 @@ cd / &amp;&amp; sudo rpmextract ~/antigravity-ide-latest.x86_64.rpm</code>
             </div>
         </div>
 
+        <!-- Universal Installer Automation & CLI Reference Section -->
+        <section class="cli-reference-section" id="cli-reference" aria-labelledby="cli-reference-heading">
+            <h2 id="cli-reference-heading" class="section-title">
+                <span>🤖</span> Universal Installer Automation &amp; CLI Options
+            </h2>
+            <p class="subtitle" style="max-width: 720px; margin-bottom: 24px;">
+                Automate headless setups, bypass interactive prompts in CI/CD pipelines, preview changes with dry-run mode, or install components individually.
+            </p>
+
+            <!-- Important syntax callout -->
+            <div class="syntax-callout">
+                <div class="syntax-callout-header">
+                    <span class="syntax-callout-icon">💡</span>
+                    <strong>How to Pass Arguments to Piped Scripts:</strong>
+                </div>
+                <p>
+                    When executing via <code>curl ... | bash</code>, flags must be passed using <code>bash -s -- &lt;options&gt;</code>.
+                    The <code>-s</code> tells Bash to read the script from standard input (stdin), and <code>--</code> separates Bash options from script arguments so they are delivered directly to <code>install.sh</code>.
+                    Appending flags directly (e.g. <code>| bash --help</code>) or to curl (e.g. <code>curl ... --help | bash</code>) will invoke Bash or curl's internal help instead of the installer.
+                </p>
+            </div>
+
+            <!-- Common Automated Commands Grid -->
+            <div class="cli-examples-grid">
+                <div class="cli-example-card">
+                    <div class="cli-example-header">
+                        <span class="cli-badge silent">Headless CI / Silent</span>
+                        <button class="copy-btn" onclick="copyCode(this)" aria-label="Copy command" title="Copy to clipboard">
+                            <svg class="copy-icon" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
+                            <svg class="check-icon" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#34d399" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                        </button>
+                    </div>
+                    <div class="cli-example-title">Install Complete Suite (IDE + Hub + CLI)</div>
+                    <div class="code-block">
+                        <code>curl -fsSL https://x3m-industries.github.io/antigravity-packages/install.sh | bash -s -- -y</code>
+                    </div>
+                </div>
+
+                <div class="cli-example-card">
+                    <div class="cli-example-header">
+                        <span class="cli-badge user">User-Space / No Sudo</span>
+                        <button class="copy-btn" onclick="copyCode(this)" aria-label="Copy command" title="Copy to clipboard">
+                            <svg class="copy-icon" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
+                            <svg class="check-icon" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#34d399" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                        </button>
+                    </div>
+                    <div class="cli-example-title">Install Antigravity CLI Only ('agy')</div>
+                    <div class="code-block">
+                        <code>curl -fsSL https://x3m-industries.github.io/antigravity-packages/install.sh | bash -s -- --cli-only</code>
+                    </div>
+                </div>
+
+                <div class="cli-example-card">
+                    <div class="cli-example-header">
+                        <span class="cli-badge dry-run">Safe Inspection</span>
+                        <button class="copy-btn" onclick="copyCode(this)" aria-label="Copy command" title="Copy to clipboard">
+                            <svg class="copy-icon" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
+                            <svg class="check-icon" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#34d399" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                        </button>
+                    </div>
+                    <div class="cli-example-title">Dry Run (Preview Plan Without Changes)</div>
+                    <div class="code-block">
+                        <code>curl -fsSL https://x3m-industries.github.io/antigravity-packages/install.sh | bash -s -- --dry-run</code>
+                    </div>
+                </div>
+
+                <div class="cli-example-card">
+                    <div class="cli-example-header">
+                        <span class="cli-badge desktop">Desktop Packages Only</span>
+                        <button class="copy-btn" onclick="copyCode(this)" aria-label="Copy command" title="Copy to clipboard">
+                            <svg class="copy-icon" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
+                            <svg class="check-icon" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#34d399" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                        </button>
+                    </div>
+                    <div class="cli-example-title">Install IDE &amp; Hub (Skip Terminal CLI)</div>
+                    <div class="code-block">
+                        <code>curl -fsSL https://x3m-industries.github.io/antigravity-packages/install.sh | bash -s -- --no-cli</code>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Full Command-Line Options Table -->
+            <div class="cli-table-card">
+                <div class="cli-table-title">
+                    <span>📋</span> Full Command-Line Options Reference
+                </div>
+                <div class="cli-table-responsive">
+                    <table class="cli-table">
+                        <thead>
+                            <tr>
+                                <th>Option Flag</th>
+                                <th>Description</th>
+                                <th>Scope &amp; Privileges</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><code>-y</code>, <code>--yes</code>, <code>--non-interactive</code></td>
+                                <td>Run silently without interactive prompts (installs defaults: IDE, Hub, CLI)</td>
+                                <td><span class="scope-pill root">Sudo required</span></td>
+                            </tr>
+                            <tr>
+                                <td><code>--all</code></td>
+                                <td>Explicitly install all three components (IDE, Hub, CLI)</td>
+                                <td><span class="scope-pill root">Sudo required</span></td>
+                            </tr>
+                            <tr>
+                                <td><code>--cli-only</code></td>
+                                <td>Install only the Antigravity CLI (<code>agy</code>) into <code>~/.local/bin/agy</code></td>
+                                <td><span class="scope-pill user">User-space (No sudo)</span></td>
+                            </tr>
+                            <tr>
+                                <td><code>--ide-only</code></td>
+                                <td>Install only the Antigravity IDE (code editor) via RPM/DEB</td>
+                                <td><span class="scope-pill root">Sudo required</span></td>
+                            </tr>
+                            <tr>
+                                <td><code>--hub-only</code></td>
+                                <td>Install only the Antigravity Hub (agent platform) via RPM/DEB</td>
+                                <td><span class="scope-pill root">Sudo required</span></td>
+                            </tr>
+                            <tr>
+                                <td><code>--no-cli</code></td>
+                                <td>Skip Antigravity CLI installation (desktop packages only)</td>
+                                <td><span class="scope-pill root">Sudo required</span></td>
+                            </tr>
+                            <tr>
+                                <td><code>--no-ide</code></td>
+                                <td>Skip Antigravity IDE installation</td>
+                                <td><span class="scope-pill root">Sudo / User</span></td>
+                            </tr>
+                            <tr>
+                                <td><code>--no-hub</code></td>
+                                <td>Skip Antigravity Hub installation</td>
+                                <td><span class="scope-pill root">Sudo / User</span></td>
+                            </tr>
+                            <tr>
+                                <td><code>--dry-run</code></td>
+                                <td>Preview what would be installed and exit 0 without making any system changes</td>
+                                <td><span class="scope-pill free">Zero privileges</span></td>
+                            </tr>
+                            <tr>
+                                <td><code>-h</code>, <code>--help</code></td>
+                                <td>Display the built-in help menu and usage examples</td>
+                                <td><span class="scope-pill free">Zero privileges</span></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="cli-table-footer">
+                    <span>💡 <strong>Tip for Bash/Zsh users:</strong> You can also use process substitution: <code>bash &lt;(curl -fsSL https://x3m-industries.github.io/antigravity-packages/install.sh) --dry-run</code></span>
+                </div>
+            </div>
+        </section>
+
         <!-- Features Section -->
         <section class="features-section">
             <h2 class="section-title">Key Repository Features</h2>
@@ -2722,12 +3115,15 @@ cd / &amp;&amp; sudo rpmextract ~/antigravity-ide-latest.x86_64.rpm</code>
         function copyCode(btn) {
             let codeEl = null;
             const stepHeader = btn.closest('.step-header');
+            const exampleCard = btn.closest('.cli-example-card');
             if (stepHeader) {
                 let next = stepHeader.nextElementSibling;
                 while (next && !next.classList.contains('code-block') && !next.matches('code')) {
                     next = next.nextElementSibling;
                 }
                 codeEl = next ? (next.matches('code') ? next : next.querySelector('code')) : null;
+            } else if (exampleCard) {
+                codeEl = exampleCard.querySelector('.code-block code') || exampleCard.querySelector('code');
             } else {
                 const container = btn.closest('.code-block') || btn.closest('.terminal-body');
                 codeEl = container ? container.querySelector('code') : null;
@@ -2749,8 +3145,9 @@ cd / &amp;&amp; sudo rpmextract ~/antigravity-ide-latest.x86_64.rpm</code>
                 // Track GA4 conversion event
                 if (typeof gtag === 'function') {
                     const isUniversal = btn.closest('.terminal-body') !== null;
+                    const isCliRef = btn.closest('.cli-example-card') !== null;
                     const tabContainer = btn.closest('.tab-content');
-                    const tabId = tabContainer ? tabContainer.id : (isUniversal ? 'universal' : 'general');
+                    const tabId = tabContainer ? tabContainer.id : (isUniversal ? 'universal' : (isCliRef ? 'cli-reference' : 'general'));
                     gtag('event', isUniversal ? 'copy_universal_installer' : 'copy_install_command', {
                         event_category: isUniversal ? 'conversion' : 'engagement',
                         distro: tabId,

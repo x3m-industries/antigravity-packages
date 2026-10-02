@@ -54,19 +54,57 @@ curl -fsSL https://x3m-industries.github.io/antigravity-packages/install.sh | ba
 
 Simply press **ENTER** to install the complete suite (IDE + Hub + CLI), or type custom numbers (e.g. `1, 3` for IDE and CLI).
 
-#### Automated & Headless Execution (CI/CD, Docker, Scripts)
-Bypass interactive prompts using command-line arguments:
+#### 🤖 Automated & Headless Execution (CI/CD, Docker, Scripts)
+
+When installing in automated environments, containers, or non-interactive deployment scripts, bypass prompts by passing command-line arguments.
+
+> [!IMPORTANT]
+> **How to pass arguments to piped scripts (`bash -s --`)**:
+> When running via `curl ... | bash`, arguments cannot be passed directly after `bash` (e.g. `| bash --help` invokes GNU Bash's help, while `curl ... --help | bash` invokes curl's help).
+> 
+> Always pass arguments using **`bash -s -- <options>`**:
+> - **`-s`**: Instructs `bash` to read the script from standard input (`stdin`).
+> - **`--`**: Denotes the end of bash options, passing all subsequent flags directly to `install.sh`.
+
+##### Common Command Examples
 
 ```bash
-# Install everything silently without prompts
+# 1. Install complete suite silently without prompts (IDE + Hub + CLI)
 curl -fsSL https://x3m-industries.github.io/antigravity-packages/install.sh | bash -s -- -y
 
-# Install only the CLI ('agy') — runs in user-space, NO sudo required!
+# 2. Install only the CLI ('agy') — user-space only, NO sudo required!
 curl -fsSL https://x3m-industries.github.io/antigravity-packages/install.sh | bash -s -- --cli-only
 
-# Install only desktop packages (skip CLI)
+# 3. Dry run — preview what would be installed without making any changes
+curl -fsSL https://x3m-industries.github.io/antigravity-packages/install.sh | bash -s -- --dry-run
+
+# 4. Install only desktop packages (IDE + Hub, skip CLI)
 curl -fsSL https://x3m-industries.github.io/antigravity-packages/install.sh | bash -s -- --no-cli
+
+# 5. Display the built-in installer help menu
+curl -fsSL https://x3m-industries.github.io/antigravity-packages/install.sh | bash -s -- --help
 ```
+
+*Alternative (Process Substitution in Bash or Zsh):*
+```bash
+bash <(curl -fsSL https://x3m-industries.github.io/antigravity-packages/install.sh) --cli-only
+```
+
+##### Command-Line Options Reference
+
+| Option Flag | Description | Scope / Privileges |
+| :--- | :--- | :--- |
+| `-y`, `--yes`, `--non-interactive` | Run silently without interactive prompts (installs defaults: IDE, Hub, CLI) | Sudo (desktop packages) |
+| `--all` | Explicitly install all three components (IDE, Hub, CLI) | Sudo (desktop packages) |
+| `--cli-only` | Install only the Antigravity CLI (`agy`) into `~/.local/bin/agy` | **User only (No sudo)** |
+| `--ide-only` | Install only Antigravity IDE (code editor) via RPM/DEB | Sudo |
+| `--hub-only` | Install only Antigravity Hub (agent platform) via RPM/DEB | Sudo |
+| `--no-cli` | Skip Antigravity CLI installation (desktop packages only) | Sudo |
+| `--no-ide` | Skip Antigravity IDE installation | Sudo / User |
+| `--no-hub` | Skip Antigravity Hub installation | Sudo / User |
+| `--dry-run` | Preview what would be installed and exit without making changes | None |
+| `-h`, `--help` | Display the built-in help menu and usage examples | None |
+
 
 ---
 

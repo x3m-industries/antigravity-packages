@@ -153,6 +153,8 @@ class TestPackagingLogic(unittest.TestCase):
         self.assertIn('data-tab="cli"', html)
         self.assertIn("Antigravity CLI", html)
         self.assertIn("agy", html)
+        self.assertIn("cli-reference", html)
+        self.assertIn("bash -s --", html)
 
     def test_version_tag_injection(self):
         import sys
