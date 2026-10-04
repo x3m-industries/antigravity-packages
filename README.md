@@ -48,13 +48,13 @@ Unlike basic community scripts that download Google tarballs and manually unpack
 
 | Architectural Feature | Raw Tarball Extractors (`/opt`) | X3M Native Repositories (RPM & DEB) |
 | :--- | :--- | :--- |
-| **Package Manager Integration** | ❌ None (system database is unaware of files) | **Native DNF, APT & Zypper** integration |
-| **Automated System Updates** | ❌ Must remember custom script to update | **Seamless updates** (`sudo dnf update` / `sudo apt upgrade`) |
-| **Cryptographic Signing** | ❌ No signature verification | **GPG signed** packages & repository metadata (`7A48CA4D7E7B6601`) |
-| **Dependency Resolution** | ❌ Prone to missing shared libraries | **Automatic system dependency resolution** |
-| **Sandboxing & Permissions** | ⚠️ Often breaks Chromium SUID sandboxing | **Hardened `chrome-sandbox` permissions** (`04755 root:root`) |
-| **Desktop & Shell Integration** | ⚠️ Minimal launchers | **Full FreeDesktop menus, OAuth handlers, GNOME Files extension** |
-| **Clean, Reversible Removal** | ⚠️ Risk of orphaned files across `/usr` | **Complete removal** (`dnf remove`, `apt purge`, or `--uninstall`) |
+| **Package Manager Integration** | ❌ None (system database is unaware of files) | ✅ **Native DNF, APT & Zypper** integration |
+| **Automated System Updates** | ❌ Must remember custom script to update | ✅ **Seamless updates** (`sudo dnf update` / `sudo apt upgrade`) |
+| **Cryptographic Signing** | ❌ No signature verification | ✅ **GPG signed** packages & repository metadata (`7A48CA4D7E7B6601`) |
+| **Dependency Resolution** | ❌ Prone to missing shared libraries | ✅ **Automatic system dependency resolution** |
+| **Sandboxing & Permissions** | ⚠️ Often breaks Chromium SUID sandboxing | ✅ **Hardened `chrome-sandbox` permissions** (`04755 root:root`) |
+| **Desktop & Shell Integration** | ⚠️ Minimal launchers | ✅ **Full FreeDesktop menus, OAuth handlers, multi-desktop right-click (GNOME, KDE, Mint, MATE, COSMIC), shell completions** |
+| **Clean, Reversible Removal** | ⚠️ Risk of orphaned files across `/usr` | ✅ **Complete removal** (`dnf remove`, `apt purge`, or `--uninstall`) |
 
 ---
 
