@@ -839,10 +839,239 @@ h1 {
     box-shadow: 0 6px 20px rgba(255, 255, 255, 0.35);
 }
 
+/* Doc Header & Navigation */
+.nav-brand-badge {
+    background: rgba(99, 102, 241, 0.25);
+    color: #a5b4fc;
+    border: 1px solid rgba(99, 102, 241, 0.4);
+    font-size: 0.72rem;
+    padding: 2px 7px;
+    border-radius: 6px;
+    font-weight: 600;
+    margin-left: 6px;
+}
+.doc-header {
+    margin-bottom: 32px;
+    border-bottom: 1px solid var(--card-border);
+    padding-bottom: 24px;
+}
+.doc-breadcrumb {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 0.85rem;
+    color: var(--text-muted);
+    margin-bottom: 12px;
+}
+.doc-breadcrumb a {
+    color: var(--accent);
+    text-decoration: none;
+}
+.doc-breadcrumb a:hover {
+    text-decoration: underline;
+}
+.doc-title {
+    font-size: 2.2rem;
+    font-weight: 800;
+    letter-spacing: -0.025em;
+    color: #fff;
+    margin-bottom: 8px;
+}
+.doc-subtitle {
+    font-size: 1.05rem;
+    color: var(--text-muted);
+    max-width: 760px;
+}
+
+/* Table of Contents Quick Nav */
+.toc-bar {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-bottom: 36px;
+    background: rgba(15, 23, 42, 0.6);
+    padding: 12px 16px;
+    border-radius: 12px;
+    border: 1px solid var(--card-border);
+}
+.toc-link {
+    text-decoration: none;
+    color: var(--text-muted);
+    font-size: 0.85rem;
+    padding: 5px 12px;
+    border-radius: 6px;
+    background: rgba(255, 255, 255, 0.04);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    transition: all 0.15s ease;
+}
+.toc-link:hover {
+    background: rgba(99, 102, 241, 0.15);
+    color: #fff;
+    border-color: rgba(99, 102, 241, 0.35);
+}
+
+/* Documentation Sections */
+.doc-section {
+    margin-bottom: 48px;
+    scroll-margin-top: 96px;
+}
+.section-heading {
+    font-size: 1.5rem;
+    font-weight: 700;
+    letter-spacing: -0.015em;
+    margin-bottom: 16px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    color: #fff;
+}
+
+/* Cards & Code Blocks */
+.doc-card {
+    background: var(--card-bg);
+    border: 1px solid var(--card-border);
+    border-radius: 14px;
+    padding: 24px;
+    margin-bottom: 24px;
+    backdrop-filter: blur(12px);
+}
+.card-subtitle {
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: #fff;
+    margin-bottom: 12px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.code-block {
+    background: var(--code-bg);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 10px;
+    padding: 14px 48px 14px 18px;
+    margin: 12px 0 16px;
+    position: relative;
+    display: block;
+}
+.code-block code {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.88rem;
+    color: #e2e8f0;
+    white-space: pre-wrap;
+    word-break: normal;
+    overflow-wrap: break-word;
+    line-height: 1.5;
+    display: block;
+}
+.copy-btn {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    width: 32px;
+    height: 32px;
+    padding: 0;
+    border-radius: 6px;
+    background: rgba(255, 255, 255, 0.08);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    color: var(--text-muted);
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.15s ease;
+    flex-shrink: 0;
+}
+.copy-btn:hover {
+    background: rgba(255, 255, 255, 0.18);
+    color: #fff;
+    border-color: rgba(255, 255, 255, 0.3);
+}
+.copy-btn.copied {
+    background: rgba(16, 185, 129, 0.2);
+    border-color: rgba(16, 185, 129, 0.4);
+    color: #34d399;
+}
+.copy-btn svg {
+    flex-shrink: 0;
+}
+.copy-btn .check-icon {
+    display: none;
+}
+.copy-btn.copied .check-icon {
+    display: inline-block;
+}
+.copy-btn.copied .copy-icon {
+    display: none;
+}
+
+/* CLI Table */
+.table-wrapper {
+    overflow-x: auto;
+    border: 1px solid var(--card-border);
+    border-radius: 12px;
+    margin: 16px 0;
+    background: rgba(15, 23, 42, 0.5);
+}
+.doc-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.9rem;
+    text-align: left;
+}
+.doc-table th {
+    background: rgba(255, 255, 255, 0.05);
+    padding: 12px 16px;
+    color: #fff;
+    font-weight: 600;
+    border-bottom: 1px solid var(--card-border);
+}
+.doc-table td {
+    padding: 12px 16px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+    color: var(--text-muted);
+}
+.doc-table tr:last-child td {
+    border-bottom: none;
+}
+.doc-table code {
+    font-family: 'JetBrains Mono', monospace;
+    background: rgba(0, 0, 0, 0.35);
+    padding: 2px 6px;
+    border-radius: 4px;
+    color: var(--accent);
+    font-size: 0.85rem;
+}
+
+.badge-pill {
+    font-size: 0.72rem;
+    font-weight: 700;
+    padding: 2px 8px;
+    border-radius: 9999px;
+    text-transform: uppercase;
+}
+.badge-pill.root {
+    background: rgba(239, 68, 68, 0.15);
+    color: #fca5a5;
+    border: 1px solid rgba(239, 68, 68, 0.3);
+}
+.badge-pill.user {
+    background: rgba(56, 189, 248, 0.15);
+    color: #38bdf8;
+    border: 1px solid rgba(56, 189, 248, 0.3);
+}
+.badge-pill.free {
+    background: rgba(16, 185, 129, 0.15);
+    color: #6ee7b7;
+    border: 1px solid rgba(16, 185, 129, 0.3);
+}
+
 /* Footer */
 footer {
+    margin-top: 56px;
     border-top: 1px solid var(--card-border);
     padding-top: 28px;
+    padding-bottom: 16px;
     text-align: center;
     font-size: 0.85rem;
     color: #94a3b8;
@@ -854,10 +1083,21 @@ footer a {
 footer a:hover {
     text-decoration: underline;
 }
+.footer-links {
+    margin-top: 8px;
+}
+.footer-disclaimer {
+    margin-top: 10px;
+    font-size: 0.76rem;
+    color: #64748b;
+    line-height: 1.5;
+}
 
 @media (max-width: 768px) {
     .bento-grid, .apps-grid { grid-template-columns: 1fr; }
     .nav-links { display: none; }
+    .doc-title { font-size: 1.8rem; }
+    .container { padding: 24px 16px 60px; }
     .terminal-header {
         padding: 8px 12px;
         gap: 8px;

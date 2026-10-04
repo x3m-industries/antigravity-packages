@@ -319,42 +319,12 @@ import { siteConfig } from '../data/siteConfig';
       <h2 class="section-heading"><span>❓</span> Complete FAQ Archive</h2>
       <p class="section-desc">Frequently asked questions regarding architecture, packaging, sandboxing, and updates.</p>
 
-      {siteConfig.faqs.map((faq, index) => (
+      {siteConfig.docsFaqs.map((faq, index) => (
         <details class="faq-item" open={index === 0}>
           <summary>{faq.q}</summary>
-          <div class="faq-answer">
-            {faq.a}
-          </div>
+          <div class="faq-answer" set:html={faq.a} />
         </details>
       ))}
-
-      <details class="faq-item">
-        <summary>How do I update Google Antigravity IDE in Ubuntu or Debian?</summary>
-        <div class="faq-answer">
-          Run <code>sudo apt update &amp;&amp; sudo apt install --only-upgrade antigravity-ide antigravity</code>, or simply perform your regular system upgrade with <code>sudo apt update &amp;&amp; sudo apt upgrade</code>.
-        </div>
-      </details>
-
-      <details class="faq-item">
-        <summary>Are ARM64 / aarch64 systems supported?</summary>
-        <div class="faq-answer">
-          Yes! Both <code>x86_64</code> (Intel/AMD) and <code>aarch64</code> (ARM64, Raspberry Pi 4/5 64-bit, Ampere, Apple Silicon Linux VMs) RPM and DEB packages are natively built and published for every release.
-        </div>
-      </details>
-
-      <details class="faq-item">
-        <summary>Is it safe to run the universal installer more than once?</summary>
-        <div class="faq-answer">
-          Yes, the universal installer is completely idempotent. Running it multiple times safely refreshes repository definitions and GPG keys without creating duplicates, and upgrades your applications to the latest upstream release.
-        </div>
-      </details>
-
-      <details class="faq-item">
-        <summary>How do I check installation status or cleanly uninstall?</summary>
-        <div class="faq-answer">
-          Run <code>curl -fsSL https://x3m-industries.github.io/antigravity-packages/install.sh | bash -s -- --status</code> to inspect installed components, or pass <code>--uninstall</code> to cleanly remove packages, repos, and extensions without touching your personal projects.
-        </div>
-      </details>
     </section>
   </main>
 

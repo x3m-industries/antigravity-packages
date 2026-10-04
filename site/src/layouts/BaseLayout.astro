@@ -41,12 +41,12 @@ const structuredData = {
     },
     {
       "@type": "FAQPage",
-      "mainEntity": siteConfig.faqs.map((faq) => ({
+      "mainEntity": (currentPage === 'docs' ? siteConfig.docsFaqs : siteConfig.homeFaqs).map((faq) => ({
         "@type": "Question",
         "name": faq.q,
         "acceptedAnswer": {
           "@type": "Answer",
-          "text": faq.a,
+          "text": faq.a.replace(/<[^>]*>/g, ""),
         },
       })),
     },
@@ -119,7 +119,7 @@ const structuredData = {
   <Navbar currentPage={currentPage} />
   <div class="container">
     <slot />
+    <Footer currentPage={currentPage} />
   </div>
-  <Footer />
 </body>
 </html>
