@@ -109,25 +109,32 @@ fi
 # Copy landing page template
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 REPO_ROOT="$(dirname "${SCRIPT_DIR}")"
-if [ -f "${REPO_ROOT}/templates/index.html" ]; then
-    cp "${REPO_ROOT}/templates/index.html" "${DIST_DIR}/index.html"
-elif [ -f "templates/index.html" ]; then
-    cp "templates/index.html" "${DIST_DIR}/index.html"
-fi
-
-# Inject dynamic release versions into dist/index.html based on RELEASE_TAG
-if [ -f "${DIST_DIR}/index.html" ] && [ -n "${RELEASE_TAG:-}" ] && [ "${RELEASE_TAG}" != "latest" ] && [ "${RELEASE_TAG}" != "vlatest" ]; then
-    if [ -f "${SCRIPT_DIR}/inject_versions.py" ]; then
-        python3 "${SCRIPT_DIR}/inject_versions.py" "${RELEASE_TAG}" "${DIST_DIR}/index.html" || true
+# Copy HTML templates and inject release versions
+for tmpl in "${REPO_ROOT}/templates/"*.html; do
+    if [ -f "$tmpl" ]; then
+        filename="$(basename "$tmpl")"
+        cp "$tmpl" "${DIST_DIR}/${filename}"
+        if [ -n "${RELEASE_TAG:-}" ] && [ "${RELEASE_TAG}" != "latest" ] && [ "${RELEASE_TAG}" != "vlatest" ]; then
+            if [ -f "${SCRIPT_DIR}/inject_versions.py" ]; then
+                python3 "${SCRIPT_DIR}/inject_versions.py" "${RELEASE_TAG}" "${DIST_DIR}/${filename}" || true
+            fi
+        fi
     fi
-fi
+done
 
-# Copy universal installer script
+# Copy universal installer script and LLM context files
 if [ -f "${REPO_ROOT}/install.sh" ]; then
     cp "${REPO_ROOT}/install.sh" "${DIST_DIR}/install.sh"
 elif [ -f "install.sh" ]; then
     cp "install.sh" "${DIST_DIR}/install.sh"
 fi
+for llm_file in llms.txt llms-full.txt; do
+    if [ -f "${REPO_ROOT}/${llm_file}" ]; then
+        cp "${REPO_ROOT}/${llm_file}" "${DIST_DIR}/${llm_file}"
+    elif [ -f "${llm_file}" ]; then
+        cp "${llm_file}" "${DIST_DIR}/${llm_file}"
+    fi
+done
 
 # Generate robots.txt
 cat << 'ROBOTS_EOF' > "${DIST_DIR}/robots.txt"
@@ -147,6 +154,24 @@ cat << SITEMAP_EOF > "${DIST_DIR}/sitemap.xml"
     <lastmod>${CURRENT_DATE}</lastmod>
     <changefreq>daily</changefreq>
     <priority>1.0</priority>
+  </url>
+  <url>
+    <loc>https://x3m-industries.github.io/antigravity-packages/docs.html</loc>
+    <lastmod>${CURRENT_DATE}</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
+  </url>
+  <url>
+    <loc>https://x3m-industries.github.io/antigravity-packages/llms.txt</loc>
+    <lastmod>${CURRENT_DATE}</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://x3m-industries.github.io/antigravity-packages/llms-full.txt</loc>
+    <lastmod>${CURRENT_DATE}</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
   </url>
 </urlset>
 SITEMAP_EOF

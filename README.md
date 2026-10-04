@@ -1,4 +1,4 @@
-# Google Antigravity & Antigravity IDE Linux Packages
+# Google Antigravity for Linux — Native Packages & Universal Installer
 
 <p align="center">
   <img src="assets/logo.png" width="76" height="76" alt="Google Antigravity IDE" title="Antigravity IDE" style="border-radius: 18px; margin-right: 12px; vertical-align: middle;" />
@@ -14,19 +14,19 @@
   <img src="https://img.shields.io/badge/Signatures-GPG%20Signed-38bdf8" alt="GPG Signed" />
 </p>
 
-> **Community RPM (DNF) and DEB (APT) packaging & universal installation infrastructure for Google Antigravity (IDE, Hub & CLI).**  
-> Architected & maintained by [**Steven Ceuppens**](https://github.com/stevenceuppens) at [**X3M Industries**](https://x3m.industries).  
-> Automatically synchronized daily directly from Google's official release page, packaged natively for Linux with desktop application menus, high-resolution icons, and browser OAuth redirect integration.
+> **Install Google Antigravity 2.0, Antigravity IDE, and Antigravity CLI ('agy') on Linux with one command or native package managers (DNF, APT, Zypper).**  
+> One-command Linux installer & native enterprise-grade repositories (RPM & DEB) with automatic daily synchronization directly from Google's official release page. Features full FreeDesktop desktop menus, GNOME Files (Nautilus) right-click context menu, high-resolution icons, and browser OAuth redirect integration for Fedora, Ubuntu, Debian, Arch Linux, and openSUSE.  
+> Architected & maintained by [**Steven Ceuppens**](https://github.com/stevenceuppens) at [**X3M Industries**](https://x3m.industries).
 
 ```bash
-# ⚡ Interactive Universal Installation (Prompts for IDE, Hub & CLI with smart defaults)
+# ⚡ 1-Command Universal Linux Installer (Interactive with smart defaults: IDE + Hub + CLI)
 curl -fsSL https://x3m-industries.github.io/antigravity-packages/install.sh | bash
 ```
 
-> ⭐ **If this project saves you time on Linux, please star the repository!** It helps fellow developers discover native packages and supports our automated packaging infrastructure.
+> ⭐ **If this project saves you time on Linux, please star the repository!** It helps fellow Linux developers discover native packages and supports our automated packaging infrastructure.
 
 **Quick Navigation:**
-[⚡ Quick Install](#-quick-installation) · [Fedora / RHEL (DNF)](#fedora--rhel--centos-stream--rocky--almalinux-dnf) · [Ubuntu / Debian (APT)](#ubuntu--debian--pop_os--linux-mint-apt) · [Arch Linux](#arch-linux--manjaro--endeavouros) · [CLI Integration](#-antigravity-cli-agy-integration) · [Standalone Downloads](#-standalone-package-downloads) · [🛡️ Security & Trust](#-gpg-security--package-verification)
+[⚡ Quick Install](#-quick-installation) · [Why Native Packages vs Tarballs](#-why-native-packages-vs-raw-tarball-extractors) · [Fedora / RHEL (DNF)](#fedora--rhel--centos-stream--rocky--almalinux-dnf) · [Ubuntu / Debian (APT)](#ubuntu--debian--pop_os--linux-mint-apt) · [Arch Linux](#arch-linux--manjaro--endeavouros) · [Nautilus Integration](#-gnome-files--nautilus-right-click-integration) · [CLI Integration](#-antigravity-cli-agy-integration) · [Inspection & Uninstall](#-maintenance-status--uninstallation) · [🛡️ Security & Trust](#-gpg-security--package-verification)
 
 ---
 
@@ -39,6 +39,22 @@ Google publishes official Linux binaries for both apps as standalone archives wi
 | <img src="assets/logo.png" width="36" height="36" alt="Antigravity IDE" style="border-radius:8px;"> | **`antigravity-ide`** | **[Google Antigravity IDE](https://antigravity.google/product/antigravity-ide)** | Official AI-first desktop code editor. Native RPM/DEB, desktop launcher, `antigravity-ide://` OAuth handler. | [Google IDE Details](https://antigravity.google/product/antigravity-ide) |
 | <img src="assets/hub-logo.png" width="36" height="36" alt="Antigravity Hub" style="border-radius:8px;"> | **`antigravity`** | **[Google Antigravity Hub](https://antigravity.google/product/antigravity-2)** | Official agent platform & workspace. Native RPM/DEB, desktop launcher, `antigravity://` OAuth handler. | [Google Hub Details](https://antigravity.google/product/antigravity-2) |
 | <img src="assets/antigravity.png" width="36" height="36" alt="Antigravity CLI" style="border-radius:8px;"> | **`agy`** | **[Google Antigravity CLI](https://antigravity.google/docs/cli/reference)** | Official terminal coding agent. Seamlessly installed into `~/.local/bin/agy` with native background auto-updates. | [Google CLI Reference](https://antigravity.google/docs/cli/reference) |
+
+---
+
+## 💡 Why Native Packages vs Raw Tarball Extractors
+
+Unlike basic community scripts that download Google tarballs and manually unpack them into `/opt` without package manager integration:
+
+| Architectural Feature | Raw Tarball Extractors (`/opt`) | X3M Native Repositories (RPM & DEB) |
+| :--- | :--- | :--- |
+| **Package Manager Integration** | ❌ None (system database is unaware of files) | **Native DNF, APT & Zypper** integration |
+| **Automated System Updates** | ❌ Must remember custom script to update | **Seamless updates** (`sudo dnf update` / `sudo apt upgrade`) |
+| **Cryptographic Signing** | ❌ No signature verification | **GPG signed** packages & repository metadata (`7A48CA4D7E7B6601`) |
+| **Dependency Resolution** | ❌ Prone to missing shared libraries | **Automatic system dependency resolution** |
+| **Sandboxing & Permissions** | ⚠️ Often breaks Chromium SUID sandboxing | **Hardened `chrome-sandbox` permissions** (`04755 root:root`) |
+| **Desktop & Shell Integration** | ⚠️ Minimal launchers | **Full FreeDesktop menus, OAuth handlers, GNOME Files extension** |
+| **Clean, Reversible Removal** | ⚠️ Risk of orphaned files across `/usr` | **Complete removal** (`dnf remove`, `apt purge`, or `--uninstall`) |
 
 ---
 
@@ -71,22 +87,25 @@ When installing in automated environments, containers, or non-interactive deploy
 # 1. Install complete suite silently without prompts (IDE + Hub + CLI)
 curl -fsSL https://x3m-industries.github.io/antigravity-packages/install.sh | bash -s -- -y
 
-# 2. Install only the CLI ('agy') — user-space only, NO sudo required!
+# 2. Inspect installation status and repository health
+curl -fsSL https://x3m-industries.github.io/antigravity-packages/install.sh | bash -s -- --status
+
+# 3. Cleanly uninstall all helper-configured packages, repos & integrations
+curl -fsSL https://x3m-industries.github.io/antigravity-packages/install.sh | bash -s -- --uninstall
+
+# 4. Install only the CLI ('agy') — user-space only, NO sudo required!
 curl -fsSL https://x3m-industries.github.io/antigravity-packages/install.sh | bash -s -- --cli-only
 
-# 3. Dry run — preview what would be installed without making any changes
+# 5. Print official Google tarball & package download URLs
+curl -fsSL https://x3m-industries.github.io/antigravity-packages/install.sh | bash -s -- --print-downloads
+
+# 6. Dry run — preview what would be installed without making any changes
 curl -fsSL https://x3m-industries.github.io/antigravity-packages/install.sh | bash -s -- --dry-run
-
-# 4. Install only desktop packages (IDE + Hub, skip CLI)
-curl -fsSL https://x3m-industries.github.io/antigravity-packages/install.sh | bash -s -- --no-cli
-
-# 5. Display the built-in installer help menu
-curl -fsSL https://x3m-industries.github.io/antigravity-packages/install.sh | bash -s -- --help
 ```
 
 *Alternative (Process Substitution in Bash or Zsh):*
 ```bash
-bash <(curl -fsSL https://x3m-industries.github.io/antigravity-packages/install.sh) --cli-only
+bash <(curl -fsSL https://x3m-industries.github.io/antigravity-packages/install.sh) --status
 ```
 
 ##### Command-Line Options Reference
@@ -95,12 +114,16 @@ bash <(curl -fsSL https://x3m-industries.github.io/antigravity-packages/install.
 | :--- | :--- | :--- |
 | `-y`, `--yes`, `--non-interactive` | Run silently without interactive prompts (installs defaults: IDE, Hub, CLI) | Sudo (desktop packages) |
 | `--all` | Explicitly install all three components (IDE, Hub, CLI) | Sudo (desktop packages) |
+| `--status` | Show installed components, versions, and repository health | **User / None** |
+| `--print-downloads` | Print official Google tarballs & package download URLs | **User / None** |
+| `--uninstall` | Cleanly remove helper-configured repositories, packages & integrations | Sudo |
 | `--cli-only` | Install only the Antigravity CLI (`agy`) into `~/.local/bin/agy` | **User only (No sudo)** |
 | `--ide-only` | Install only Antigravity IDE (code editor) via RPM/DEB | Sudo |
 | `--hub-only` | Install only Antigravity Hub (agent platform) via RPM/DEB | Sudo |
 | `--no-cli` | Skip Antigravity CLI installation (desktop packages only) | Sudo |
 | `--no-ide` | Skip Antigravity IDE installation | Sudo / User |
 | `--no-hub` | Skip Antigravity Hub installation | Sudo / User |
+| `--no-nautilus` | Skip GNOME Files / Nautilus context menu integration | Sudo |
 | `--dry-run` | Preview what would be installed and exit without making changes | None |
 | `-h`, `--help` | Display the built-in help menu and usage examples | None |
 
@@ -228,9 +251,57 @@ antigravity
 ```
 
 ### ✨ Native Desktop Features Included:
+* **GNOME Files (Nautilus) Context Menu:** Right-click any file, folder, or directory background in GNOME Files and select **"Open in Antigravity IDE"** (`/usr/share/nautilus-python/extensions/open-in-antigravity-ide.py`).
 * **Browser OAuth Callback Handling:** Pre-registered `antigravity-ide://` and `antigravity://` URL scheme handlers so Google authentication redirects straight back into the running app.
+* **Workspace MIME Handling:** Pre-registered associations for `.code-workspace` and `.antigravity-workspace` files.
+* **Hardened SUID Sandboxing:** Correctly set `04755 root:root` permissions on `chrome-sandbox` binaries so Electron runs securely without insecure `--no-sandbox` flags.
 * **High-Resolution Icons:** Extracted official 1024x1024 application icons placed in FreeDesktop icon themes and `/usr/share/pixmaps`.
 * **System Application Menu:** GNOME, KDE, and XFCE desktop entries with quick action shortcuts (New Empty Window, etc.).
+
+---
+
+## 📂 GNOME Files / Nautilus Right-Click Integration
+
+When Antigravity IDE is installed via our native packages or universal installer, it automatically sets up a native Python extension for **GNOME Files (Nautilus)**:
+
+* **Open Files & Folders:** Right-click any file, source code file, or directory and select **"Open in Antigravity IDE"**.
+* **Open Folder Background:** Right-click anywhere in empty directory space in GNOME Files to select **"Open Folder in Antigravity IDE"**.
+* **Modern & Backward-Compatible:** Fully supports modern Nautilus 4.x (GNOME 43+ / GTK4) and Nautilus 3.x.
+* **Extension Location:** Installed into `/usr/share/nautilus-python/extensions/open-in-antigravity-ide.py`.
+* **Restart Nautilus:** If the context menu does not appear immediately after installation, restart Nautilus with:
+  ```bash
+  nautilus -q
+  ```
+* **Opt-Out:** If you prefer not to install the Nautilus extension, pass `--no-nautilus`:
+  ```bash
+  curl -fsSL https://x3m-industries.github.io/antigravity-packages/install.sh | bash -s -- --no-nautilus
+  ```
+
+---
+
+## 🛠️ Maintenance: Status & Clean Uninstallation
+
+This project is designed to be transparent, auditable, and 100% reversible:
+
+### 🔍 Inspect Installation Status
+Check which components, package versions, repository files, GPG keys, and desktop extensions are active on your system:
+```bash
+curl -fsSL https://x3m-industries.github.io/antigravity-packages/install.sh | bash -s -- --status
+```
+
+### 🗑️ Clean Uninstallation
+If you ever need to remove Google Antigravity, the uninstaller cleanly removes RPM/DEB packages, repository configs, GPG keys, and desktop extensions while leaving your personal project files and settings intact:
+```bash
+curl -fsSL https://x3m-industries.github.io/antigravity-packages/install.sh | bash -s -- --uninstall
+```
+
+---
+
+## 🤖 LLM & AI Search Index (`llms.txt`)
+
+For AI assistants, search crawlers, and LLM coding tools (Gemini, Perplexity, ChatGPT Search, Claude), machine-readable context files are published at:
+- **Canonical LLM Summary:** [`https://x3m-industries.github.io/antigravity-packages/llms.txt`](https://x3m-industries.github.io/antigravity-packages/llms.txt)
+- **Deep Technical Guide:** [`https://x3m-industries.github.io/antigravity-packages/llms-full.txt`](https://x3m-industries.github.io/antigravity-packages/llms-full.txt)
 
 ---
 

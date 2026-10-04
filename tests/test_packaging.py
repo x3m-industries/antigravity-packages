@@ -89,11 +89,44 @@ class TestPackagingLogic(unittest.TestCase):
             self.assertIn("Exec=", content)
             self.assertIn("Icon=", content)
 
+        ide_content = (desktop_dir / "antigravity-ide.desktop").read_text(encoding="utf-8")
+        self.assertIn("application/x-code-workspace;", ide_content)
+        self.assertIn("application/x-antigravity-workspace;", ide_content)
+
         import shutil
         import subprocess
         if shutil.which("desktop-file-validate"):
             res = subprocess.run(["desktop-file-validate"] + [str(f) for f in desktop_dir.glob("*.desktop")], capture_output=True, text=True)
             self.assertEqual(res.returncode, 0, f"desktop-file-validate failed: {res.stderr}")
+
+    def test_nautilus_extension(self):
+        import py_compile
+        nautilus_script = repo_root / "desktop" / "nautilus" / "open-in-antigravity-ide.py"
+        self.assertTrue(nautilus_script.exists())
+        content = nautilus_script.read_text(encoding="utf-8")
+        self.assertIn("OpenInAntigravityIDE", content)
+        self.assertIn("Nautilus.MenuProvider", content)
+        self.assertIn("Open in Antigravity IDE", content)
+        self.assertIn("antigravity-ide", content)
+        # Verify valid Python syntax
+        py_compile.compile(str(nautilus_script), doraise=True)
+
+    def test_llms_txt(self):
+        llms_file = repo_root / "llms.txt"
+        llms_full_file = repo_root / "llms-full.txt"
+        self.assertTrue(llms_file.exists())
+        self.assertTrue(llms_full_file.exists())
+
+        llms_content = llms_file.read_text(encoding="utf-8")
+        self.assertIn("# Google Antigravity for Linux", llms_content)
+        self.assertIn("https://x3m-industries.github.io/antigravity-packages/", llms_content)
+        self.assertIn("install.sh", llms_content)
+
+        llms_full_content = llms_full_file.read_text(encoding="utf-8")
+        self.assertIn("# Google Antigravity for Linux — Complete Architecture & Operations Guide", llms_full_content)
+        self.assertIn("https://x3m-industries.github.io/antigravity-packages/", llms_full_content)
+        self.assertIn("dnf install antigravity-ide antigravity", llms_full_content)
+        self.assertIn("apt install antigravity-ide antigravity", llms_full_content)
 
     def test_installer_script(self):
         import subprocess
@@ -111,6 +144,11 @@ class TestPackagingLogic(unittest.TestCase):
         self.assertIn("--hub-only", content)
         self.assertIn("--all", content)
         self.assertIn("--dry-run", content)
+        self.assertIn("--status", content)
+        self.assertIn("--uninstall", content)
+        self.assertIn("--print-downloads", content)
+        self.assertIn("--no-nautilus", content)
+        self.assertIn("--nautilus", content)
         self.assertIn("TARGET_USER", content)
         self.assertIn("TARGET_HOME", content)
         self.assertIn("EXISTING_CLI_PATH", content)
@@ -127,17 +165,48 @@ class TestPackagingLogic(unittest.TestCase):
         self.assertIn("--hub-only", res_help.stdout)
         self.assertIn("--all", res_help.stdout)
         self.assertIn("--dry-run", res_help.stdout)
+        self.assertIn("--status", res_help.stdout)
+        self.assertIn("--uninstall", res_help.stdout)
+        self.assertIn("--print-downloads", res_help.stdout)
+
+        # Validate --status execution
+        res_status = subprocess.run([str(install_sh), "--status"], capture_output=True, text=True)
+        self.assertEqual(res_status.returncode, 0)
+        self.assertIn("System Environment:", res_status.stdout)
+        self.assertIn("Installed Applications:", res_status.stdout)
+
+        # Validate --print-downloads execution
+        res_downloads = subprocess.run([str(install_sh), "--print-downloads"], capture_output=True, text=True)
+        self.assertEqual(res_downloads.returncode, 0)
+        self.assertIn("Google Antigravity Upstream & Distribution Assets:", res_downloads.stdout)
+        self.assertIn("storage.googleapis.com", res_downloads.stdout)
 
         # Validate --dry-run execution
         res_dry = subprocess.run([str(install_sh), "--dry-run"], capture_output=True, text=True)
         self.assertEqual(res_dry.returncode, 0)
         self.assertIn("Dry run complete", res_dry.stdout)
 
+        # Validate piped execution (curl ... | bash)
+        res_pipe = subprocess.run(
+            ["bash", "-c", f"cat {install_sh} | bash -s -- --dry-run"],
+            capture_output=True, text=True
+        )
+        self.assertEqual(res_pipe.returncode, 0)
+        self.assertIn("Dry run complete", res_pipe.stdout)
+
+        # Validate headless execution without controlling terminal (no /dev/tty errors)
+        res_setsid = subprocess.run(
+            ["setsid", "bash", str(install_sh), "--dry-run"],
+            stdin=subprocess.DEVNULL, capture_output=True, text=True
+        )
+        self.assertEqual(res_setsid.returncode, 0)
+        self.assertNotIn("No such device or address", res_setsid.stderr)
+
     def test_html_template(self):
         template_file = repo_root / "templates" / "index.html"
         self.assertTrue(template_file.exists())
         html = template_file.read_text(encoding="utf-8")
-        self.assertIn("<title>", html)
+        self.assertIn("<title>Google Antigravity for Linux", html)
         self.assertIn("switchTab", html)
         self.assertIn("detectOSAndInitTabs", html)
         self.assertIn("X3M Antigravity Packagers", html)
@@ -155,6 +224,27 @@ class TestPackagingLogic(unittest.TestCase):
         self.assertIn("agy", html)
         self.assertIn("cli-reference", html)
         self.assertIn("bash -s --", html)
+        self.assertIn('href="llms.txt"', html)
+        self.assertIn("--status", html)
+        self.assertIn("--uninstall", html)
+        self.assertIn("--print-downloads", html)
+        self.assertIn("GNOME Files (Nautilus)", html)
+
+    def test_docs_template(self):
+        docs_file = repo_root / "templates" / "docs.html"
+        self.assertTrue(docs_file.exists())
+        docs_html = docs_file.read_text(encoding="utf-8")
+        self.assertIn("<title>Documentation &amp; CLI Reference — Google Antigravity for Linux", docs_html)
+        self.assertIn("Developer &amp; Enterprise Documentation", docs_html)
+        self.assertIn("--status", docs_html)
+        self.assertIn("--uninstall", docs_html)
+        self.assertIn("--print-downloads", docs_html)
+        self.assertIn("--no-nautilus", docs_html)
+        self.assertIn("open-in-antigravity-ide.py", docs_html)
+        self.assertIn("7A48CA4D7E7B6601", docs_html)
+        self.assertIn("E83A 23BC", docs_html)
+        self.assertIn("G-XXTD2B1XB0", docs_html)
+        self.assertIn("debtap", docs_html)
 
     def test_version_tag_injection(self):
         import sys

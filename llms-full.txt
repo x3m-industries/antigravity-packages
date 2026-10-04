@@ -1,0 +1,141 @@
+# Google Antigravity for Linux — Complete Architecture & Operations Guide (`llms-full.txt`)
+
+> Comprehensive operational, architectural, and security guide for AI agents, developers, and LLM search systems referencing the X3M Industries Google Antigravity Linux packaging distribution.
+
+## 1. Project Overview & Canonical Links
+- **Project Website**: https://x3m-industries.github.io/antigravity-packages/
+- **Source Repository**: https://github.com/x3m-industries/antigravity-packages
+- **Universal Installer**: https://x3m-industries.github.io/antigravity-packages/install.sh
+- **Short LLM Summary**: https://x3m-industries.github.io/antigravity-packages/llms.txt
+- **GPG Key (ASCII)**: https://x3m-industries.github.io/antigravity-packages/RPM-GPG-KEY-antigravity
+- **GPG Key (Binary Ring)**: https://x3m-industries.github.io/antigravity-packages/antigravity.gpg
+- **Official Google Antigravity Download Page**: https://antigravity.google/download
+- **Official Google Antigravity CLI Installer**: https://antigravity.google/cli/install.sh
+
+## 2. Core Architecture
+The `antigravity-packages` project automates the packaging, testing, cryptographic signing, and hosting of Google's official Antigravity software suite for Linux distributions.
+
+### Products Packaged
+1. **`antigravity-ide`**:
+   - Google's official VS Code–based AI code editor.
+   - Native FHS layout: installed to `/usr/share/antigravity-ide`, symlinked to `/usr/bin/antigravity-ide`.
+   - Desktop entry: `/usr/share/applications/antigravity-ide.desktop`.
+   - MIME associations: text files, directories, `.code-workspace`, `.antigravity-workspace`, and `antigravity-ide://` OAuth redirect scheme.
+   - GNOME Files (Nautilus) context menu: `/usr/share/nautilus-python/extensions/open-in-antigravity-ide.py` for right-click "Open in Antigravity IDE" support.
+   - High-resolution icons in `/usr/share/icons/hicolor/512x512/apps/antigravity-ide.png` and `/usr/share/pixmaps/`.
+2. **`antigravity` (Hub / Antigravity 2.0)**:
+   - Google's official agent platform and hub.
+   - Installed to `/usr/share/antigravity`, symlinked to `/usr/bin/antigravity`.
+   - Desktop entry: `/usr/share/applications/antigravity.desktop`.
+   - URL scheme handler: `antigravity://` for browser OAuth login callbacks.
+3. **`agy` (Antigravity CLI)**:
+   - Google's official terminal coding agent.
+   - Installed to `$HOME/.local/bin/agy` (user-space, no sudo needed).
+   - Preserves Google's native 15-minute background auto-updater.
+   - Avoids `$PATH` shadowing or write permission errors.
+
+### Supported Architectures
+- **`x86_64`** (`amd64`): Intel and AMD 64-bit processors.
+- **`aarch64`** (`arm64`): ARM 64-bit processors (Apple Silicon Linux VMs, Raspberry Pi 4/5 64-bit, ARM cloud instances).
+
+## 3. Comparison: Native Packages vs Tarball Unpack Scripts
+Basic community scripts often download Google tarballs and unpack them into `/opt` using manual bash loops. The table below details why native packages are superior:
+
+| Feature | Raw Tarball Extraction (`/opt`) | Native Repositories (X3M Industries) |
+| :--- | :--- | :--- |
+| **Package Manager Integration** | None (OS is unaware of files) | Native (`dnf`, `apt`, `zypper`) package database integration |
+| **System Updates** | Must remember custom update script | Included in standard `sudo dnf update` or `sudo apt upgrade` |
+| **GPG Cryptographic Signing** | None | Fully signed RPMs and signed APT Release files (`7A48CA4D7E7B6601`) |
+| **Dependency Resolution** | Manual runtime dependency checks | Automatic system library dependency resolution |
+| **File Integrity Verification** | None | System package manager verifies SHA256 checksums on all files |
+| **Sandboxing & Privileges** | Frequent Chrome sandbox permission failures | Standard `04755 root:root` permissions on `chrome-sandbox` |
+| **Desktop & Shell Integration** | Partial | Menu entries, MIME associations, OAuth schemes, Nautilus extension |
+| **Clean Removal** | Custom script or manual file deletion | Standard `dnf remove` or `apt remove` or `install.sh --uninstall` |
+
+## 4. Universal Installer Options Reference
+The universal installer (`install.sh`) supports interactive and automated modes:
+
+```bash
+# Default interactive installation (prompts for components with smart defaults)
+curl -fsSL https://x3m-industries.github.io/antigravity-packages/install.sh | bash
+
+# Non-interactive silent installation (all components)
+curl -fsSL https://x3m-industries.github.io/antigravity-packages/install.sh | bash -s -- -y
+
+# Install only CLI (user-space only, no root/sudo needed)
+curl -fsSL https://x3m-industries.github.io/antigravity-packages/install.sh | bash -s -- --cli-only
+
+# Install only Antigravity IDE (code editor)
+curl -fsSL https://x3m-industries.github.io/antigravity-packages/install.sh | bash -s -- --ide-only
+
+# Install only Antigravity Hub (agent platform)
+curl -fsSL https://x3m-industries.github.io/antigravity-packages/install.sh | bash -s -- --hub-only
+
+# Check installation status and repository configuration
+curl -fsSL https://x3m-industries.github.io/antigravity-packages/install.sh | bash -s -- --status
+
+# Print resolved official Google download URLs
+curl -fsSL https://x3m-industries.github.io/antigravity-packages/install.sh | bash -s -- --print-downloads
+
+# Cleanly uninstall all helper-configured packages and repositories
+curl -fsSL https://x3m-industries.github.io/antigravity-packages/install.sh | bash -s -- --uninstall
+
+# Dry run (simulate execution without making changes)
+curl -fsSL https://x3m-industries.github.io/antigravity-packages/install.sh | bash -s -- --dry-run
+```
+
+## 5. Native Repository Setup by Distribution
+
+### Fedora, Red Hat Enterprise Linux, Rocky Linux, AlmaLinux, CentOS Stream
+```bash
+# 1. Add RPM repository
+sudo curl -fsSL https://x3m-industries.github.io/antigravity-packages/rpm/antigravity.repo -o /etc/yum.repos.d/antigravity.repo
+
+# 2. Install Antigravity IDE and Hub
+sudo dnf install antigravity-ide antigravity
+
+# 3. Update anytime with your normal system upgrades
+sudo dnf update antigravity-ide antigravity
+```
+
+### Ubuntu, Debian, Linux Mint, Pop!_OS, Elementary OS
+```bash
+# 1. Add GPG Key and Modern DEB822 repository configuration
+sudo mkdir -p /etc/apt/keyrings
+sudo curl -fsSL https://x3m-industries.github.io/antigravity-packages/deb/antigravity.gpg -o /etc/apt/keyrings/antigravity.gpg
+sudo curl -fsSL https://x3m-industries.github.io/antigravity-packages/deb/antigravity.sources -o /etc/apt/sources.list.d/antigravity.sources
+
+# 2. Update and install packages
+sudo apt update && sudo apt install antigravity-ide antigravity
+
+# 3. Update anytime
+sudo apt update && sudo apt install --only-upgrade antigravity-ide antigravity
+```
+
+### openSUSE Leap & Tumbleweed
+```bash
+# 1. Add repository and import GPG key
+sudo zypper addrepo -f https://x3m-industries.github.io/antigravity-packages/rpm/ antigravity
+sudo rpm --import https://x3m-industries.github.io/antigravity-packages/rpm/RPM-GPG-KEY-antigravity
+
+# 2. Install packages
+sudo zypper install antigravity-ide antigravity
+```
+
+### Arch Linux, Manjaro, EndeavourOS
+Extract RPM packages or convert DEBs:
+```bash
+# Convert with debtap
+curl -fsSLO https://github.com/x3m-industries/antigravity-packages/releases/latest/download/antigravity-ide_latest_amd64.deb
+debtap -u && debtap antigravity-ide_latest_amd64.deb
+sudo pacman -U antigravity-ide-*.pkg.tar.zst
+```
+
+## 6. Security, Trust & Cryptography
+- **Maintainer**: Steven Ceuppens, Lead Software Architect & Cloud Technologist at X3M Industries.
+- **Maintainer Email**: packaging@x3m.industries
+- **GPG Key ID**: `7A48CA4D7E7B6601`
+- **Full Fingerprint**: `E83A 23BC 57FE 6953 E4B5  F465 7A48 CA4D 7E7B 6601`
+- **Public Key**: Available in ASCII format at `/RPM-GPG-KEY-antigravity` and binary format at `/antigravity.gpg`.
+- **Public CI Pipeline**: Build automation scripts and workflows run openly on GitHub Actions with automated smoke testing in Fedora and Ubuntu container environments.
+- **Binary Integrity**: Upstream binaries are pulled directly from Google's official distribution CDNs (`storage.googleapis.com` and `edgedl.me.gvt1.com`) without modifying or recompiling executable code.
