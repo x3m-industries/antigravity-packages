@@ -1,7 +1,7 @@
 ---
 import Navbar from '../components/Navbar.astro';
 import Footer from '../components/Footer.astro';
-import { siteConfig } from '../data/siteConfig';
+import { siteConfig, currentVersions } from '../data/siteConfig';
 import '../styles/global.css';
 
 interface Props {
@@ -27,12 +27,26 @@ const structuredData = {
       "@type": "SoftwareApplication",
       "name": "Google Antigravity Linux Packages",
       "applicationCategory": "DeveloperApplication",
-      "operatingSystem": "Linux",
+      "operatingSystem": "Linux (Fedora, Ubuntu, Debian, Arch Linux, openSUSE, RHEL)",
+      "softwareVersion": `${currentVersions.ideSemver} (IDE) / ${currentVersions.hubSemver} (Hub)`,
+      "downloadUrl": siteConfig.repo.releasesUrl,
+      "url": siteConfig.siteUrl,
       "offers": {
         "@type": "Offer",
         "price": "0",
         "priceCurrency": "USD",
       },
+      "publisher": {
+        "@type": "Organization",
+        "name": "X3M Industries",
+        "url": "https://x3m.industries",
+      },
+    },
+    {
+      "@type": "WebSite",
+      "name": "Google Antigravity Linux Repositories",
+      "url": siteConfig.siteUrl,
+      "description": siteConfig.description,
       "publisher": {
         "@type": "Organization",
         "name": "X3M Industries",
@@ -72,6 +86,7 @@ const structuredData = {
   <meta name="description" content={description} />
   <meta name="keywords" content="Google Antigravity, Antigravity Linux, Antigravity IDE, Antigravity RPM, Antigravity DEB, Fedora Antigravity, Ubuntu Antigravity, Debian Antigravity, Arch Linux Antigravity, RHEL Antigravity, google antigravity rpm, antigravity fedora, fedora antigravity, antigravity apt, how to update antigravity ide in ubuntu, download antigravity linux, google antigravity download linux, install google antigravity, AI code editor, DeepMind Antigravity, DNF repository, APT repository, x86_64, aarch64, arm64, AUR antigravity, antigravity 2.0 linux" />
   <meta name="author" content={siteConfig.author.name} />
+  <meta name="google-site-verification" content="google676aa476e852c7b0" />
   <link rel="author" href={siteConfig.author.linkedin} />
   <link rel="me" href={siteConfig.author.linkedin} />
   <link rel="me" href={siteConfig.author.x} />
@@ -79,6 +94,7 @@ const structuredData = {
   <link rel="me" href={siteConfig.author.url} />
   <link rel="canonical" href={canonicalUrl} />
   <link rel="alternate" type="text/plain" href="llms.txt" title="LLM Context" />
+  <link rel="sitemap" type="application/xml" title="Sitemap" href="sitemap.xml" />
   <meta name="robots" content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1" />
 
   <!-- Favicon & Icons -->
