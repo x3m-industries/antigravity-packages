@@ -248,12 +248,10 @@
             background: var(--code-bg);
             border: 1px solid rgba(255, 255, 255, 0.1);
             border-radius: 10px;
-            padding: 14px 18px;
+            padding: 14px 48px 14px 18px;
             margin: 12px 0 16px;
             position: relative;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
+            display: block;
         }
         .code-block code {
             font-family: 'JetBrains Mono', monospace;
@@ -261,31 +259,48 @@
             color: #e2e8f0;
             white-space: pre-wrap;
             word-break: break-all;
+            line-height: 1.5;
+            display: block;
         }
         .copy-btn {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            width: 32px;
+            height: 32px;
+            padding: 0;
+            border-radius: 6px;
             background: rgba(255, 255, 255, 0.08);
             border: 1px solid rgba(255, 255, 255, 0.15);
             color: var(--text-muted);
-            padding: 6px 10px;
-            border-radius: 6px;
             cursor: pointer;
             display: inline-flex;
             align-items: center;
-            gap: 6px;
-            font-size: 0.78rem;
-            font-weight: 600;
+            justify-content: center;
             transition: all 0.15s ease;
             flex-shrink: 0;
-            margin-left: 12px;
         }
         .copy-btn:hover {
             background: rgba(255, 255, 255, 0.18);
             color: #fff;
+            border-color: rgba(255, 255, 255, 0.3);
         }
         .copy-btn.copied {
             background: rgba(16, 185, 129, 0.2);
             border-color: rgba(16, 185, 129, 0.4);
             color: #34d399;
+        }
+        .copy-btn svg {
+            flex-shrink: 0;
+        }
+        .copy-btn .check-icon {
+            display: none;
+        }
+        .copy-btn.copied .check-icon {
+            display: inline-block;
+        }
+        .copy-btn.copied .copy-icon {
+            display: none;
         }
 
         /* CLI Table */
@@ -548,7 +563,10 @@
                     <p class="section-desc">Check which applications, versions, repository definitions, GPG keys, and desktop extensions are active on your system (works without sudo):</p>
                     <div class="code-block">
                         <code>curl -fsSL https://x3m-industries.github.io/antigravity-packages/install.sh | bash -s -- --status</code>
-                        <button class="copy-btn" onclick="copyCode(this)" aria-label="Copy to clipboard">Copy</button>
+                        <button class="copy-btn" onclick="copyCode(this)" aria-label="Copy to clipboard" title="Copy to clipboard">
+                            <svg class="copy-icon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
+                            <svg class="check-icon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#34d399" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                        </button>
                     </div>
                 </div>
 
@@ -557,7 +575,10 @@
                     <p class="section-desc">Cleanly remove packages via your native package manager (<code>dnf</code> or <code>apt</code>), purge repository definitions, remove GPG keyrings, and delete the Nautilus extension while safely preserving your personal project workspaces in <code>~/.config</code> and <code>$HOME</code>:</p>
                     <div class="code-block">
                         <code>curl -fsSL https://x3m-industries.github.io/antigravity-packages/install.sh | bash -s -- --uninstall</code>
-                        <button class="copy-btn" onclick="copyCode(this)" aria-label="Copy to clipboard">Copy</button>
+                        <button class="copy-btn" onclick="copyCode(this)" aria-label="Copy to clipboard" title="Copy to clipboard">
+                            <svg class="copy-icon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
+                            <svg class="check-icon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#34d399" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                        </button>
                     </div>
                 </div>
             </section>
@@ -572,17 +593,26 @@
                     <p class="section-desc">1. Add the RPM repository file to <code>/etc/yum.repos.d/</code>:</p>
                     <div class="code-block">
                         <code>sudo curl -fsSL https://x3m-industries.github.io/antigravity-packages/rpm/antigravity.repo -o /etc/yum.repos.d/antigravity.repo</code>
-                        <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                        <button class="copy-btn" onclick="copyCode(this)" aria-label="Copy to clipboard" title="Copy to clipboard">
+                            <svg class="copy-icon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
+                            <svg class="check-icon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#34d399" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                        </button>
                     </div>
                     <p class="section-desc">2. Install the applications:</p>
                     <div class="code-block">
                         <code>sudo dnf install antigravity-ide antigravity</code>
-                        <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                        <button class="copy-btn" onclick="copyCode(this)" aria-label="Copy to clipboard" title="Copy to clipboard">
+                            <svg class="copy-icon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
+                            <svg class="check-icon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#34d399" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                        </button>
                     </div>
                     <p class="section-desc">3. Receive automatic updates during your normal system upgrades:</p>
                     <div class="code-block">
                         <code>sudo dnf update antigravity-ide antigravity</code>
-                        <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                        <button class="copy-btn" onclick="copyCode(this)" aria-label="Copy to clipboard" title="Copy to clipboard">
+                            <svg class="copy-icon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
+                            <svg class="check-icon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#34d399" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                        </button>
                     </div>
                 </div>
 
@@ -591,17 +621,26 @@
                     <p class="section-desc">1. Add the binary GPG keyring and modern DEB822 repository definition:</p>
                     <div class="code-block">
                         <code>sudo mkdir -p /etc/apt/keyrings &amp;&amp; sudo curl -fsSL https://x3m-industries.github.io/antigravity-packages/deb/antigravity.gpg -o /etc/apt/keyrings/antigravity.gpg &amp;&amp; sudo curl -fsSL https://x3m-industries.github.io/antigravity-packages/deb/antigravity.sources -o /etc/apt/sources.list.d/antigravity.sources</code>
-                        <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                        <button class="copy-btn" onclick="copyCode(this)" aria-label="Copy to clipboard" title="Copy to clipboard">
+                            <svg class="copy-icon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
+                            <svg class="check-icon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#34d399" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                        </button>
                     </div>
                     <p class="section-desc">2. Update index and install packages:</p>
                     <div class="code-block">
                         <code>sudo apt update &amp;&amp; sudo apt install antigravity-ide antigravity</code>
-                        <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                        <button class="copy-btn" onclick="copyCode(this)" aria-label="Copy to clipboard" title="Copy to clipboard">
+                            <svg class="copy-icon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
+                            <svg class="check-icon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#34d399" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                        </button>
                     </div>
                     <p class="section-desc">3. Upgrade anytime with:</p>
                     <div class="code-block">
                         <code>sudo apt update &amp;&amp; sudo apt install --only-upgrade antigravity-ide antigravity</code>
-                        <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                        <button class="copy-btn" onclick="copyCode(this)" aria-label="Copy to clipboard" title="Copy to clipboard">
+                            <svg class="copy-icon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
+                            <svg class="check-icon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#34d399" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                        </button>
                     </div>
                 </div>
 
@@ -610,12 +649,18 @@
                     <p class="section-desc">1. Add repository and import the ASCII-armored GPG key:</p>
                     <div class="code-block">
                         <code>sudo zypper addrepo -f https://x3m-industries.github.io/antigravity-packages/rpm/ antigravity &amp;&amp; sudo rpm --import https://x3m-industries.github.io/antigravity-packages/rpm/RPM-GPG-KEY-antigravity</code>
-                        <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                        <button class="copy-btn" onclick="copyCode(this)" aria-label="Copy to clipboard" title="Copy to clipboard">
+                            <svg class="copy-icon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
+                            <svg class="check-icon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#34d399" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                        </button>
                     </div>
                     <p class="section-desc">2. Install packages:</p>
                     <div class="code-block">
                         <code>sudo zypper install antigravity-ide antigravity</code>
-                        <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                        <button class="copy-btn" onclick="copyCode(this)" aria-label="Copy to clipboard" title="Copy to clipboard">
+                            <svg class="copy-icon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
+                            <svg class="check-icon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#34d399" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                        </button>
                     </div>
                 </div>
             </section>
@@ -636,7 +681,10 @@
                     <p class="section-desc">If the context menu does not appear immediately after installation, restart Nautilus:</p>
                     <div class="code-block">
                         <code>nautilus -q</code>
-                        <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                        <button class="copy-btn" onclick="copyCode(this)" aria-label="Copy to clipboard" title="Copy to clipboard">
+                            <svg class="copy-icon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
+                            <svg class="check-icon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#34d399" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                        </button>
                     </div>
                 </div>
 
@@ -665,7 +713,10 @@
                     <h3 class="card-subtitle">Converting DEB to Arch Package via debtap</h3>
                     <div class="code-block">
                         <code>curl -fsSLO https://github.com/x3m-industries/antigravity-packages/releases/latest/download/antigravity-ide_latest_amd64.deb &amp;&amp; debtap -u &amp;&amp; debtap antigravity-ide_latest_amd64.deb &amp;&amp; sudo pacman -U antigravity-ide-*.pkg.tar.zst</code>
-                        <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                        <button class="copy-btn" onclick="copyCode(this)" aria-label="Copy to clipboard" title="Copy to clipboard">
+                            <svg class="copy-icon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
+                            <svg class="check-icon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#34d399" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                        </button>
                     </div>
                 </div>
             </section>
@@ -687,7 +738,10 @@
                     <p class="section-desc">To verify an installed RPM package signature on Fedora / RHEL:</p>
                     <div class="code-block">
                         <code>rpm -qpi /path/to/antigravity*.rpm | grep -E "Signature|Signer"</code>
-                        <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                        <button class="copy-btn" onclick="copyCode(this)" aria-label="Copy to clipboard" title="Copy to clipboard">
+                            <svg class="copy-icon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
+                            <svg class="check-icon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#34d399" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                        </button>
                     </div>
                 </div>
             </section>
@@ -770,12 +824,13 @@
             if (!code) return;
 
             navigator.clipboard.writeText(code).then(() => {
-                const orig = btn.innerText;
-                btn.innerText = 'Copied!';
                 btn.classList.add('copied');
+                btn.setAttribute('title', 'Copied to clipboard!');
+                btn.setAttribute('aria-label', 'Copied to clipboard!');
                 setTimeout(() => {
-                    btn.innerText = orig;
                     btn.classList.remove('copied');
+                    btn.setAttribute('title', 'Copy to clipboard');
+                    btn.setAttribute('aria-label', 'Copy to clipboard');
                 }, 2000);
             }).catch(err => console.error('Copy failed: ', err));
         }
