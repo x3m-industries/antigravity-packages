@@ -265,6 +265,12 @@ class TestPackagingLogic(unittest.TestCase):
         self.assertIn("--uninstall", html)
         self.assertIn("--print-downloads", html)
         self.assertIn("GNOME Files (Nautilus)", html)
+        self.assertIn("terminal-sim-drawer", html)
+        self.assertIn("sim-toggle-btn", html)
+        self.assertIn("toggleSimDrawer", html)
+        self.assertIn("replaySimulation", html)
+        self.assertIn("SIM_SCENARIOS", html)
+        self.assertIn("prefers-reduced-motion", html)
 
     def test_docs_template(self):
         docs_file = repo_root / "templates" / "docs.html"

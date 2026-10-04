@@ -349,18 +349,25 @@
 
         /* Segmented Distro Tabs directly on Terminal Header */
         .terminal-header {
-            background: rgba(15, 23, 42, 0.85);
+            background: #0f172a;
             border-bottom: 1px solid rgba(255, 255, 255, 0.08);
-            padding: 10px 16px;
+            padding: 8px 14px 8px 16px;
             display: flex;
             align-items: center;
             justify-content: space-between;
-            flex-wrap: wrap;
             gap: 12px;
+        }
+        .terminal-header-left {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            flex: 1;
+            min-width: 0;
         }
         .terminal-dots {
             display: flex;
             gap: 7px;
+            flex-shrink: 0;
         }
         .dot {
             width: 11px;
@@ -373,22 +380,30 @@
 
         .terminal-tabs {
             display: flex;
-            gap: 6px;
-            flex-wrap: wrap;
+            gap: 5px;
+            align-items: center;
+            overflow-x: auto;
+            scrollbar-width: none;
+            -webkit-overflow-scrolling: touch;
+        }
+        .terminal-tabs::-webkit-scrollbar {
+            display: none;
         }
         .tab-btn {
             background: transparent;
             border: 1px solid transparent;
             color: var(--text-muted);
-            padding: 6px 12px;
-            border-radius: 8px;
-            font-size: 0.82rem;
+            padding: 5px 10px;
+            border-radius: 7px;
+            font-size: 0.8rem;
             font-weight: 600;
+            white-space: nowrap;
             cursor: pointer;
             transition: all 0.15s ease;
             display: inline-flex;
             align-items: center;
-            gap: 6px;
+            gap: 5px;
+            flex-shrink: 0;
         }
         .tab-btn:hover {
             color: var(--text-main);
@@ -400,17 +415,58 @@
             border-color: rgba(99, 102, 241, 0.45);
         }
 
+        .terminal-copy {
+            width: 32px;
+            height: 32px;
+            padding: 0;
+            border-radius: 8px;
+            background: rgba(255, 255, 255, 0.06);
+            border: 1px solid rgba(255, 255, 255, 0.14);
+            color: #94a3b8;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+            flex-shrink: 0;
+            box-shadow: 0 1px 4px rgba(0, 0, 0, 0.2);
+        }
+        .terminal-copy:hover {
+            background: rgba(99, 102, 241, 0.25);
+            border-color: rgba(99, 102, 241, 0.5);
+            color: #fff;
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(79, 70, 229, 0.35);
+        }
+        .terminal-copy.copied {
+            background: rgba(16, 185, 129, 0.22);
+            border-color: rgba(16, 185, 129, 0.55);
+            color: #34d399;
+            box-shadow: 0 0 12px rgba(16, 185, 129, 0.35);
+        }
+        .terminal-copy svg {
+            flex-shrink: 0;
+        }
+        .check-icon {
+            display: none;
+        }
+        .terminal-copy.copied .check-icon {
+            display: inline-block;
+        }
+        .terminal-copy.copied .copy-icon {
+            display: none;
+        }
+
         /* Terminal Body */
         .terminal-body {
-            position: relative;
-            padding: 22px 64px 22px 24px;
+            padding: 22px 24px;
             display: flex;
             align-items: center;
         }
         .terminal-prompt {
             display: flex;
             align-items: baseline;
-            gap: 12px;
+            gap: 14px;
             width: 100%;
             min-width: 0;
         }
@@ -427,53 +483,10 @@
             font-size: clamp(0.85rem, 1.8vw, 1.02rem);
             color: #f1f5f9;
             white-space: pre-wrap;
-            word-break: break-all;
-            line-height: 1.5;
+            word-break: normal;
+            overflow-wrap: break-word;
+            line-height: 1.6;
             flex: 1;
-        }
-        .terminal-copy {
-            position: absolute;
-            top: 14px;
-            right: 14px;
-            width: 38px;
-            height: 38px;
-            padding: 0;
-            border-radius: 9px;
-            background: rgba(255, 255, 255, 0.08);
-            border: 1px solid rgba(255, 255, 255, 0.16);
-            color: #cbd5e1;
-            cursor: pointer;
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
-            flex-shrink: 0;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
-        }
-        .terminal-copy:hover {
-            background: rgba(99, 102, 241, 0.25);
-            border-color: rgba(99, 102, 241, 0.5);
-            color: #fff;
-            transform: translateY(-1px);
-            box-shadow: 0 4px 14px rgba(79, 70, 229, 0.4);
-        }
-        .terminal-copy.copied {
-            background: rgba(16, 185, 129, 0.22);
-            border-color: rgba(16, 185, 129, 0.55);
-            color: #34d399;
-            box-shadow: 0 0 16px rgba(16, 185, 129, 0.35);
-        }
-        .terminal-copy svg {
-            flex-shrink: 0;
-        }
-        .check-icon {
-            display: none;
-        }
-        .terminal-copy.copied .check-icon {
-            display: inline-block;
-        }
-        .terminal-copy.copied .copy-icon {
-            display: none;
         }
 
         /* Terminal Footer / Info */
@@ -489,6 +502,11 @@
             flex-wrap: wrap;
             gap: 10px;
         }
+        .terminal-footer-actions {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+        }
         .detected-tag {
             display: inline-flex;
             align-items: center;
@@ -502,6 +520,167 @@
             border-radius: 50%;
             background: #38bdf8;
             box-shadow: 0 0 6px #38bdf8;
+        }
+
+        /* Terminal Simulation Drawer */
+        .sim-toggle-btn {
+            background: rgba(99, 102, 241, 0.15);
+            border: 1px solid rgba(99, 102, 241, 0.38);
+            color: #a5b4fc;
+            padding: 4px 12px;
+            border-radius: 8px;
+            font-size: 0.78rem;
+            font-weight: 600;
+            font-family: inherit;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        .sim-toggle-btn:hover {
+            background: rgba(99, 102, 241, 0.28);
+            border-color: rgba(99, 102, 241, 0.6);
+            color: #fff;
+            transform: translateY(-1px);
+        }
+        .sim-toggle-btn.active {
+            background: rgba(16, 185, 129, 0.2);
+            border-color: rgba(16, 185, 129, 0.55);
+            color: #34d399;
+        }
+        .terminal-sim-drawer {
+            border-top: 1px solid rgba(255, 255, 255, 0.08);
+            background: #030712;
+            display: none;
+            animation: drawerSlide 0.22s ease-out;
+        }
+        @keyframes drawerSlide {
+            from { opacity: 0; transform: translateY(-4px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .sim-bar {
+            background: #0b1324;
+            padding: 8px 16px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            font-size: 0.76rem;
+            font-family: 'JetBrains Mono', monospace;
+            color: #94a3b8;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+        .sim-title {
+            color: #cbd5e1;
+            font-weight: 500;
+        }
+        .sim-controls {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .sim-btn {
+            background: rgba(255, 255, 255, 0.06);
+            border: 1px solid rgba(255, 255, 255, 0.12);
+            color: #cbd5e1;
+            padding: 3px 8px;
+            border-radius: 5px;
+            font-size: 0.72rem;
+            font-family: inherit;
+            cursor: pointer;
+            transition: all 0.15s ease;
+        }
+        .sim-btn:hover {
+            background: rgba(255, 255, 255, 0.14);
+            color: #fff;
+        }
+        .sim-speed-select {
+            background: #020617;
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            color: #cbd5e1;
+            font-size: 0.72rem;
+            font-family: inherit;
+            padding: 2px 6px;
+            border-radius: 5px;
+            outline: none;
+            cursor: pointer;
+        }
+        .sim-output {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: clamp(0.75rem, 1.4vw, 0.82rem);
+            background: #030712;
+            padding: 14px 18px;
+            max-height: 290px;
+            overflow-y: auto;
+            color: #e2e8f0;
+            line-height: 1.45;
+            user-select: text;
+        }
+        .sim-output::-webkit-scrollbar {
+            width: 6px;
+        }
+        .sim-output::-webkit-scrollbar-thumb {
+            background: rgba(255, 255, 255, 0.18);
+            border-radius: 4px;
+        }
+        .sim-output::-webkit-scrollbar-track {
+            background: rgba(0, 0, 0, 0.2);
+        }
+        .sim-status-bar {
+            background: #080d1a;
+            border-top: 1px solid rgba(255, 255, 255, 0.05);
+            padding: 6px 16px;
+            font-size: 0.72rem;
+            font-family: 'JetBrains Mono', monospace;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            color: #64748b;
+            flex-wrap: wrap;
+            gap: 6px;
+        }
+        .sim-pulse-dot {
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background: #34d399;
+            box-shadow: 0 0 6px #34d399;
+            display: inline-block;
+            margin-right: 6px;
+            animation: simPulse 1.5s infinite;
+        }
+        @keyframes simPulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.35; }
+        }
+        .sim-line {
+            white-space: pre-wrap;
+            word-break: break-all;
+            margin-bottom: 2px;
+        }
+        .sim-line-input { color: #fff; font-weight: 600; }
+        .sim-line-prompt-sym { color: #38bdf8; font-weight: 700; }
+        .sim-line-banner { color: #38bdf8; font-size: 0.72rem; line-height: 1.25; }
+        .sim-line-info { color: #60a5fa; font-weight: 600; }
+        .sim-line-success { color: #34d399; }
+        .sim-line-choice { color: #fbbf24; font-weight: 700; text-decoration: underline; }
+        .sim-line-dim { color: #64748b; }
+        .sim-line-cyan { color: #38bdf8; }
+        .sim-line-progress { color: #a5b4fc; }
+        .sim-success-card {
+            margin-top: 8px;
+            padding: 10px 14px;
+            background: rgba(16, 185, 129, 0.12);
+            border: 1px solid rgba(16, 185, 129, 0.35);
+            border-radius: 8px;
+            color: #6ee7b7;
+            font-weight: 600;
+        }
+        @media (prefers-reduced-motion: reduce) {
+            .sim-pulse-dot { animation: none; }
+            .terminal-sim-drawer { animation: none; }
         }
 
         /* Bento Feature Grid (4 Visual Cards) */
@@ -704,8 +883,25 @@
         @media (max-width: 768px) {
             .bento-grid { grid-template-columns: 1fr; }
             .nav-links { display: none; }
-            .terminal-body { padding: 18px 52px 18px 16px; }
-            .terminal-copy { top: 12px; right: 12px; width: 36px; height: 36px; }
+            .terminal-header {
+                padding: 8px 12px;
+                gap: 8px;
+            }
+            .terminal-header-left {
+                gap: 8px;
+            }
+            .terminal-tabs {
+                flex-wrap: nowrap;
+                overflow-x: auto;
+                -webkit-overflow-scrolling: touch;
+                scrollbar-width: none;
+            }
+            .terminal-tabs::-webkit-scrollbar {
+                display: none;
+            }
+            .terminal-body {
+                padding: 16px 14px;
+            }
             .docs-cta-card { flex-direction: column; align-items: stretch; text-align: left; }
             .docs-cta-btn { width: 100%; justify-content: center; }
         }
@@ -778,19 +974,25 @@
             <!-- Unified Hero Terminal (The Crown Jewel) -->
             <section class="terminal-card" id="quickstart" aria-label="Terminal Installation Command">
                 <div class="terminal-header">
-                    <div class="terminal-dots">
-                        <span class="dot dot-red"></span>
-                        <span class="dot dot-yellow"></span>
-                        <span class="dot dot-green"></span>
+                    <div class="terminal-header-left">
+                        <div class="terminal-dots">
+                            <span class="dot dot-red"></span>
+                            <span class="dot dot-yellow"></span>
+                            <span class="dot dot-green"></span>
+                        </div>
+                        <!-- Segmented Distro Switcher -->
+                        <div class="terminal-tabs" role="tablist">
+                            <button class="tab-btn active" data-tab="universal" onclick="switchTab('universal', this)" role="tab" aria-selected="true">⚡ 1-Click Universal</button>
+                            <button class="tab-btn" data-tab="rpm" onclick="switchTab('rpm', this)" role="tab" aria-selected="false">Fedora / RHEL (DNF)</button>
+                            <button class="tab-btn" data-tab="deb" onclick="switchTab('deb', this)" role="tab" aria-selected="false">Ubuntu / Debian (APT)</button>
+                            <button class="tab-btn" data-tab="suse" onclick="switchTab('suse', this)" role="tab" aria-selected="false">openSUSE (Zypper)</button>
+                            <button class="tab-btn" data-tab="cli" onclick="switchTab('cli', this)" role="tab" aria-selected="false">Antigravity CLI ('agy')</button>
+                        </div>
                     </div>
-                    <!-- Segmented Distro Switcher -->
-                    <div class="terminal-tabs" role="tablist">
-                        <button class="tab-btn active" data-tab="universal" onclick="switchTab('universal', this)" role="tab" aria-selected="true">⚡ 1-Click Universal</button>
-                        <button class="tab-btn" data-tab="rpm" onclick="switchTab('rpm', this)" role="tab" aria-selected="false">Fedora / RHEL (DNF)</button>
-                        <button class="tab-btn" data-tab="deb" onclick="switchTab('deb', this)" role="tab" aria-selected="false">Ubuntu / Debian (APT)</button>
-                        <button class="tab-btn" data-tab="suse" onclick="switchTab('suse', this)" role="tab" aria-selected="false">openSUSE (Zypper)</button>
-                        <button class="tab-btn" data-tab="cli" onclick="switchTab('cli', this)" role="tab" aria-selected="false">Antigravity CLI ('agy')</button>
-                    </div>
+                    <button class="terminal-copy" onclick="copyCode(this)" aria-label="Copy installation command" title="Copy installation command">
+                        <svg class="copy-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
+                        <svg class="check-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#34d399" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                    </button>
                 </div>
 
                 <div class="terminal-body">
@@ -798,18 +1000,53 @@
                         <span class="prompt-symbol">$</span>
                         <code class="terminal-code" id="terminal-command">curl -fsSL https://x3m-industries.github.io/antigravity-packages/install.sh | bash</code>
                     </div>
-                    <button class="terminal-copy" onclick="copyCode(this)" aria-label="Copy installation command" title="Copy installation command">
-                        <svg class="copy-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
-                        <svg class="check-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#34d399" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
-                    </button>
                 </div>
 
                 <div class="terminal-footer">
                     <span id="tab-desc">Smart universal installer with interactive menu, auto-detection &amp; desktop integration.</span>
-                    <span id="detected-pill" class="detected-tag" style="display:none;">
-                        <span class="detected-dot"></span>
-                        <span id="detected-name">Detected OS</span>
-                    </span>
+                    <div class="terminal-footer-actions">
+                        <span id="detected-pill" class="detected-tag" style="display:none;">
+                            <span class="detected-dot"></span>
+                            <span id="detected-name">Detected OS</span>
+                        </span>
+                        <button id="sim-toggle-btn" class="sim-toggle-btn" onclick="toggleSimDrawer()" aria-expanded="false" aria-controls="terminal-sim-drawer" title="Toggle interactive terminal playback">
+                            <span id="sim-play-icon" class="sim-play-icon">▶</span>
+                            <span id="sim-toggle-text">Preview Shell Run</span>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Interactive Terminal Simulation Drawer -->
+                <div id="terminal-sim-drawer" class="terminal-sim-drawer" role="region" aria-label="Terminal Installation Output Simulation">
+                    <div class="sim-bar">
+                        <div class="sim-title">
+                            <span id="sim-terminal-title">bash — user@fedora:~ (x86_64)</span>
+                        </div>
+                        <div class="sim-controls">
+                            <button id="sim-ctrl-play" class="sim-btn" onclick="toggleSimPlayPause()" title="Pause or resume simulation">❚❚ Pause</button>
+                            <button class="sim-btn" onclick="replaySimulation()" title="Replay simulation from start">↺ Replay</button>
+                            <button class="sim-btn" onclick="finishSimulationInstant()" title="Instant fast-forward to completion">⏭ Instant</button>
+                            <select id="sim-speed-select" class="sim-speed-select" onchange="changeSimSpeed(this.value)" title="Playback speed">
+                                <option value="1">1x</option>
+                                <option value="2" selected>2x</option>
+                                <option value="4">4x</option>
+                            </select>
+                            <button id="sim-copy-btn" class="sim-btn" onclick="copySimLog(this)" title="Copy terminal log">📋 Copy Log</button>
+                        </div>
+                    </div>
+                    <div id="sim-output" class="sim-output" tabindex="0" aria-live="polite">
+                        <!-- Populated dynamically by script -->
+                    </div>
+                    <div class="sim-status-bar">
+                        <div style="display:flex; align-items:center;">
+                            <span id="sim-status-indicator" class="sim-pulse-dot"></span>
+                            <span id="sim-status-text">Simulating execution...</span>
+                        </div>
+                        <div style="display:flex; align-items:center; gap:12px;">
+                            <span id="sim-step-counter">Step 1/14</span>
+                            <button class="sim-btn" onclick="toggleSimDrawer()" style="padding:1px 6px; font-size:0.7rem;" title="Close preview">Collapse ▴</button>
+                        </div>
+                    </div>
                 </div>
             </section>
 
@@ -1015,6 +1252,10 @@
                     });
                 }
             }
+
+            if (typeof simState !== 'undefined' && simState.isOpen) {
+                setSimScenario(tabId);
+            }
         }
 
         function copyCode(btn) {
@@ -1098,6 +1339,310 @@
                     pill.style.display = 'inline-flex';
                 }
             }
+        }
+
+        /* --- Terminal Installation Output Simulation Engine --- */
+        const SIM_BANNER = 
+`    ___    _   ___________ ________  ___ _    _____________  __
+   /   |  / | / /_  __/  _/ ____/ __ \\/   | |  / /  _/_  __/\x5c \\/ /
+  / /| | /  |/ / / /  / // / __/ /_/ / /| | | / // /  / /    \x5c  / 
+ / ___ |/ /|  / / / _/ // /_/ / _, _/ ___ | |/ // /  / /     / /  
+/_/  |_/_/ |_/ /_/ /___/\x5c____/_/ |_/_/  |_|___/___/ /_/     /_/   
+Google Antigravity Linux Universal Installer & Package Manager
+Repository: https://x3m-industries.github.io/antigravity-packages/`;
+
+        const SIM_SCENARIOS = {
+            universal: {
+                title: "bash — user@fedora:~ (Universal Installer)",
+                lines: [
+                    { type: "input", text: "curl -fsSL https://x3m-industries.github.io/antigravity-packages/install.sh | bash", delay: 200 },
+                    { type: "banner", text: SIM_BANNER, delay: 120 },
+                    { type: "text", text: "\nSelect components to install / update:\n  [1] Antigravity IDE        AI-first standalone code editor (RPM/DEB)     [Not installed]\n  [2] Antigravity Hub        Antigravity 2.0 desktop agent hub (RPM/DEB)   [Not installed]\n  [3] Antigravity CLI (agy)  Terminal agent with auto-updating             [Not installed]\n", delay: 60 },
+                    { type: "prompt", text: "Enter selection [Default: 1, 2, 3 (All)] or press ENTER: ", delay: 250 },
+                    { type: "choice", text: "1, 2, 3\n", delay: 150 },
+                    { type: "info", text: "==> Installation plan:\n  • Antigravity IDE (Native package & desktop launcher)\n  • Antigravity Hub (Antigravity 2.0 agent platform)\n  • Antigravity CLI ('agy') (Terminal agent with auto-updater)\n  • GNOME Nautilus Integration ('Open in Antigravity IDE' context menu)\n", delay: 80 },
+                    { type: "info", text: "==> Requesting sudo privileges to configure package repositories...", delay: 80 },
+                    { type: "info", text: "==> Configuring DNF/YUM repository...", delay: 100 },
+                    { type: "success", text: "✓ Added /etc/yum.repos.d/antigravity.repo", delay: 80 },
+                    { type: "info", text: "==> Installing antigravity-ide antigravity...", delay: 120 },
+                    { type: "progress", text: "Downloading Packages:\n(1/2): antigravity-2.19.1.x86_64.rpm           38.2 MB/s | 114.2 MB  00:03\n(2/2): antigravity-ide-2.5.5.x86_64.rpm       42.1 MB/s | 128.7 MB  00:03\nTotal                                         40.1 MB/s | 242.9 MB  00:06", delay: 350 },
+                    { type: "dim", text: "Running transaction check...\nRunning transaction...\n  Installing : antigravity-2.19.1.x86_64                                1/2\n  Installing : antigravity-ide-2.5.5.x86_64                            2/2\nInstalled:\n  antigravity.x86_64 2.19.1-6046815158665216\n  antigravity-ide.x86_64 2.5.5-4923483625488384\nComplete!", delay: 200 },
+                    { type: "success", text: "✓ Created short CLI shortcut 'agy-ide' -> /usr/bin/antigravity-ide", delay: 50 },
+                    { type: "success", text: "✓ Created short CLI shortcut 'agy-hub' -> /usr/bin/antigravity", delay: 50 },
+                    { type: "info", text: "==> Configuring GNOME Files / Nautilus right-click context menu...", delay: 80 },
+                    { type: "success", text: "✓ Installed Nautilus extension: /usr/share/nautilus-python/extensions/open-in-antigravity-ide.py", delay: 70 },
+                    { type: "info", text: "==> Installing Antigravity CLI ('agy') via official Google installer...", delay: 120 },
+                    { type: "success", text: "✓ Antigravity CLI installed successfully into ~/.local/bin/agy\n", delay: 70 },
+                    { type: "success-card", text: "✓ Installation completed successfully!\n\nQuick Start:\n  • Launch IDE:   agy-ide ./my-project (or antigravity-ide)\n  • Launch Hub:   agy-hub (or antigravity)\n  • Launch CLI:   agy", delay: 50 }
+                ]
+            },
+            rpm: {
+                title: "bash — user@fedora:~ (Fedora DNF Repository)",
+                lines: [
+                    { type: "input", text: "sudo curl -fsSL https://x3m-industries.github.io/antigravity-packages/rpm/antigravity.repo -o /etc/yum.repos.d/antigravity.repo", delay: 180 },
+                    { type: "success", text: "✓ Created /etc/yum.repos.d/antigravity.repo", delay: 100 },
+                    { type: "input", text: "sudo dnf install antigravity-ide antigravity", delay: 200 },
+                    { type: "dim", text: "Updating and loading repositories:\nantigravity                                     100% | 4.8 kB     00:00\nRepositories loaded.\n\nPackage                  Arch      Version                   Repository      Size\nInstalling:\n antigravity             x86_64    2.19.1-6046815158665216   antigravity  114.2 MiB\n antigravity-ide         x86_64    2.5.5-4923483625488384    antigravity  128.7 MiB\n\nTransaction Summary:\n Installing: 2 Packages\nTotal download size: 242.9 MiB\nInstalled size: 684.1 MiB", delay: 220 },
+                    { type: "progress", text: "Downloading Packages:\n(1/2): antigravity-2.19.1.x86_64.rpm           38.2 MB/s | 114.2 MB  00:03\n(2/2): antigravity-ide-2.5.5.x86_64.rpm       42.1 MB/s | 128.7 MB  00:03", delay: 350 },
+                    { type: "dim", text: "Running transaction check\nTransaction check succeeded.\nRunning transaction\n  Installing : antigravity-2.19.1.x86_64                                1/2\n  Installing : antigravity-ide-2.5.5.x86_64                            2/2\n  Verifying  : antigravity-2.19.1.x86_64                                1/2\n  Verifying  : antigravity-ide-2.5.5.x86_64                            2/2\n\nComplete!", delay: 200 },
+                    { type: "success-card", text: "✓ Packages installed & registered in RPM database.\nUpdates will arrive automatically via 'sudo dnf upgrade'.", delay: 50 }
+                ]
+            },
+            deb: {
+                title: "bash — user@ubuntu:~ (Ubuntu DEB822 Repository)",
+                lines: [
+                    { type: "input", text: "sudo mkdir -p /etc/apt/keyrings && sudo curl -fsSL https://x3m-industries.github.io/antigravity-packages/deb/antigravity.gpg -o /etc/apt/keyrings/antigravity.gpg", delay: 180 },
+                    { type: "input", text: "sudo curl -fsSL https://x3m-industries.github.io/antigravity-packages/deb/antigravity.sources -o /etc/apt/sources.list.d/antigravity.sources", delay: 180 },
+                    { type: "input", text: "sudo apt update && sudo apt install -y antigravity-ide antigravity", delay: 200 },
+                    { type: "dim", text: "Get:1 https://x3m-industries.github.io/antigravity-packages/deb stable InRelease [3,842 B]\nGet:2 https://x3m-industries.github.io/antigravity-packages/deb stable/main amd64 Packages [1,248 B]\nReading package lists... Done\nBuilding dependency tree... Done\nThe following NEW packages will be installed:\n  antigravity antigravity-ide\nNeed to get 242 MB of archives.", delay: 250 },
+                    { type: "progress", text: "Get:1 https://github.com/x3m-industries/... antigravity 2.19.1 [114 MB]\nGet:2 https://github.com/x3m-industries/... antigravity-ide 2.5.5 [128 MB]\nFetched 242 MB in 4s (58.4 MB/s)", delay: 350 },
+                    { type: "dim", text: "Selecting previously unselected package antigravity.\nUnpacking antigravity (2.19.1-6046815158665216) ...\nSelecting previously unselected package antigravity-ide.\nUnpacking antigravity-ide (2.5.5-4923483625488384) ...\nSetting up antigravity (2.19.1-6046815158665216) ...\nSetting up antigravity-ide (2.5.5-4923483625488384) ...\nProcessing triggers for desktop-file-utils (0.27) ...\nProcessing triggers for hicolor-icon-theme (0.17) ...", delay: 200 },
+                    { type: "success-card", text: "✓ Packages installed & registered in APT database.\nUpdates will arrive automatically via 'sudo apt update && sudo apt upgrade'.", delay: 50 }
+                ]
+            },
+            suse: {
+                title: "bash — user@opensuse:~ (openSUSE Zypper)",
+                lines: [
+                    { type: "input", text: "sudo zypper addrepo -f https://x3m-industries.github.io/antigravity-packages/rpm/ antigravity", delay: 180 },
+                    { type: "input", text: "sudo rpm --import https://x3m-industries.github.io/antigravity-packages/rpm/RPM-GPG-KEY-antigravity", delay: 150 },
+                    { type: "input", text: "sudo zypper install antigravity-ide antigravity", delay: 200 },
+                    { type: "dim", text: "Retrieving repository 'antigravity' metadata .........................[done]\nBuilding repository 'antigravity' cache ..............................[done]\nLoading repository data...\nReading installed packages...\nResolving package dependencies...\n\nThe following 2 NEW packages are going to be installed:\n  antigravity antigravity-ide\n\nOverall download size: 242.9 MiB. Already cached: 0 B. After the operation, additional 684.1 MiB will be used.", delay: 250 },
+                    { type: "progress", text: "Retrieving package antigravity-2.19.1 (1/2), 114.2 MiB (345.1 MiB unpacked)\nRetrieving package antigravity-ide-2.5.5 (2/2), 128.7 MiB (339.0 MiB unpacked)", delay: 350 },
+                    { type: "dim", text: "Checking for file conflicts: .........................................[done]\n(1/2) Installing: antigravity-2.19.1-6046815158665216 ................[done]\n(2/2) Installing: antigravity-ide-2.5.5-4923483625488384 ............[done]", delay: 200 },
+                    { type: "success-card", text: "✓ Successfully configured in Zypper. Launch via 'antigravity-ide' or application menu.", delay: 50 }
+                ]
+            },
+            cli: {
+                title: "bash — user@workstation:~ (Antigravity CLI)",
+                lines: [
+                    { type: "input", text: "curl -fsSL https://x3m-industries.github.io/antigravity-packages/install.sh | bash -s -- --cli-only", delay: 200 },
+                    { type: "banner", text: SIM_BANNER, delay: 120 },
+                    { type: "info", text: "==> Installation plan:\n  • Antigravity CLI ('agy') (Terminal agent with auto-updater)\n", delay: 80 },
+                    { type: "info", text: "==> Checking Antigravity CLI ('agy')...", delay: 100 },
+                    { type: "info", text: "==> Installing Antigravity CLI ('agy') via official Google installer into ~/.local/bin/agy...", delay: 120 },
+                    { type: "dim", text: "Downloading https://storage.googleapis.com/antigravity-public/agy/latest/agy-linux-x64.tar.gz...\nExtracted agy -> /home/user/.local/bin/agy\nAuto-update timer registered (checks upstream every 15 min)", delay: 220 },
+                    { type: "success", text: "✓ Antigravity CLI installed successfully (no root/sudo required)", delay: 70 },
+                    { type: "success-card", text: "✓ Ready! Run 'agy' in any directory to start your terminal AI coding session.", delay: 50 }
+                ]
+            }
+        };
+
+        const simState = {
+            isOpen: false,
+            currentTab: 'universal',
+            stepIndex: 0,
+            isPaused: false,
+            speed: 2,
+            timer: null,
+            fullLog: ''
+        };
+
+        function toggleSimDrawer() {
+            simState.isOpen = !simState.isOpen;
+            const drawer = document.getElementById('terminal-sim-drawer');
+            const toggleBtn = document.getElementById('sim-toggle-btn');
+            const playIcon = document.getElementById('sim-play-icon');
+            const toggleText = document.getElementById('sim-toggle-text');
+
+            if (simState.isOpen) {
+                drawer.style.display = 'block';
+                toggleBtn.classList.add('active');
+                toggleBtn.setAttribute('aria-expanded', 'true');
+                if (playIcon) playIcon.textContent = '▼';
+                if (toggleText) toggleText.textContent = 'Hide Shell Run';
+
+                const activeTab = document.querySelector('.tab-btn.active');
+                const tabId = activeTab ? activeTab.getAttribute('data-tab') : 'universal';
+                setSimScenario(tabId);
+
+                if (typeof gtag === 'function') {
+                    gtag('event', 'open_terminal_simulation', {
+                        event_category: 'engagement',
+                        distro: tabId,
+                        event_label: tabId
+                    });
+                }
+            } else {
+                drawer.style.display = 'none';
+                toggleBtn.classList.remove('active');
+                toggleBtn.setAttribute('aria-expanded', 'false');
+                if (playIcon) playIcon.textContent = '▶';
+                if (toggleText) toggleText.textContent = 'Preview Shell Run';
+                if (simState.timer) clearTimeout(simState.timer);
+            }
+        }
+
+        function setSimScenario(tabId) {
+            simState.currentTab = tabId;
+            const scenario = SIM_SCENARIOS[tabId] || SIM_SCENARIOS.universal;
+            const titleEl = document.getElementById('sim-terminal-title');
+            if (titleEl) titleEl.textContent = scenario.title;
+            replaySimulation();
+        }
+
+        function toggleSimPlayPause() {
+            simState.isPaused = !simState.isPaused;
+            const btn = document.getElementById('sim-ctrl-play');
+            const statusIndicator = document.getElementById('sim-status-indicator');
+            const statusText = document.getElementById('sim-status-text');
+
+            if (simState.isPaused) {
+                btn.textContent = '▶ Resume';
+                if (statusIndicator) {
+                    statusIndicator.style.animation = 'none';
+                    statusIndicator.style.background = '#fbbf24';
+                    statusIndicator.style.boxShadow = '0 0 6px #fbbf24';
+                }
+                if (statusText) statusText.textContent = 'Paused';
+                if (simState.timer) clearTimeout(simState.timer);
+            } else {
+                btn.textContent = '❚❚ Pause';
+                if (statusIndicator) {
+                    statusIndicator.style.animation = 'simPulse 1.5s infinite';
+                    statusIndicator.style.background = '#34d399';
+                    statusIndicator.style.boxShadow = '0 0 6px #34d399';
+                }
+                if (statusText) statusText.textContent = 'Simulating execution...';
+                runNextSimStep();
+            }
+        }
+
+        function replaySimulation() {
+            if (simState.timer) clearTimeout(simState.timer);
+            simState.stepIndex = 0;
+            simState.isPaused = false;
+            simState.fullLog = '';
+
+            const outputEl = document.getElementById('sim-output');
+            if (outputEl) outputEl.innerHTML = '';
+
+            const btn = document.getElementById('sim-ctrl-play');
+            if (btn) btn.textContent = '❚❚ Pause';
+
+            const statusIndicator = document.getElementById('sim-status-indicator');
+            const statusText = document.getElementById('sim-status-text');
+            if (statusIndicator) {
+                statusIndicator.style.animation = 'simPulse 1.5s infinite';
+                statusIndicator.style.background = '#34d399';
+                statusIndicator.style.boxShadow = '0 0 6px #34d399';
+            }
+            if (statusText) statusText.textContent = 'Simulating execution...';
+
+            if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+                finishSimulationInstant();
+                return;
+            }
+
+            runNextSimStep();
+        }
+
+        function finishSimulationInstant() {
+            if (simState.timer) clearTimeout(simState.timer);
+            const scenario = SIM_SCENARIOS[simState.currentTab] || SIM_SCENARIOS.universal;
+            const outputEl = document.getElementById('sim-output');
+            if (!outputEl) return;
+
+            outputEl.innerHTML = '';
+            simState.fullLog = '';
+
+            for (let i = 0; i < scenario.lines.length; i++) {
+                appendSimLineDOM(scenario.lines[i]);
+            }
+            simState.stepIndex = scenario.lines.length;
+            updateSimStatusComplete();
+            outputEl.scrollTop = outputEl.scrollHeight;
+        }
+
+        function changeSimSpeed(val) {
+            simState.speed = parseFloat(val) || 2;
+        }
+
+        function copySimLog(btn) {
+            if (!simState.fullLog) return;
+            navigator.clipboard.writeText(simState.fullLog).then(() => {
+                const oldText = btn.textContent;
+                btn.textContent = '✓ Copied!';
+                setTimeout(() => { btn.textContent = oldText; }, 2000);
+            });
+        }
+
+        function escapeSimHtml(str) {
+            return str
+                .replace(/&/g, "&amp;")
+                .replace(/</g, "&lt;")
+                .replace(/>/g, "&gt;");
+        }
+
+        function appendSimLineDOM(lineData) {
+            const outputEl = document.getElementById('sim-output');
+            if (!outputEl) return;
+
+            const div = document.createElement('div');
+            div.className = 'sim-line';
+            simState.fullLog += lineData.text + '\n';
+
+            if (lineData.type === 'input') {
+                div.innerHTML = `<span class="sim-line-prompt-sym">$ </span><span class="sim-line-input">${escapeSimHtml(lineData.text)}</span>`;
+            } else if (lineData.type === 'banner') {
+                div.innerHTML = `<span class="sim-line-banner">${escapeSimHtml(lineData.text)}</span>`;
+            } else if (lineData.type === 'prompt') {
+                div.innerHTML = `<span>${escapeSimHtml(lineData.text)}</span>`;
+            } else if (lineData.type === 'choice') {
+                div.innerHTML = `<span class="sim-line-choice">${escapeSimHtml(lineData.text)}</span>`;
+            } else if (lineData.type === 'info') {
+                div.innerHTML = `<span class="sim-line-info">==&gt;</span> <span style="font-weight:600;">${escapeSimHtml(lineData.text.replace('==> ', ''))}</span>`;
+            } else if (lineData.type === 'success') {
+                div.innerHTML = `<span class="sim-line-success">✓</span> <span>${escapeSimHtml(lineData.text.replace('✓ ', ''))}</span>`;
+            } else if (lineData.type === 'dim') {
+                div.innerHTML = `<span class="sim-line-dim">${escapeSimHtml(lineData.text)}</span>`;
+            } else if (lineData.type === 'progress') {
+                div.innerHTML = `<span class="sim-line-progress">${escapeSimHtml(lineData.text)}</span>`;
+            } else if (lineData.type === 'success-card') {
+                div.innerHTML = `<div class="sim-success-card">${escapeSimHtml(lineData.text)}</div>`;
+            } else {
+                div.innerHTML = `<span>${escapeSimHtml(lineData.text)}</span>`;
+            }
+
+            outputEl.appendChild(div);
+            outputEl.scrollTop = outputEl.scrollHeight;
+        }
+
+        function updateSimStatusComplete() {
+            const scenario = SIM_SCENARIOS[simState.currentTab] || SIM_SCENARIOS.universal;
+            const counter = document.getElementById('sim-step-counter');
+            if (counter) counter.textContent = `Step ${scenario.lines.length}/${scenario.lines.length}`;
+
+            const statusIndicator = document.getElementById('sim-status-indicator');
+            const statusText = document.getElementById('sim-status-text');
+            if (statusIndicator) {
+                statusIndicator.style.animation = 'none';
+                statusIndicator.style.background = '#38bdf8';
+                statusIndicator.style.boxShadow = '0 0 6px #38bdf8';
+            }
+            if (statusText) statusText.textContent = 'Complete';
+
+            const playBtn = document.getElementById('sim-ctrl-play');
+            if (playBtn) playBtn.textContent = '▶ Finished';
+        }
+
+        function runNextSimStep() {
+            if (simState.isPaused) return;
+            const scenario = SIM_SCENARIOS[simState.currentTab] || SIM_SCENARIOS.universal;
+
+            if (simState.stepIndex >= scenario.lines.length) {
+                updateSimStatusComplete();
+                return;
+            }
+
+            const lineData = scenario.lines[simState.stepIndex];
+            appendSimLineDOM(lineData);
+            simState.stepIndex++;
+
+            const counter = document.getElementById('sim-step-counter');
+            if (counter) counter.textContent = `Step ${simState.stepIndex}/${scenario.lines.length}`;
+
+            const delay = Math.max(25, (lineData.delay || 100) / simState.speed);
+            simState.timer = setTimeout(runNextSimStep, delay);
         }
 
         window.addEventListener('DOMContentLoaded', detectOSAndInitTabs);
