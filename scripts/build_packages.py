@@ -205,7 +205,7 @@ License:        Proprietary
 URL:            https://antigravity.google
 AutoReqProv:    no
 
-Requires:       gtk3, libnotify, nss, alsa-lib, libXScrnSaver
+Requires:       gtk3, libnotify, nss, alsa-lib, libXScrnSaver{"\nRecommends:     nautilus-python" if package_name == "antigravity-ide" else ""}
 
 %description
 Google Antigravity packages distributed for Linux.
@@ -366,12 +366,13 @@ def build_deb(package_name, version, release, arch, app_source_dir, output_dir, 
     debian_dir = stage_dir / "DEBIAN"
     debian_dir.mkdir(parents=True, exist_ok=True)
     
+    recommends_deb = "\nRecommends: python3-nautilus" if package_name == "antigravity-ide" else ""
     control_content = f"""Package: {package_name}
 Version: {deb_version}
 Section: devel
 Priority: optional
 Architecture: {deb_arch}
-Depends: libgtk-3-0, libnotify4, libnss3, libxss1, libasound2
+Depends: libgtk-3-0, libnotify4, libnss3, libxss1, libasound2{recommends_deb}
 Maintainer: X3M Antigravity Packagers <packaging@x3m.industries>
 Description: Google Antigravity - {"Agentic IDE" if "ide" in package_name else "Agent Platform"}
  Google Antigravity packages for Debian and Ubuntu based distributions.

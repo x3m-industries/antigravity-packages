@@ -147,6 +147,16 @@ class TestPackagingLogic(unittest.TestCase):
         self.assertIn("Open in Antigravity IDE", nemo_content)
         self.assertIn("Exec=antigravity-ide %F", nemo_content)
 
+        # Build script packaging recommendations
+        build_script = (repo_root / "scripts" / "build_packages.py").read_text(encoding="utf-8")
+        self.assertIn("Recommends:     nautilus-python", build_script)
+        self.assertIn("Recommends: python3-nautilus", build_script)
+
+        # Installer integration checks
+        installer = (repo_root / "install.sh").read_text(encoding="utf-8")
+        self.assertIn("nautilus-python", installer)
+        self.assertIn("python3-nautilus", installer)
+
     def test_llms_txt(self):
         llms_file = repo_root / "llms.txt"
         llms_full_file = repo_root / "llms-full.txt"

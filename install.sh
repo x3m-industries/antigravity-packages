@@ -688,6 +688,16 @@ install_desktop_integrations() {
             info "Installing python3-nautilus package for file manager extension..."
             ${SUDO} apt-get install -y --no-install-recommends python3-nautilus 2>/dev/null || true
         fi
+        if command -v dnf > /dev/null 2>&1 && ! rpm -q nautilus-python > /dev/null 2>&1; then
+            info "Installing nautilus-python package for file manager extension..."
+            ${SUDO} dnf install -y nautilus-python 2>/dev/null || true
+        fi
+        if command -v zypper > /dev/null 2>&1 && ! rpm -q python3-nautilus > /dev/null 2>&1; then
+            ${SUDO} zypper install -y python3-nautilus 2>/dev/null || true
+        fi
+        if command -v pacman > /dev/null 2>&1 && ! pacman -Qi python-nautilus > /dev/null 2>&1; then
+            ${SUDO} pacman -S --noconfirm python-nautilus 2>/dev/null || true
+        fi
         ${SUDO} mkdir -p /usr/share/nautilus-python/extensions
         write_py=true
     fi
@@ -711,7 +721,22 @@ Maintained by X3M Industries (https://github.com/x3m-industries/antigravity-pack
 
 import subprocess
 from urllib.parse import unquote, urlparse
+import gi
 from gi.repository import GObject
+
+for _ver in ["4.1", "4.0", "3.0"]:
+    try:
+        gi.require_version("Nautilus", _ver)
+        break
+    except (ValueError, AttributeError):
+        pass
+
+for _ver in ["3.0", "2.0"]:
+    try:
+        gi.require_version("Caja", _ver)
+        break
+    except (ValueError, AttributeError):
+        pass
 
 try:
     from gi.repository import Nautilus as FM
@@ -738,26 +763,29 @@ class OpenInAntigravityIDE(GObject.GObject, FM.MenuProvider if FM else object):
     def get_file_items(self, *args):
         if not FM:
             return []
+        # Support both 3.x (files) and 4.x (window, files) signatures
         files = args[-1] if args else []
-        if not files or len(files) != 1:
+        if not files:
             return []
 
-        path = self._get_path(files[0])
-        if not path:
+        paths = [self._get_path(f) for f in files]
+        paths = [p for p in paths if p]
+        if not paths:
             return []
 
         item = FM.MenuItem(
             name="OpenInAntigravityIDE::open",
             label="Open in Antigravity IDE",
-            tip="Open this file or folder in Antigravity IDE",
+            tip="Open selected items in Antigravity IDE",
             icon="antigravity-ide",
         )
-        item.connect("activate", lambda _menu_item: subprocess.Popen(["antigravity-ide", path]))
+        item.connect("activate", lambda _menu_item, target_paths=paths: subprocess.Popen(["antigravity-ide"] + target_paths))
         return [item]
 
     def get_background_items(self, *args):
         if not FM:
             return []
+        # Support both 3.x (folder) and 4.x (window, folder) signatures
         folder = args[-1] if args else None
         if not folder:
             return []
@@ -772,7 +800,7 @@ class OpenInAntigravityIDE(GObject.GObject, FM.MenuProvider if FM else object):
             tip="Open current folder in Antigravity IDE",
             icon="antigravity-ide",
         )
-        item.connect("activate", lambda _menu_item: subprocess.Popen(["antigravity-ide", path]))
+        item.connect("activate", lambda _menu_item, target_path=path: subprocess.Popen(["antigravity-ide", target_path]))
         return [item]
 NAUTILUS_EOF
         ${SUDO} chmod 0644 /usr/share/nautilus-python/extensions/open-in-antigravity-ide.py

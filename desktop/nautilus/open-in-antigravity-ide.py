@@ -9,7 +9,22 @@ Maintained by X3M Industries (https://github.com/x3m-industries/antigravity-pack
 
 import subprocess
 from urllib.parse import unquote, urlparse
+import gi
 from gi.repository import GObject
+
+for _ver in ["4.1", "4.0", "3.0"]:
+    try:
+        gi.require_version("Nautilus", _ver)
+        break
+    except (ValueError, AttributeError):
+        pass
+
+for _ver in ["3.0", "2.0"]:
+    try:
+        gi.require_version("Caja", _ver)
+        break
+    except (ValueError, AttributeError):
+        pass
 
 try:
     from gi.repository import Nautilus as FM
@@ -38,20 +53,21 @@ class OpenInAntigravityIDE(GObject.GObject, FM.MenuProvider if FM else object):
             return []
         # Support both 3.x (files) and 4.x (window, files) signatures
         files = args[-1] if args else []
-        if not files or len(files) != 1:
+        if not files:
             return []
 
-        path = self._get_path(files[0])
-        if not path:
+        paths = [self._get_path(f) for f in files]
+        paths = [p for p in paths if p]
+        if not paths:
             return []
 
         item = FM.MenuItem(
             name="OpenInAntigravityIDE::open",
             label="Open in Antigravity IDE",
-            tip="Open this file or folder in Antigravity IDE",
+            tip="Open selected items in Antigravity IDE",
             icon="antigravity-ide",
         )
-        item.connect("activate", lambda _menu_item: subprocess.Popen(["antigravity-ide", path]))
+        item.connect("activate", lambda _menu_item, target_paths=paths: subprocess.Popen(["antigravity-ide"] + target_paths))
         return [item]
 
     def get_background_items(self, *args):
@@ -72,5 +88,5 @@ class OpenInAntigravityIDE(GObject.GObject, FM.MenuProvider if FM else object):
             tip="Open current folder in Antigravity IDE",
             icon="antigravity-ide",
         )
-        item.connect("activate", lambda _menu_item: subprocess.Popen(["antigravity-ide", path]))
+        item.connect("activate", lambda _menu_item, target_path=path: subprocess.Popen(["antigravity-ide", target_path]))
         return [item]
