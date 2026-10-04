@@ -1,0 +1,13 @@
+[Desktop Entry]
+Name=Antigravity IDE - URL Handler
+Comment=Antigravity Code Editor & IDE URL Handler
+GenericName=Text Editor
+Exec=/usr/bin/antigravity-ide --open-url %U
+Icon=antigravity-ide
+Type=Application
+NoDisplay=true
+StartupNotify=true
+StartupWMClass=Antigravity IDE
+Categories=Development;IDE;TextEditor;
+MimeType=x-scheme-handler/antigravity-ide;
+Keywords=code;vscode;editor;development;programming;ide;google;antigravity;agy;

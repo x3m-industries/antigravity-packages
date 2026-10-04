@@ -1,0 +1,9 @@
+[Nemo Action]
+Name=Open in Antigravity IDE
+Comment=Open in Antigravity IDE
+Exec=antigravity-ide %F
+Icon-Name=antigravity-ide
+Selection=any
+Extensions=any;
+Quote=double
+Dependencies=antigravity-ide;

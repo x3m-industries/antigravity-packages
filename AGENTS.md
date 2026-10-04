@@ -34,9 +34,13 @@ antigravity-packages/
 │   ├── hub-logo.png / .webp       # Antigravity Hub visual branding assets
 │   ├── icon.png                   # Fallback square icon
 │   └── logo.png / .webp           # Antigravity IDE visual branding assets
-├── desktop/                       # FreeDesktop application desktop entry templates
-│   ├── antigravity.desktop        # Desktop entry for Antigravity Hub (Categories, URL scheme: antigravity://)
-│   └── antigravity-ide.desktop    # Desktop entry for Antigravity IDE (Categories, MIME types, URL scheme: antigravity-ide://, actions)
+├── desktop/                       # FreeDesktop application desktop entry templates & context menus
+│   ├── antigravity.desktop        # Desktop entry for Antigravity Hub (Categories, Keywords, URL scheme: antigravity://)
+│   ├── antigravity-ide.desktop    # Desktop entry for Antigravity IDE (Categories, Keywords, MIME types, %F)
+│   ├── antigravity-ide-url-handler.desktop # Hidden protocol handler for antigravity-ide:// URLs (NoDisplay=true)
+│   ├── dolphin/                   # KDE Dolphin context menu (KIO Service Menu)
+│   ├── nautilus/                  # GNOME Files & Caja right-click Python extension
+│   └── nemo/                      # Linux Mint / Cinnamon right-click Nemo Action
 ├── scripts/                       # Core Python & Bash build, automation, and diagnostic scripts
 │   ├── build_packages.py          # Downloads upstream tarballs, normalizes permissions, extracts icons, and builds .rpm & .deb packages
 │   ├── check_upstream.py          # Scrapes Google's download page for new releases, compares against latest GitHub Release, and sets CI outputs
@@ -115,7 +119,8 @@ python3 scripts/build_packages.py \
    - Google tarballs often extract into directory names with spaces (e.g., `Antigravity IDE/`). The script renames the directory to `app_source/` to eliminate path issues.
    - `sanitize_tree_permissions` traverses the directory tree:
      - All directories: `0755`
-     - Executables (ELF headers `\x7fELF`, shebangs `#!`, `bin/` directories, `chrome-sandbox`, `language_server`, `rg`): `0755`
+     - Executables (ELF headers `\x7fELF`, shebangs `#!`, `bin/` directories, `language_server`, `rg`): `0755`
+     - Chromium SUID Sandbox (`chrome-sandbox`): `4755 root:root` (enforced via RPM `%install` / `%post` and DEB staging / `postinst` to ensure process isolation on Ubuntu 24.04+, Debian, and hardened kernels)
      - Regular data files: `0644`
 3. **Icon Resolution**:
    - **Antigravity IDE**: Extracts icon from `resources/app/resources/linux/code.png`.
@@ -339,7 +344,7 @@ python3 scripts/check_upstream.py
      4. `scripts/generate_repos.sh`
 4. **Desktop Entry Protocol Handlers**:
    - Keep `MimeType=...;x-scheme-handler/antigravity;` in `desktop/antigravity.desktop`.
-   - Keep `MimeType=...;x-scheme-handler/antigravity-ide;` in `desktop/antigravity-ide.desktop`.
+   - Keep `MimeType=x-scheme-handler/antigravity-ide;` in `desktop/antigravity-ide-url-handler.desktop` with `NoDisplay=true`.
    These handlers are required for Google OAuth browser login redirects to work.
 5. **GPG Key Integrity**:
    - Maintainer: `X3M Antigravity Packagers <packaging@x3m.industries>`

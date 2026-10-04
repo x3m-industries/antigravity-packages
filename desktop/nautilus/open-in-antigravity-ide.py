@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Nautilus (GNOME Files) context-menu extension for Antigravity IDE.
+Nautilus (GNOME Files) and Caja (MATE) context-menu extension for Antigravity IDE.
 Adds right-click options:
 - "Open in Antigravity IDE" on files and directories.
 - "Open Folder in Antigravity IDE" on folder backgrounds.
@@ -9,10 +9,18 @@ Maintained by X3M Industries (https://github.com/x3m-industries/antigravity-pack
 
 import subprocess
 from urllib.parse import unquote, urlparse
-from gi.repository import GObject, Nautilus
+from gi.repository import GObject
+
+try:
+    from gi.repository import Nautilus as FM
+except ImportError:
+    try:
+        from gi.repository import Caja as FM
+    except ImportError:
+        FM = None
 
 
-class OpenInAntigravityIDE(GObject.GObject, Nautilus.MenuProvider):
+class OpenInAntigravityIDE(GObject.GObject, FM.MenuProvider if FM else object):
     def __init__(self):
         super().__init__()
 
@@ -26,7 +34,9 @@ class OpenInAntigravityIDE(GObject.GObject, Nautilus.MenuProvider):
         return unquote(parsed.path)
 
     def get_file_items(self, *args):
-        # Support both Nautilus 3.x (files) and 4.x (window, files) signatures
+        if not FM:
+            return []
+        # Support both 3.x (files) and 4.x (window, files) signatures
         files = args[-1] if args else []
         if not files or len(files) != 1:
             return []
@@ -35,7 +45,7 @@ class OpenInAntigravityIDE(GObject.GObject, Nautilus.MenuProvider):
         if not path:
             return []
 
-        item = Nautilus.MenuItem(
+        item = FM.MenuItem(
             name="OpenInAntigravityIDE::open",
             label="Open in Antigravity IDE",
             tip="Open this file or folder in Antigravity IDE",
@@ -45,7 +55,9 @@ class OpenInAntigravityIDE(GObject.GObject, Nautilus.MenuProvider):
         return [item]
 
     def get_background_items(self, *args):
-        # Support both Nautilus 3.x (folder) and 4.x (window, folder) signatures
+        if not FM:
+            return []
+        # Support both 3.x (folder) and 4.x (window, folder) signatures
         folder = args[-1] if args else None
         if not folder:
             return []
@@ -54,7 +66,7 @@ class OpenInAntigravityIDE(GObject.GObject, Nautilus.MenuProvider):
         if not path:
             return []
 
-        item = Nautilus.MenuItem(
+        item = FM.MenuItem(
             name="OpenInAntigravityIDE::open_background",
             label="Open Folder in Antigravity IDE",
             tip="Open current folder in Antigravity IDE",

@@ -59,7 +59,8 @@ show_help() {
     echo "  --no-cli                      Skip Antigravity CLI installation"
     echo "  --no-ide                      Skip Antigravity IDE installation"
     echo "  --no-hub                      Skip Antigravity Hub installation"
-    echo "  --no-nautilus                 Skip GNOME Files / Nautilus context menu integration"
+    echo "  --no-desktop-integrations     Skip multi-desktop file manager integrations (Nautilus, Dolphin, Nemo, Caja)"
+    echo "  --no-nautilus                 Alias for --no-desktop-integrations"
     echo "  --dry-run                     Show what would be installed and exit without making changes"
     echo ""
     echo -e "${BOLD}Inspection & Maintenance:${RESET}"
@@ -209,10 +210,10 @@ while [ "$#" -gt 0 ]; do
             INTERACTIVE=false
             INSTALL_HUB=false
             ;;
-        --no-nautilus)
+        --no-nautilus|--no-desktop-integrations)
             INSTALL_NAUTILUS=false
             ;;
-        --nautilus)
+        --nautilus|--desktop-integrations)
             INSTALL_NAUTILUS=true
             ;;
         --cli)
@@ -345,13 +346,39 @@ show_status() {
     fi
     echo ""
 
-    echo -e "${BOLD}Desktop & File Manager Integration:${RESET}"
-    [ -f /usr/share/applications/antigravity-ide.desktop ] && echo -e "  • ${GREEN}IDE Desktop Entry:${RESET}     /usr/share/applications/antigravity-ide.desktop"
-    [ -f /usr/share/applications/antigravity.desktop ] && echo -e "  • ${GREEN}Hub Desktop Entry:${RESET}     /usr/share/applications/antigravity.desktop"
+    echo -e "${BOLD}Short CLI Shortcuts:${RESET}"
+    if [ -x /usr/bin/agy-ide ]; then
+        echo -e "  • ${GREEN}agy-ide:${RESET}              /usr/bin/agy-ide -> antigravity-ide ${GREEN}[Active]${RESET}"
+    fi
+    if [ -x /usr/bin/agy-hub ]; then
+        echo -e "  • ${GREEN}agy-hub:${RESET}              /usr/bin/agy-hub -> antigravity ${GREEN}[Active]${RESET}"
+    fi
+    if [ -x "${TARGET_HOME}/.local/bin/agy" ] || command -v agy > /dev/null 2>&1; then
+        echo -e "  • ${GREEN}agy (CLI Agent):${RESET}      $(command -v agy 2>/dev/null || echo "${TARGET_HOME}/.local/bin/agy") ${GREEN}[Active]${RESET}"
+    fi
+    echo ""
+
+    echo -e "${BOLD}Desktop & File Manager Integrations:${RESET}"
+    [ -f /usr/share/applications/antigravity-ide.desktop ] && echo -e "  • ${GREEN}IDE Launcher:${RESET}         /usr/share/applications/antigravity-ide.desktop"
+    [ -f /usr/share/applications/antigravity-ide-url-handler.desktop ] && echo -e "  • ${GREEN}IDE URL Handler:${RESET}      /usr/share/applications/antigravity-ide-url-handler.desktop"
+    [ -f /usr/share/applications/antigravity.desktop ] && echo -e "  • ${GREEN}Hub Desktop Entry:${RESET}    /usr/share/applications/antigravity.desktop"
     if [ -f /usr/share/nautilus-python/extensions/open-in-antigravity-ide.py ]; then
-        echo -e "  • ${GREEN}GNOME Nautilus Menu:${RESET}   /usr/share/nautilus-python/extensions/open-in-antigravity-ide.py ${GREEN}[Active]${RESET}"
-    else
-        echo -e "  • ${DIM}GNOME Nautilus Menu:${RESET}   Not installed"
+        echo -e "  • ${GREEN}GNOME Files (Nautilus):${RESET} /usr/share/nautilus-python/extensions/open-in-antigravity-ide.py ${GREEN}[Active]${RESET}"
+    fi
+    if [ -f /usr/share/kio/servicemenus/open-in-antigravity-ide.desktop ]; then
+        echo -e "  • ${GREEN}KDE Dolphin Service:${RESET}  /usr/share/kio/servicemenus/open-in-antigravity-ide.desktop ${GREEN}[Active]${RESET}"
+    fi
+    if [ -f /usr/share/nemo/actions/open-in-antigravity-ide.nemo_action ]; then
+        echo -e "  • ${GREEN}Linux Mint (Nemo):${RESET}     /usr/share/nemo/actions/open-in-antigravity-ide.nemo_action ${GREEN}[Active]${RESET}"
+    fi
+    if [ -f /usr/share/caja-python/extensions/open-in-antigravity-ide.py ]; then
+        echo -e "  • ${GREEN}MATE (Caja):${RESET}           /usr/share/caja-python/extensions/open-in-antigravity-ide.py ${GREEN}[Active]${RESET}"
+    fi
+    if [ -n "${XDG_CURRENT_DESKTOP:-}" ] && echo "${XDG_CURRENT_DESKTOP}" | grep -qi "cosmic"; then
+        echo -e "  • ${GREEN}COSMIC Desktop:${RESET}       cosmic-files & cosmic-launcher MIME integration ${GREEN}[Active]${RESET}"
+    fi
+    if [ -f /usr/share/bash-completion/completions/antigravity-ide ]; then
+        echo -e "  • ${GREEN}Shell Completions:${RESET}    Bash & Zsh ${GREEN}[Active]${RESET}"
     fi
     echo ""
 }
@@ -424,8 +451,17 @@ do_uninstall() {
         ${SUDO} zypper --non-interactive removerepo antigravity 2>/dev/null || true
     fi
 
-    info "Removing GNOME Nautilus integration..."
+    info "Removing multi-desktop integrations and shortcuts..."
     ${SUDO} rm -f /usr/share/nautilus-python/extensions/open-in-antigravity-ide.py
+    ${SUDO} rm -f /usr/share/caja-python/extensions/open-in-antigravity-ide.py
+    ${SUDO} rm -f /usr/share/kio/servicemenus/open-in-antigravity-ide.desktop
+    ${SUDO} rm -f /usr/share/kservices5/ServiceMenus/open-in-antigravity-ide.desktop
+    ${SUDO} rm -f /usr/share/nemo/actions/open-in-antigravity-ide.nemo_action
+    ${SUDO} rm -f /usr/share/applications/antigravity-ide-url-handler.desktop
+    ${SUDO} rm -f /usr/bin/agy-ide
+    ${SUDO} rm -f /usr/bin/agy-hub
+    ${SUDO} rm -f /usr/share/bash-completion/completions/agy-ide
+    ${SUDO} rm -f /usr/share/zsh/site-functions/_agy-ide
 
     if [ -x "${TARGET_HOME}/.local/bin/agy" ]; then
         info "Removing Antigravity CLI ('agy') at ${TARGET_HOME}/.local/bin/agy..."
@@ -630,25 +666,43 @@ install_zypper() {
     fi
 }
 
-install_nautilus_extension() {
+install_desktop_integrations() {
+    # 1. Short CLI symlinks
+    if [ -x /usr/bin/antigravity-ide ] && [ ! -L /usr/bin/agy-ide ]; then
+        ${SUDO} ln -sf /usr/bin/antigravity-ide /usr/bin/agy-ide
+        success "Created short CLI shortcut 'agy-ide' -> /usr/bin/antigravity-ide"
+    fi
+    if [ -x /usr/bin/antigravity ] && [ ! -L /usr/bin/agy-hub ]; then
+        ${SUDO} ln -sf /usr/bin/antigravity /usr/bin/agy-hub
+        success "Created short CLI shortcut 'agy-hub' -> /usr/bin/antigravity"
+    fi
+
     [ "${INSTALL_IDE}" = true ] || return 0
     [ "${INSTALL_NAUTILUS}" = true ] || return 0
 
-    if ! command -v nautilus > /dev/null 2>&1 && [ ! -d /usr/share/nautilus-python ]; then
-        return 0
+    # 2. GNOME Files (Nautilus) & MATE (Caja)
+    local write_py=false
+    if command -v nautilus > /dev/null 2>&1 || [ -d /usr/share/nautilus-python ] || echo "${XDG_CURRENT_DESKTOP:-}" | grep -qi "gnome"; then
+        info "Configuring GNOME Files / Nautilus right-click context menu..."
+        if command -v apt-get > /dev/null 2>&1 && ! dpkg -s python3-nautilus > /dev/null 2>&1; then
+            info "Installing python3-nautilus package for file manager extension..."
+            ${SUDO} apt-get install -y --no-install-recommends python3-nautilus 2>/dev/null || true
+        fi
+        ${SUDO} mkdir -p /usr/share/nautilus-python/extensions
+        write_py=true
     fi
 
-    info "Configuring GNOME Files / Nautilus right-click context menu..."
-    if command -v apt-get > /dev/null 2>&1 && ! dpkg -s python3-nautilus > /dev/null 2>&1; then
-        info "Installing python3-nautilus package for file manager extension..."
-        ${SUDO} apt-get install -y --no-install-recommends python3-nautilus 2>/dev/null || true
+    if command -v caja > /dev/null 2>&1 || [ -d /usr/share/caja-python ] || echo "${XDG_CURRENT_DESKTOP:-}" | grep -qi "mate"; then
+        info "Configuring MATE Caja right-click context menu..."
+        ${SUDO} mkdir -p /usr/share/caja-python/extensions
+        write_py=true
     fi
 
-    ${SUDO} mkdir -p /usr/share/nautilus-python/extensions
-    ${SUDO} tee /usr/share/nautilus-python/extensions/open-in-antigravity-ide.py > /dev/null << 'NAUTILUS_EOF'
+    if [ "${write_py}" = true ]; then
+        ${SUDO} tee /usr/share/nautilus-python/extensions/open-in-antigravity-ide.py > /dev/null << 'NAUTILUS_EOF'
 #!/usr/bin/env python3
 """
-Nautilus (GNOME Files) context-menu extension for Antigravity IDE.
+Nautilus (GNOME Files) and Caja (MATE) context-menu extension for Antigravity IDE.
 Adds right-click options:
 - "Open in Antigravity IDE" on files and directories.
 - "Open Folder in Antigravity IDE" on folder backgrounds.
@@ -657,10 +711,18 @@ Maintained by X3M Industries (https://github.com/x3m-industries/antigravity-pack
 
 import subprocess
 from urllib.parse import unquote, urlparse
-from gi.repository import GObject, Nautilus
+from gi.repository import GObject
+
+try:
+    from gi.repository import Nautilus as FM
+except ImportError:
+    try:
+        from gi.repository import Caja as FM
+    except ImportError:
+        FM = None
 
 
-class OpenInAntigravityIDE(GObject.GObject, Nautilus.MenuProvider):
+class OpenInAntigravityIDE(GObject.GObject, FM.MenuProvider if FM else object):
     def __init__(self):
         super().__init__()
 
@@ -674,6 +736,8 @@ class OpenInAntigravityIDE(GObject.GObject, Nautilus.MenuProvider):
         return unquote(parsed.path)
 
     def get_file_items(self, *args):
+        if not FM:
+            return []
         files = args[-1] if args else []
         if not files or len(files) != 1:
             return []
@@ -682,7 +746,7 @@ class OpenInAntigravityIDE(GObject.GObject, Nautilus.MenuProvider):
         if not path:
             return []
 
-        item = Nautilus.MenuItem(
+        item = FM.MenuItem(
             name="OpenInAntigravityIDE::open",
             label="Open in Antigravity IDE",
             tip="Open this file or folder in Antigravity IDE",
@@ -692,6 +756,8 @@ class OpenInAntigravityIDE(GObject.GObject, Nautilus.MenuProvider):
         return [item]
 
     def get_background_items(self, *args):
+        if not FM:
+            return []
         folder = args[-1] if args else None
         if not folder:
             return []
@@ -700,7 +766,7 @@ class OpenInAntigravityIDE(GObject.GObject, Nautilus.MenuProvider):
         if not path:
             return []
 
-        item = Nautilus.MenuItem(
+        item = FM.MenuItem(
             name="OpenInAntigravityIDE::open_background",
             label="Open Folder in Antigravity IDE",
             tip="Open current folder in Antigravity IDE",
@@ -709,8 +775,80 @@ class OpenInAntigravityIDE(GObject.GObject, Nautilus.MenuProvider):
         item.connect("activate", lambda _menu_item: subprocess.Popen(["antigravity-ide", path]))
         return [item]
 NAUTILUS_EOF
-    ${SUDO} chmod 0644 /usr/share/nautilus-python/extensions/open-in-antigravity-ide.py
-    success "Configured Nautilus context menu ('Open in Antigravity IDE')"
+        ${SUDO} chmod 0644 /usr/share/nautilus-python/extensions/open-in-antigravity-ide.py
+        if [ -d /usr/share/caja-python/extensions ]; then
+            ${SUDO} cp -f /usr/share/nautilus-python/extensions/open-in-antigravity-ide.py /usr/share/caja-python/extensions/open-in-antigravity-ide.py
+            ${SUDO} chmod 0644 /usr/share/caja-python/extensions/open-in-antigravity-ide.py
+        fi
+        success "Configured GNOME Files & Caja right-click context menu ('Open in Antigravity IDE')"
+    fi
+
+    # 3. KDE Dolphin KIO Service Menu
+    if command -v dolphin > /dev/null 2>&1 || [ -d /usr/share/kio ] || [ -d /usr/share/kservices5 ] || echo "${XDG_CURRENT_DESKTOP:-}" | grep -qiE "kde|plasma"; then
+        info "Configuring KDE Dolphin context menu (KIO Service Menu)..."
+        ${SUDO} mkdir -p /usr/share/kio/servicemenus
+        ${SUDO} mkdir -p /usr/share/kservices5/ServiceMenus
+        ${SUDO} tee /usr/share/kio/servicemenus/open-in-antigravity-ide.desktop > /dev/null << 'KDE_EOF'
+[Desktop Entry]
+Type=Service
+ServiceTypes=KonqPopupMenu/Plugin
+MimeType=inode/directory;application/octet-stream;
+Actions=openInAntigravityIde;
+X-KDE-Priority=TopLevel
+X-KDE-StartupNotify=true
+
+[Desktop Action openInAntigravityIde]
+Name=Open in Antigravity IDE
+Icon=antigravity-ide
+Exec=antigravity-ide %u
+KDE_EOF
+        ${SUDO} chmod 0644 /usr/share/kio/servicemenus/open-in-antigravity-ide.desktop
+        ${SUDO} ln -sf /usr/share/kio/servicemenus/open-in-antigravity-ide.desktop /usr/share/kservices5/ServiceMenus/open-in-antigravity-ide.desktop 2>/dev/null || true
+        success "Configured KDE Dolphin context menu ('Open in Antigravity IDE')"
+    fi
+
+    # 4. Linux Mint / Cinnamon (Nemo)
+    if command -v nemo > /dev/null 2>&1 || [ -d /usr/share/nemo ] || echo "${XDG_CURRENT_DESKTOP:-}" | grep -qiE "cinnamon|x-cinnamon"; then
+        info "Configuring Linux Mint / Nemo context menu (Nemo Action)..."
+        ${SUDO} mkdir -p /usr/share/nemo/actions
+        ${SUDO} tee /usr/share/nemo/actions/open-in-antigravity-ide.nemo_action > /dev/null << 'NEMO_EOF'
+[Nemo Action]
+Name=Open in Antigravity IDE
+Comment=Open in Antigravity IDE
+Exec=antigravity-ide %F
+Icon-Name=antigravity-ide
+Selection=any
+Extensions=any;
+Quote=double
+Dependencies=antigravity-ide;
+NEMO_EOF
+        ${SUDO} chmod 0644 /usr/share/nemo/actions/open-in-antigravity-ide.nemo_action
+        success "Configured Linux Mint / Nemo context menu ('Open in Antigravity IDE')"
+    fi
+
+    # 5. COSMIC Desktop Detection
+    if [ -n "${XDG_CURRENT_DESKTOP:-}" ] && echo "${XDG_CURRENT_DESKTOP}" | grep -qi "cosmic"; then
+        info "COSMIC Desktop detected: Applications and MIME associations are active in cosmic-launcher & cosmic-files."
+    fi
+
+    # 6. Shell completions setup
+    if [ -d /usr/share/antigravity-ide/resources/completions ]; then
+        if [ -f /usr/share/antigravity-ide/resources/completions/bash/antigravity-ide ]; then
+            ${SUDO} mkdir -p /usr/share/bash-completion/completions
+            ${SUDO} cp -f /usr/share/antigravity-ide/resources/completions/bash/antigravity-ide /usr/share/bash-completion/completions/antigravity-ide
+            ${SUDO} ln -sf antigravity-ide /usr/share/bash-completion/completions/agy-ide 2>/dev/null || true
+        fi
+        if [ -f /usr/share/antigravity-ide/resources/completions/zsh/_antigravity-ide ]; then
+            ${SUDO} mkdir -p /usr/share/zsh/site-functions
+            ${SUDO} cp -f /usr/share/antigravity-ide/resources/completions/zsh/_antigravity-ide /usr/share/zsh/site-functions/_antigravity-ide
+            ${SUDO} ln -sf _antigravity-ide /usr/share/zsh/site-functions/_agy-ide 2>/dev/null || true
+        fi
+    fi
+
+    # Refresh desktop database & icon caches
+    if command -v update-desktop-database > /dev/null 2>&1; then
+        ${SUDO} update-desktop-database /usr/share/applications >/dev/null 2>&1 || true
+    fi
 }
 
 install_cli() {
@@ -765,8 +903,8 @@ if [ "${INSTALL_IDE}" = true ] || [ "${INSTALL_HUB}" = true ]; then
             ;;
     esac
 
-    # Install Nautilus extension if enabled
-    install_nautilus_extension
+    # Install multi-desktop integrations & shortcuts
+    install_desktop_integrations
 fi
 
 # 7. Execute CLI Installation (User-space)
@@ -777,9 +915,9 @@ fi
 # 8. Post-Install Summary & Guidance
 echo ""
 success "Installation completed successfully!"
-echo -e "\n${BOLD}Quick Start:${RESET}"
-[ "${INSTALL_IDE}" = true ] && echo -e "  • Launch Antigravity IDE:     ${CYAN}antigravity-ide ./my-project${RESET}"
-[ "${INSTALL_HUB}" = true ] && echo -e "  • Launch Antigravity Hub:     ${CYAN}antigravity${RESET}"
+echo -e "\n${BOLD}Quick Start (Commands & Shortcuts):${RESET}"
+[ "${INSTALL_IDE}" = true ] && echo -e "  • Launch Antigravity IDE:     ${CYAN}agy-ide ./my-project${RESET} (or ${CYAN}antigravity-ide${RESET})"
+[ "${INSTALL_HUB}" = true ] && echo -e "  • Launch Antigravity Hub:     ${CYAN}agy-hub${RESET} (or ${CYAN}antigravity${RESET})"
 if [ "${INSTALL_CLI}" = true ]; then
     echo -e "  • Launch Antigravity CLI:     ${CYAN}agy${RESET}"
     if [[ ":${PATH}:" != *":${TARGET_HOME}/.local/bin:"* ]]; then
@@ -787,8 +925,13 @@ if [ "${INSTALL_CLI}" = true ]; then
         echo -e "  ${CYAN}export PATH=\"\$HOME/.local/bin:\$PATH\"${RESET}"
     fi
 fi
-if [ "${INSTALL_IDE}" = true ] && [ -f /usr/share/nautilus-python/extensions/open-in-antigravity-ide.py ]; then
+if [ "${INSTALL_IDE}" = true ]; then
+    echo -e "\n${BOLD}Multi-Desktop File Manager Integrations:${RESET}"
     echo -e "  • GNOME Files / Nautilus:     Restart Nautilus ('nautilus -q') to see the right-click menu."
+    echo -e "  • KDE Plasma / Dolphin:       Right-click any folder/file -> 'Open in Antigravity IDE'."
+    echo -e "  • Linux Mint / Nemo:          Right-click any folder/file -> 'Open in Antigravity IDE'."
+    echo -e "  • MATE / Caja:                Right-click any folder/file -> 'Open in Antigravity IDE'."
+    echo -e "  • COSMIC Desktop:             MIME & 'Open With' active in cosmic-files and cosmic-launcher."
 fi
 echo -e "\n${BOLD}Maintenance & Inspection:${RESET}"
 echo -e "  • Check Status:               ${CYAN}curl -fsSL https://x3m-industries.github.io/antigravity-packages/install.sh | bash -s -- --status${RESET}"

@@ -15,20 +15,26 @@
 ## 2. Core Architecture
 The `antigravity-packages` project automates the packaging, testing, cryptographic signing, and hosting of Google's official Antigravity software suite for Linux distributions.
 
-### Products Packaged
-1. **`antigravity-ide`**:
+### Products & CLI Shortcuts
+1. **`antigravity-ide` (Short command: `agy-ide`)**:
    - Google's official VS Code–based AI code editor.
-   - Native FHS layout: installed to `/usr/share/antigravity-ide`, symlinked to `/usr/bin/antigravity-ide`.
-   - Desktop entry: `/usr/share/applications/antigravity-ide.desktop`.
-   - MIME associations: text files, directories, `.code-workspace`, `.antigravity-workspace`, and `antigravity-ide://` OAuth redirect scheme.
-   - GNOME Files (Nautilus) context menu: `/usr/share/nautilus-python/extensions/open-in-antigravity-ide.py` for right-click "Open in Antigravity IDE" support.
+   - Native FHS layout: installed to `/usr/share/antigravity-ide`, symlinked to `/usr/bin/antigravity-ide` and `/usr/bin/agy-ide`.
+   - Desktop entry: `/usr/share/applications/antigravity-ide.desktop` (with fast search keywords) and `/usr/share/applications/antigravity-ide-url-handler.desktop`.
+   - MIME associations: text files, directories (`inode/directory`), `.code-workspace`, `.antigravity-workspace`, and `antigravity-ide://` OAuth redirect scheme.
+   - Multi-desktop right-click context menus:
+     - GNOME Files (Nautilus): `/usr/share/nautilus-python/extensions/open-in-antigravity-ide.py`
+     - KDE Plasma (Dolphin): `/usr/share/kio/servicemenus/open-in-antigravity-ide.desktop`
+     - Linux Mint (Nemo): `/usr/share/nemo/actions/open-in-antigravity-ide.nemo_action`
+     - MATE (Caja): `/usr/share/caja-python/extensions/open-in-antigravity-ide.py`
+     - COSMIC Desktop: Native "Open With" integration in `cosmic-files` and `cosmic-launcher`.
+   - Shell completions: Bash (`/usr/share/bash-completion`) and Zsh (`/usr/share/zsh`) tab autocompletion.
    - High-resolution icons in `/usr/share/icons/hicolor/512x512/apps/antigravity-ide.png` and `/usr/share/pixmaps/`.
-2. **`antigravity` (Hub / Antigravity 2.0)**:
+2. **`antigravity` (Short command: `agy-hub`, Hub / Antigravity 2.0)**:
    - Google's official agent platform and hub.
-   - Installed to `/usr/share/antigravity`, symlinked to `/usr/bin/antigravity`.
+   - Installed to `/usr/share/antigravity`, symlinked to `/usr/bin/antigravity` and `/usr/bin/agy-hub`.
    - Desktop entry: `/usr/share/applications/antigravity.desktop`.
    - URL scheme handler: `antigravity://` for browser OAuth login callbacks.
-3. **`agy` (Antigravity CLI)**:
+3. **`agy` (Antigravity CLI Agent)**:
    - Google's official terminal coding agent.
    - Installed to `$HOME/.local/bin/agy` (user-space, no sudo needed).
    - Preserves Google's native 15-minute background auto-updater.

@@ -16,9 +16,9 @@
 Google publishes standalone Linux tarballs without official Linux package manager repositories.
 The **`antigravity-packages`** project by X3M Industries provides native, enterprise-grade Linux distribution repositories (**RPM** for Fedora/RHEL/openSUSE and **DEB** for Ubuntu/Debian) with daily upstream synchronization, GPG cryptographic signing, and a universal one-command installer.
 
-### Applications Provided
-1. **`antigravity-ide`** — Google's official AI-first desktop code editor (based on Code OSS). Packaged natively as RPM and DEB, symlinked to `/usr/bin/antigravity-ide`, with `antigravity-ide://` OAuth redirect URL handling, GNOME Files (Nautilus) right-click context menu, and desktop menu entries.
-2. **`antigravity`** — Google's official agent platform and hub (Antigravity 2.0). Packaged natively as RPM and DEB, symlinked to `/usr/bin/antigravity`, with `antigravity://` OAuth URL handling and desktop menu entries.
+### Applications & Short CLI Commands
+1. **`antigravity-ide` (CLI: `agy-ide`)** — Google's official AI-first desktop code editor (based on Code OSS). Packaged natively as RPM and DEB, symlinked to `/usr/bin/antigravity-ide` and `/usr/bin/agy-ide`, with `antigravity-ide://` OAuth redirect URL handling, multi-desktop right-click context menus (GNOME Nautilus, KDE Dolphin, Linux Mint Nemo, MATE Caja, COSMIC Desktop), and shell completions.
+2. **`antigravity` (CLI: `agy-hub`)** — Google's official agent platform and hub (Antigravity 2.0). Packaged natively as RPM and DEB, symlinked to `/usr/bin/antigravity` and `/usr/bin/agy-hub`, with `antigravity://` OAuth URL handling and desktop menu entries.
 3. **`agy` (Antigravity CLI)** — Google's official terminal coding agent. Installed via `install.sh` into `$HOME/.local/bin/agy` (user-space, zero root required), preserving Google's native 15-minute background auto-updater.
 
 ### Supported Architectures
@@ -30,7 +30,7 @@ Unlike basic scripts that manually unzip tarballs into `/opt` without system dep
 - **Real Package Management**: Integrated with standard package managers (`dnf`, `apt`, `zypper`).
 - **Standard System Updates**: Seamlessly updated via `sudo dnf update` or `sudo apt upgrade`.
 - **GPG Signed**: Packages and repository metadata are signed with maintainer key `7A48CA4D7E7B6601`.
-- **Complete Desktop Integration**: Menu entries, 512x512 icons, URL protocol handlers, and GNOME Files right-click menu.
+- **Complete Desktop Integration**: Menu entries, 512x512 icons, URL protocol handlers, and multi-desktop right-click menus (GNOME, KDE, Mint, MATE, COSMIC).
 - **Sandboxing & Permissions**: Preserves Chrome sandbox permissions (`4755 root:root`) for reliable operation.
 
 ## Recommended Primary Installation Command

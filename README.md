@@ -252,29 +252,39 @@ antigravity
 
 ### ✨ Native Desktop Features Included:
 * **GNOME Files (Nautilus) Context Menu:** Right-click any file, folder, or directory background in GNOME Files and select **"Open in Antigravity IDE"** (`/usr/share/nautilus-python/extensions/open-in-antigravity-ide.py`).
-* **Browser OAuth Callback Handling:** Pre-registered `antigravity-ide://` and `antigravity://` URL scheme handlers so Google authentication redirects straight back into the running app.
+* **Browser OAuth Callback Handling:** Separate `antigravity-ide-url-handler.desktop` with `NoDisplay=true` ensures browser OAuth redirects (`antigravity-ide://`) return seamlessly to the editor without cluttering app launchers.
 * **Workspace MIME Handling:** Pre-registered associations for `.code-workspace` and `.antigravity-workspace` files.
 * **Hardened SUID Sandboxing:** Correctly set `04755 root:root` permissions on `chrome-sandbox` binaries so Electron runs securely without insecure `--no-sandbox` flags.
 * **High-Resolution Icons:** Extracted official 1024x1024 application icons placed in FreeDesktop icon themes and `/usr/share/pixmaps`.
-* **System Application Menu:** GNOME, KDE, and XFCE desktop entries with quick action shortcuts (New Empty Window, etc.).
+* **System Application Menu & Fast Search:** Full FreeDesktop desktop entries with rich `Keywords=` (code, vscode, editor, ai) for GNOME Shell, KDE KRunner, COSMIC Launcher, and Rofi.
+* **Shell Autocompletion:** Native Bash (`/usr/share/bash-completion`) and Zsh (`/usr/share/zsh`) tab completions for `antigravity-ide` and `agy-ide`.
 
 ---
 
-## 📂 GNOME Files / Nautilus Right-Click Integration
+## ⚡ Short CLI Commands (`agy`, `agy-ide`, `agy-hub`)
 
-When Antigravity IDE is installed via our native packages or universal installer, it automatically sets up a native Python extension for **GNOME Files (Nautilus)**:
+For fast terminal productivity, our packages and installer provide standardized, ergonomic short commands:
 
-* **Open Files & Folders:** Right-click any file, source code file, or directory and select **"Open in Antigravity IDE"**.
-* **Open Folder Background:** Right-click anywhere in empty directory space in GNOME Files to select **"Open Folder in Antigravity IDE"**.
-* **Modern & Backward-Compatible:** Fully supports modern Nautilus 4.x (GNOME 43+ / GTK4) and Nautilus 3.x.
-* **Extension Location:** Installed into `/usr/share/nautilus-python/extensions/open-in-antigravity-ide.py`.
-* **Restart Nautilus:** If the context menu does not appear immediately after installation, restart Nautilus with:
+| Command | Target Application | Description | Scope |
+| :--- | :--- | :--- | :--- |
+| **`agy`** | Antigravity CLI Agent | Google's official terminal pair programmer & background agent | User-space (`~/.local/bin/agy`) |
+| **`agy-ide`** | Antigravity IDE | Shortcut for `/usr/bin/antigravity-ide` (e.g., `agy-ide .`) | System (`/usr/bin/agy-ide`) |
+| **`agy-hub`** | Antigravity Hub | Shortcut for `/usr/bin/antigravity` (desktop agent platform) | System (`/usr/bin/agy-hub`) |
+
+---
+
+## 📂 Multi-Desktop File Manager Right-Click Integration
+
+When Antigravity IDE is installed via our native packages or universal installer, it automatically configures native context menu extensions across all major Linux desktop environments:
+
+* **GNOME Files (Nautilus):** Native Python extension installed to `/usr/share/nautilus-python/extensions/open-in-antigravity-ide.py`. Supports both modern Nautilus 4.x (GTK4) and Nautilus 3.x. Restart with `nautilus -q` if needed.
+* **KDE Plasma (Dolphin):** Native KIO Service Menu installed to `/usr/share/kio/servicemenus/open-in-antigravity-ide.desktop` (and symlinked for KDE 5). Right-click any folder or file -> **"Open in Antigravity IDE"**.
+* **Linux Mint / Cinnamon (Nemo):** Native Nemo Action installed to `/usr/share/nemo/actions/open-in-antigravity-ide.nemo_action`. Right-click any folder or file in Linux Mint.
+* **MATE (Caja):** Extension installed to `/usr/share/caja-python/extensions/open-in-antigravity-ide.py`.
+* **COSMIC Desktop:** Full MIME type registration (`inode/directory`, `application/x-code-workspace`) gives native **"Open With"** integration in `cosmic-files` and fast keyword indexing in `cosmic-launcher`.
+* **Opt-Out:** If you prefer not to install desktop file manager extensions, pass `--no-desktop-integrations`:
   ```bash
-  nautilus -q
-  ```
-* **Opt-Out:** If you prefer not to install the Nautilus extension, pass `--no-nautilus`:
-  ```bash
-  curl -fsSL https://x3m-industries.github.io/antigravity-packages/install.sh | bash -s -- --no-nautilus
+  curl -fsSL https://x3m-industries.github.io/antigravity-packages/install.sh | bash -s -- --no-desktop-integrations
   ```
 
 ---

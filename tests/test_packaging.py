@@ -86,6 +86,7 @@ class TestPackagingLogic(unittest.TestCase):
         desktop_dir = repo_root / "desktop"
         self.assertTrue((desktop_dir / "antigravity.desktop").exists())
         self.assertTrue((desktop_dir / "antigravity-ide.desktop").exists())
+        self.assertTrue((desktop_dir / "antigravity-ide-url-handler.desktop").exists())
 
         for desktop_file in desktop_dir.glob("*.desktop"):
             content = desktop_file.read_text(encoding="utf-8")
@@ -97,6 +98,16 @@ class TestPackagingLogic(unittest.TestCase):
         ide_content = (desktop_dir / "antigravity-ide.desktop").read_text(encoding="utf-8")
         self.assertIn("application/x-code-workspace;", ide_content)
         self.assertIn("application/x-antigravity-workspace;", ide_content)
+        self.assertIn("Keywords=", ide_content)
+        self.assertIn("Exec=/usr/bin/antigravity-ide %F", ide_content)
+
+        url_content = (desktop_dir / "antigravity-ide-url-handler.desktop").read_text(encoding="utf-8")
+        self.assertIn("NoDisplay=true", url_content)
+        self.assertIn("x-scheme-handler/antigravity-ide;", url_content)
+        self.assertIn("--open-url %U", url_content)
+
+        hub_content = (desktop_dir / "antigravity.desktop").read_text(encoding="utf-8")
+        self.assertIn("Keywords=", hub_content)
 
         import shutil
         import subprocess
@@ -104,17 +115,37 @@ class TestPackagingLogic(unittest.TestCase):
             res = subprocess.run(["desktop-file-validate"] + [str(f) for f in desktop_dir.glob("*.desktop")], capture_output=True, text=True)
             self.assertEqual(res.returncode, 0, f"desktop-file-validate failed: {res.stderr}")
 
-    def test_nautilus_extension(self):
+    def test_file_manager_integrations(self):
         import py_compile
-        nautilus_script = repo_root / "desktop" / "nautilus" / "open-in-antigravity-ide.py"
+        desktop_dir = repo_root / "desktop"
+
+        # Nautilus & Caja Python Extension
+        nautilus_script = desktop_dir / "nautilus" / "open-in-antigravity-ide.py"
         self.assertTrue(nautilus_script.exists())
         content = nautilus_script.read_text(encoding="utf-8")
         self.assertIn("OpenInAntigravityIDE", content)
-        self.assertIn("Nautilus.MenuProvider", content)
+        self.assertIn("Nautilus", content)
+        self.assertIn("Caja", content)
         self.assertIn("Open in Antigravity IDE", content)
         self.assertIn("antigravity-ide", content)
-        # Verify valid Python syntax
         py_compile.compile(str(nautilus_script), doraise=True)
+
+        # KDE Dolphin KIO Service Menu
+        dolphin_file = desktop_dir / "dolphin" / "open-in-antigravity-ide.desktop"
+        self.assertTrue(dolphin_file.exists())
+        dolphin_content = dolphin_file.read_text(encoding="utf-8")
+        self.assertIn("Type=Service", dolphin_content)
+        self.assertIn("KonqPopupMenu/Plugin", dolphin_content)
+        self.assertIn("openInAntigravityIde", dolphin_content)
+        self.assertIn("Exec=antigravity-ide %u", dolphin_content)
+
+        # Nemo Action
+        nemo_file = desktop_dir / "nemo" / "open-in-antigravity-ide.nemo_action"
+        self.assertTrue(nemo_file.exists())
+        nemo_content = nemo_file.read_text(encoding="utf-8")
+        self.assertIn("[Nemo Action]", nemo_content)
+        self.assertIn("Open in Antigravity IDE", nemo_content)
+        self.assertIn("Exec=antigravity-ide %F", nemo_content)
 
     def test_llms_txt(self):
         llms_file = repo_root / "llms.txt"
@@ -289,6 +320,30 @@ class TestPackagingLogic(unittest.TestCase):
         self.assertIsNone(parse_release_tag("latest"))
         self.assertIsNone(parse_release_tag("vlatest"))
         self.assertEqual(inject_versions_into_html(html, "latest"), html)
+
+    def test_chrome_sandbox_suid_packaging(self):
+        build_script = (repo_root / "scripts" / "build_packages.py").read_text(encoding="utf-8")
+        install_script = (repo_root / "install.sh").read_text(encoding="utf-8")
+        smoke_script = (repo_root / "scripts" / "smoke_test.sh").read_text(encoding="utf-8")
+
+        # Verify RPM spec sets 4755 in %install and %post
+        self.assertIn('chmod 4755 "%{{buildroot}}{install_dest}/chrome-sandbox"', build_script)
+        self.assertIn('chmod 4755 "{install_dest}/chrome-sandbox"', build_script)
+
+        # Verify DEB sets 4755 in staging and in postinst
+        self.assertIn('chmod 4755 "/usr/share/{package_name}/chrome-sandbox"', build_script)
+        self.assertIn('chown root:root "/usr/share/{package_name}/chrome-sandbox"', build_script)
+
+        # Verify install.sh enforces 4755 root:root
+        self.assertIn("fix_chrome_sandbox()", install_script)
+        self.assertIn('chmod 4755 "${target}"', install_script)
+        self.assertIn('chown root:root "${target}"', install_script)
+
+        # Verify smoke test validates 4755
+        self.assertIn('chmod 4755', smoke_script)
+        self.assertIn('-rwsr-xr-x', smoke_script)
+        self.assertIn('perms=$(stat -c "%a" "$cs")', smoke_script)
+        self.assertIn('expected 4755', smoke_script)
 
 
 if __name__ == "__main__":

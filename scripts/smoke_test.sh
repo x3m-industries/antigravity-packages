@@ -24,12 +24,20 @@ echo "=== Running Package Smoke Tests ==="
 echo "Package directory: ${PKG_DIR}"
 echo "Container runtime: ${ENGINE:-None (inspect only)}"
 
-# Basic structural validation first
 for pkg in "${PKG_DIR}"/*.rpm; do
     [ -e "${pkg}" ] || continue
     echo "Inspecting RPM: $(basename "${pkg}")..."
     if command -v rpm > /dev/null 2>&1; then
         rpm -qpi "${pkg}" > /dev/null
+        if rpm -qlp "${pkg}" 2>/dev/null | grep -q "chrome-sandbox"; then
+            perms=$(rpm -qlvp "${pkg}" 2>/dev/null | grep "chrome-sandbox" | awk '{print $1}')
+            if [[ "$perms" == *"-rwsr-xr-x"* ]]; then
+                echo "  ✓ chrome-sandbox packaged with SUID mode 4755 (-rwsr-xr-x)"
+            else
+                echo "ERROR: chrome-sandbox in ${pkg} does not have SUID mode 4755 (found ${perms})" >&2
+                exit 1
+            fi
+        fi
     fi
 done
 
@@ -38,6 +46,13 @@ for pkg in "${PKG_DIR}"/*.deb; do
     echo "Inspecting DEB: $(basename "${pkg}")..."
     if command -v dpkg-deb > /dev/null 2>&1; then
         dpkg-deb -I "${pkg}" > /dev/null
+        tmp_ctrl=$(mktemp -d)
+        if dpkg-deb -e "${pkg}" "${tmp_ctrl}" 2>/dev/null; then
+            if [ -f "${tmp_ctrl}/postinst" ] && grep -q "chmod 4755" "${tmp_ctrl}/postinst"; then
+                echo "  ✓ deb postinst configures SUID permissions (chmod 4755)"
+            fi
+            rm -rf "${tmp_ctrl}"
+        fi
     fi
 done
 
@@ -70,7 +85,7 @@ if [ "${RPM_COUNT}" -gt 0 ]; then
             rpm -q antigravity-ide || true
 
             echo "Verifying binary symlinks..."
-            for b in /usr/bin/antigravity /usr/bin/antigravity-ide; do
+            for b in /usr/bin/antigravity /usr/bin/antigravity-ide /usr/bin/agy-ide /usr/bin/agy-hub; do
                 if [ -e "$b" ]; then
                     test -x "$b"
                     echo "  ✓ $b is executable"
@@ -78,9 +93,21 @@ if [ "${RPM_COUNT}" -gt 0 ]; then
             done
 
             echo "Verifying desktop integration..."
-            for d in /usr/share/applications/antigravity.desktop /usr/share/applications/antigravity-ide.desktop; do
+            for d in /usr/share/applications/antigravity.desktop /usr/share/applications/antigravity-ide.desktop /usr/share/applications/antigravity-ide-url-handler.desktop; do
                 if [ -e "$d" ]; then
                     echo "  ✓ $d installed"
+                fi
+            done
+
+            echo "Verifying chrome-sandbox SUID permissions..."
+            for cs in /usr/share/antigravity/chrome-sandbox /usr/share/antigravity-ide/chrome-sandbox; do
+                if [ -f "$cs" ]; then
+                    perms=$(stat -c "%a" "$cs")
+                    if [ "$perms" != "4755" ]; then
+                        echo "ERROR: $cs has permissions $perms, expected 4755" >&2
+                        exit 1
+                    fi
+                    echo "  ✓ $cs has correct SUID permissions (4755)"
                 fi
             done
 
@@ -108,7 +135,7 @@ if [ "${DEB_COUNT}" -gt 0 ]; then
             dpkg -s antigravity-ide 2>/dev/null || true
 
             echo "Verifying binary symlinks..."
-            for b in /usr/bin/antigravity /usr/bin/antigravity-ide; do
+            for b in /usr/bin/antigravity /usr/bin/antigravity-ide /usr/bin/agy-ide /usr/bin/agy-hub; do
                 if [ -e "$b" ]; then
                     test -x "$b"
                     echo "  ✓ $b is executable"
@@ -116,9 +143,21 @@ if [ "${DEB_COUNT}" -gt 0 ]; then
             done
 
             echo "Verifying desktop integration..."
-            for d in /usr/share/applications/antigravity.desktop /usr/share/applications/antigravity-ide.desktop; do
+            for d in /usr/share/applications/antigravity.desktop /usr/share/applications/antigravity-ide.desktop /usr/share/applications/antigravity-ide-url-handler.desktop; do
                 if [ -e "$d" ]; then
                     echo "  ✓ $d installed"
+                fi
+            done
+
+            echo "Verifying chrome-sandbox SUID permissions..."
+            for cs in /usr/share/antigravity/chrome-sandbox /usr/share/antigravity-ide/chrome-sandbox; do
+                if [ -f "$cs" ]; then
+                    perms=$(stat -c "%a" "$cs")
+                    if [ "$perms" != "4755" ]; then
+                        echo "ERROR: $cs has permissions $perms, expected 4755" >&2
+                        exit 1
+                    fi
+                    echo "  ✓ $cs has correct SUID permissions (4755)"
                 fi
             done
 

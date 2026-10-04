@@ -119,17 +119,76 @@ cp "{icon_file}" %{{buildroot}}/usr/share/pixmaps/{package_name}.png
 /usr/share/pixmaps/{package_name}.png
 """
 
-    nautilus_install = ""
-    nautilus_files = ""
+    extra_install = ""
+    extra_files = ""
     repo_root = Path(__file__).resolve().parent.parent
-    nautilus_src = repo_root / "desktop" / "nautilus" / "open-in-antigravity-ide.py"
-    if package_name == "antigravity-ide" and nautilus_src.exists():
-        nautilus_install = f"""
+    desktop_dir = repo_root / "desktop"
+    nautilus_src = desktop_dir / "nautilus" / "open-in-antigravity-ide.py"
+    dolphin_src = desktop_dir / "dolphin" / "open-in-antigravity-ide.desktop"
+    nemo_src = desktop_dir / "nemo" / "open-in-antigravity-ide.nemo_action"
+    url_handler_src = desktop_dir / "antigravity-ide-url-handler.desktop"
+
+    short_bin = "agy-ide" if package_name == "antigravity-ide" else "agy-hub"
+
+    if package_name == "antigravity-ide":
+        if url_handler_src.exists():
+            extra_install += f"""
+cp "{url_handler_src}" "%{{buildroot}}/usr/share/applications/antigravity-ide-url-handler.desktop"
+"""
+            extra_files += "/usr/share/applications/antigravity-ide-url-handler.desktop\n"
+
+        if nautilus_src.exists():
+            extra_install += f"""
 mkdir -p %{{buildroot}}/usr/share/nautilus-python/extensions
 cp "{nautilus_src}" %{{buildroot}}/usr/share/nautilus-python/extensions/open-in-antigravity-ide.py
 chmod 0644 %{{buildroot}}/usr/share/nautilus-python/extensions/open-in-antigravity-ide.py
+
+mkdir -p %{{buildroot}}/usr/share/caja-python/extensions
+cp "{nautilus_src}" %{{buildroot}}/usr/share/caja-python/extensions/open-in-antigravity-ide.py
+chmod 0644 %{{buildroot}}/usr/share/caja-python/extensions/open-in-antigravity-ide.py
 """
-        nautilus_files = "/usr/share/nautilus-python/extensions/open-in-antigravity-ide.py"
+            extra_files += """/usr/share/nautilus-python/extensions/open-in-antigravity-ide.py
+/usr/share/caja-python/extensions/open-in-antigravity-ide.py
+"""
+
+        if dolphin_src.exists():
+            extra_install += f"""
+mkdir -p %{{buildroot}}/usr/share/kio/servicemenus
+mkdir -p %{{buildroot}}/usr/share/kservices5/ServiceMenus
+cp "{dolphin_src}" %{{buildroot}}/usr/share/kio/servicemenus/open-in-antigravity-ide.desktop
+chmod 0644 %{{buildroot}}/usr/share/kio/servicemenus/open-in-antigravity-ide.desktop
+ln -sf /usr/share/kio/servicemenus/open-in-antigravity-ide.desktop %{{buildroot}}/usr/share/kservices5/ServiceMenus/open-in-antigravity-ide.desktop
+"""
+            extra_files += """/usr/share/kio/servicemenus/open-in-antigravity-ide.desktop
+/usr/share/kservices5/ServiceMenus/open-in-antigravity-ide.desktop
+"""
+
+        if nemo_src.exists():
+            extra_install += f"""
+mkdir -p %{{buildroot}}/usr/share/nemo/actions
+cp "{nemo_src}" %{{buildroot}}/usr/share/nemo/actions/open-in-antigravity-ide.nemo_action
+chmod 0644 %{{buildroot}}/usr/share/nemo/actions/open-in-antigravity-ide.nemo_action
+"""
+            extra_files += "/usr/share/nemo/actions/open-in-antigravity-ide.nemo_action\n"
+
+        extra_install += f"""
+mkdir -p %{{buildroot}}/usr/share/bash-completion/completions
+if [ -f "%{{buildroot}}{install_dest}/resources/completions/bash/antigravity-ide" ]; then
+    cp "%{{buildroot}}{install_dest}/resources/completions/bash/antigravity-ide" "%{{buildroot}}/usr/share/bash-completion/completions/antigravity-ide"
+    ln -sf antigravity-ide "%{{buildroot}}/usr/share/bash-completion/completions/agy-ide"
+fi
+
+mkdir -p %{{buildroot}}/usr/share/zsh/site-functions
+if [ -f "%{{buildroot}}{install_dest}/resources/completions/zsh/_antigravity-ide" ]; then
+    cp "%{{buildroot}}{install_dest}/resources/completions/zsh/_antigravity-ide" "%{{buildroot}}/usr/share/zsh/site-functions/_antigravity-ide"
+    ln -sf _antigravity-ide "%{{buildroot}}/usr/share/zsh/site-functions/_agy-ide"
+fi
+"""
+        extra_files += """/usr/share/bash-completion/completions/antigravity-ide
+/usr/share/bash-completion/completions/agy-ide
+/usr/share/zsh/site-functions/_antigravity-ide
+/usr/share/zsh/site-functions/_agy-ide
+"""
 
     spec_content = f"""
 %define _topdir {rpm_root}
@@ -158,27 +217,35 @@ cp -a "{app_source_dir}"/* "%{{buildroot}}{install_dest}/"
 # Permissions
 find "%{{buildroot}}{install_dest}" -type d -exec chmod 0755 {{}} +
 find "%{{buildroot}}{install_dest}" -type f -exec chmod 0644 {{}} +
-find "%{{buildroot}}{install_dest}" -type f \\( -name "*.sh" -o -name "*.so*" -o -name "{package_name}" -o -name "chrome-sandbox" -o -name "chrome_crashpad_handler" -o -name "language_server*" -o -name "webm_encoder" -o -name "rg" -o -path "*/bin/*" \\) -exec chmod 0755 {{}} +
+find "%{{buildroot}}{install_dest}" -type f \\( -name "*.sh" -o -name "*.so*" -o -name "{package_name}" -o -name "chrome_crashpad_handler" -o -name "language_server*" -o -name "webm_encoder" -o -name "rg" -o -path "*/bin/*" \\) -exec chmod 0755 {{}} +
 find "%{{buildroot}}{install_dest}" -type f -exec sh -c 'for f; do if head -c 4 "$f" 2>/dev/null | grep -q "^.ELF"; then chmod 0755 "$f"; fi; done' _ {{}} +
+if [ -f "%{{buildroot}}{install_dest}/chrome-sandbox" ]; then
+    chmod 4755 "%{{buildroot}}{install_dest}/chrome-sandbox"
+fi
 
 # Symlink to /usr/bin
 mkdir -p "%{{buildroot}}/usr/bin"
 ln -sf "{bin_target}" "%{{buildroot}}/usr/bin/{package_name}"
+ln -sf "/usr/bin/{package_name}" "%{{buildroot}}/usr/bin/{short_bin}"
 
 # Desktop entry
 mkdir -p "%{{buildroot}}/usr/share/applications"
 cp "{desktop_file}" "%{{buildroot}}/usr/share/applications/{package_name}.desktop"
 {icon_install}
-{nautilus_install}
+{extra_install}
 
 %files
 {install_dest}
 /usr/bin/{package_name}
+/usr/bin/{short_bin}
 /usr/share/applications/{package_name}.desktop
 {icon_files}
-{nautilus_files}
+{extra_files}
 
 %post
+if [ -f "{install_dest}/chrome-sandbox" ]; then
+    chmod 4755 "{install_dest}/chrome-sandbox" 2>/dev/null || true
+fi
 update-desktop-database /usr/share/applications &> /dev/null || true
 gtk-update-icon-cache -f /usr/share/icons/hicolor &> /dev/null || true
 
@@ -209,12 +276,20 @@ def build_deb(package_name, version, release, arch, app_source_dir, output_dir, 
 
     # Permissions
     sanitize_tree_permissions(install_dest)
+    cs_bin = install_dest / "chrome-sandbox"
+    if cs_bin.exists():
+        try:
+            os.chmod(cs_bin, 0o4755)
+        except Exception:
+            pass
 
-    # Bin symlink
+    # Bin symlinks
     bin_dir = stage_dir / "usr" / "bin"
     bin_dir.mkdir(parents=True, exist_ok=True)
     target_link = f"/usr/share/{package_name}/bin/{package_name}" if package_name == "antigravity-ide" else f"/usr/share/{package_name}/{package_name}"
     os.symlink(target_link, bin_dir / package_name)
+    short_bin = "agy-ide" if package_name == "antigravity-ide" else "agy-hub"
+    os.symlink(f"/usr/bin/{package_name}", bin_dir / short_bin)
 
     # Desktop file
     apps_dir = stage_dir / "usr" / "share" / "applications"
@@ -230,14 +305,62 @@ def build_deb(package_name, version, release, arch, app_source_dir, output_dir, 
         shutil.copy(icon_file, icon_dir / f"{package_name}.png")
         shutil.copy(icon_file, pix_dir / f"{package_name}.png")
 
-    # Nautilus extension
     repo_root = Path(__file__).resolve().parent.parent
-    nautilus_src = repo_root / "desktop" / "nautilus" / "open-in-antigravity-ide.py"
-    if package_name == "antigravity-ide" and nautilus_src.exists():
-        nautilus_dir = stage_dir / "usr" / "share" / "nautilus-python" / "extensions"
-        nautilus_dir.mkdir(parents=True, exist_ok=True)
-        shutil.copy(nautilus_src, nautilus_dir / "open-in-antigravity-ide.py")
-        os.chmod(nautilus_dir / "open-in-antigravity-ide.py", 0o644)
+    desktop_dir = repo_root / "desktop"
+    nautilus_src = desktop_dir / "nautilus" / "open-in-antigravity-ide.py"
+    dolphin_src = desktop_dir / "dolphin" / "open-in-antigravity-ide.desktop"
+    nemo_src = desktop_dir / "nemo" / "open-in-antigravity-ide.nemo_action"
+    url_handler_src = desktop_dir / "antigravity-ide-url-handler.desktop"
+
+    if package_name == "antigravity-ide":
+        # URL handler desktop entry
+        if url_handler_src.exists():
+            shutil.copy(url_handler_src, apps_dir / "antigravity-ide-url-handler.desktop")
+
+        # Nautilus & Caja
+        if nautilus_src.exists():
+            nautilus_dir = stage_dir / "usr" / "share" / "nautilus-python" / "extensions"
+            nautilus_dir.mkdir(parents=True, exist_ok=True)
+            shutil.copy(nautilus_src, nautilus_dir / "open-in-antigravity-ide.py")
+            os.chmod(nautilus_dir / "open-in-antigravity-ide.py", 0o644)
+
+            caja_dir = stage_dir / "usr" / "share" / "caja-python" / "extensions"
+            caja_dir.mkdir(parents=True, exist_ok=True)
+            shutil.copy(nautilus_src, caja_dir / "open-in-antigravity-ide.py")
+            os.chmod(caja_dir / "open-in-antigravity-ide.py", 0o644)
+
+        # KDE Dolphin Service Menu
+        if dolphin_src.exists():
+            kio_dir = stage_dir / "usr" / "share" / "kio" / "servicemenus"
+            kio_dir.mkdir(parents=True, exist_ok=True)
+            shutil.copy(dolphin_src, kio_dir / "open-in-antigravity-ide.desktop")
+            os.chmod(kio_dir / "open-in-antigravity-ide.desktop", 0o644)
+
+            kservice_dir = stage_dir / "usr" / "share" / "kservices5" / "ServiceMenus"
+            kservice_dir.mkdir(parents=True, exist_ok=True)
+            os.symlink("/usr/share/kio/servicemenus/open-in-antigravity-ide.desktop", kservice_dir / "open-in-antigravity-ide.desktop")
+
+        # Nemo Action
+        if nemo_src.exists():
+            nemo_dir = stage_dir / "usr" / "share" / "nemo" / "actions"
+            nemo_dir.mkdir(parents=True, exist_ok=True)
+            shutil.copy(nemo_src, nemo_dir / "open-in-antigravity-ide.nemo_action")
+            os.chmod(nemo_dir / "open-in-antigravity-ide.nemo_action", 0o644)
+
+        # Shell completions
+        bash_src = Path(app_source_dir) / "resources" / "completions" / "bash" / "antigravity-ide"
+        if bash_src.exists():
+            bash_dir = stage_dir / "usr" / "share" / "bash-completion" / "completions"
+            bash_dir.mkdir(parents=True, exist_ok=True)
+            shutil.copy(bash_src, bash_dir / "antigravity-ide")
+            os.symlink("antigravity-ide", bash_dir / "agy-ide")
+
+        zsh_src = Path(app_source_dir) / "resources" / "completions" / "zsh" / "_antigravity-ide"
+        if zsh_src.exists():
+            zsh_dir = stage_dir / "usr" / "share" / "zsh" / "site-functions"
+            zsh_dir.mkdir(parents=True, exist_ok=True)
+            shutil.copy(zsh_src, zsh_dir / "_antigravity-ide")
+            os.symlink("_antigravity-ide", zsh_dir / "_agy-ide")
 
     # DEBIAN control
     debian_dir = stage_dir / "DEBIAN"
@@ -256,8 +379,12 @@ Description: Google Antigravity - {"Agentic IDE" if "ide" in package_name else "
     with open(debian_dir / "control", "w") as f:
         f.write(control_content)
 
-    postinst_content = """#!/bin/sh
+    postinst_content = f"""#!/bin/sh
 set -e
+if [ -f "/usr/share/{package_name}/chrome-sandbox" ]; then
+    chown root:root "/usr/share/{package_name}/chrome-sandbox" 2>/dev/null || true
+    chmod 4755 "/usr/share/{package_name}/chrome-sandbox" 2>/dev/null || true
+fi
 if command -v update-desktop-database > /dev/null 2>&1; then
     update-desktop-database /usr/share/applications || true
 fi

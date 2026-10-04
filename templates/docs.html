@@ -620,24 +620,39 @@
                 </div>
             </section>
 
-            <!-- Section 4: GNOME Files (Nautilus) Integration -->
+            <!-- Section 4: Multi-Desktop File Manager Integrations -->
             <section class="doc-section" id="nautilus">
-                <h2 class="section-heading"><span>📂</span> GNOME Files (Nautilus) Right-Click Integration</h2>
-                <p class="section-desc">The universal installer and native packages include a Python extension for GNOME Files (Nautilus), providing native context menu actions.</p>
+                <h2 class="section-heading"><span>📂</span> Multi-Desktop File Manager Right-Click Integration</h2>
+                <p class="section-desc">The universal installer and native RPM/DEB packages automatically configure native context menus and right-click actions across all major Linux desktop environments:</p>
 
                 <div class="doc-card">
-                    <h3 class="card-subtitle">Extension Behavior</h3>
+                    <h3 class="card-subtitle">GNOME Files (Nautilus) &amp; MATE (Caja)</h3>
                     <ul style="margin: 8px 0 16px 20px; color: var(--text-muted); line-height: 1.8;">
                         <li><strong>Right-click files or project directories:</strong> Adds <em>"Open in Antigravity IDE"</em>.</li>
                         <li><strong>Right-click directory background:</strong> Adds <em>"Open Folder in Antigravity IDE"</em>.</li>
-                        <li><strong>Compatibility:</strong> Fully supports Nautilus 4.x (GNOME 43+ / GTK4) and Nautilus 3.x.</li>
-                        <li><strong>File location:</strong> Installed to <code>/usr/share/nautilus-python/extensions/open-in-antigravity-ide.py</code>.</li>
+                        <li><strong>Compatibility:</strong> Fully supports Nautilus 4.x (GNOME 43+ / GTK4), Nautilus 3.x, and Caja.</li>
+                        <li><strong>File locations:</strong> <code>/usr/share/nautilus-python/extensions/open-in-antigravity-ide.py</code> and <code>/usr/share/caja-python/extensions/</code>.</li>
                     </ul>
                     <p class="section-desc">If the context menu does not appear immediately after installation, restart Nautilus:</p>
                     <div class="code-block">
                         <code>nautilus -q</code>
                         <button class="copy-btn" onclick="copyCode(this)">Copy</button>
                     </div>
+                </div>
+
+                <div class="doc-card" style="margin-top: 20px;">
+                    <h3 class="card-subtitle">KDE Plasma (Dolphin)</h3>
+                    <p class="section-desc">Configured via native KIO Service Menu (<code>/usr/share/kio/servicemenus/open-in-antigravity-ide.desktop</code>). Right-clicking any folder or file displays <em>"Open in Antigravity IDE"</em> at top level with zero extra Python dependencies.</p>
+                </div>
+
+                <div class="doc-card" style="margin-top: 20px;">
+                    <h3 class="card-subtitle">Linux Mint / Cinnamon (Nemo)</h3>
+                    <p class="section-desc">Configured via native Nemo Action (<code>/usr/share/nemo/actions/open-in-antigravity-ide.nemo_action</code>). Right-clicking any file or folder in Linux Mint opens it directly in Antigravity IDE.</p>
+                </div>
+
+                <div class="doc-card" style="margin-top: 20px;">
+                    <h3 class="card-subtitle">COSMIC Desktop (Pop!_OS &amp; COSMIC)</h3>
+                    <p class="section-desc">Full FreeDesktop MIME type integration (<code>inode/directory</code>, <code>application/x-code-workspace</code>) automatically surfaces Antigravity IDE in <strong>cosmic-files</strong> "Open With" menus and enables instant discovery in <strong>cosmic-launcher</strong> search.</p>
                 </div>
             </section>
 
