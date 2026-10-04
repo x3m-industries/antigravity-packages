@@ -180,18 +180,6 @@ cat << SITEMAP_EOF > "${DIST_DIR}/sitemap.xml"
     <changefreq>weekly</changefreq>
     <priority>0.9</priority>
   </url>
-  <url>
-    <loc>https://x3m-industries.github.io/antigravity-packages/llms.txt</loc>
-    <lastmod>${CURRENT_DATE}</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
-  </url>
-  <url>
-    <loc>https://x3m-industries.github.io/antigravity-packages/llms-full.txt</loc>
-    <lastmod>${CURRENT_DATE}</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.7</priority>
-  </url>
 </urlset>
 SITEMAP_EOF
 
