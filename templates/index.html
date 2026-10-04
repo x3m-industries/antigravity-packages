@@ -756,8 +756,11 @@
                     <span>Hub</span>
                     <span data-version="hub-semver">v2.19.1</span>
                 </a>
-                <a href="https://github.com/x3m-industries/antigravity-packages" target="_blank" rel="noopener noreferrer" style="display:inline-flex; align-items:center;">
+                <a href="https://github.com/x3m-industries/antigravity-packages" target="_blank" rel="noopener noreferrer" style="display:inline-flex; align-items:center;" title="Star on GitHub">
                     <img src="https://img.shields.io/github/stars/x3m-industries/antigravity-packages?style=flat-square&logo=github&color=f59e0b&label=Star" alt="GitHub Stars" width="85" height="24">
+                </a>
+                <a href="https://github.com/x3m-industries/antigravity-packages/releases" target="_blank" rel="noopener noreferrer" style="display:inline-flex; align-items:center;" title="Total Package Downloads on GitHub">
+                    <img src="https://img.shields.io/github/downloads/x3m-industries/antigravity-packages/total?color=8b5cf6&logo=github&label=Downloads&style=flat-square" alt="Total Downloads" width="150" height="24">
                 </a>
             </div>
         </header>
@@ -870,9 +873,19 @@
                                 <td><span class="check-badge">✓</span> Hardened <code>04755 root:root</code> sandbox permissions</td>
                             </tr>
                             <tr>
-                                <td><strong>File Manager Menu</strong></td>
-                                <td><span class="cross-badge">✕</span> Missing</td>
-                                <td><span class="check-badge">✓</span> Native GNOME Files (Nautilus) right-click menu</td>
+                                <td><strong>Desktop Integration</strong></td>
+                                <td><span class="cross-badge">✕</span> None or GNOME-only script</td>
+                                <td><span class="check-badge">✓</span> Native right-click on GNOME, KDE, Mint, MATE &amp; COSMIC</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Terminal Ergonomics</strong></td>
+                                <td><span class="cross-badge">✕</span> Manual paths, zero completion</td>
+                                <td><span class="check-badge">✓</span> Fast shortcuts (<code>agy-ide</code>, <code>agy-hub</code>) &amp; Bash/Zsh tab completion</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Clean Uninstallation</strong></td>
+                                <td><span class="cross-badge">✕</span> Leaves orphaned files &amp; icons in <code>/opt</code></td>
+                                <td><span class="check-badge">✓</span> Atomic removal via <code>dnf</code>, <code>apt</code>, or <code>--uninstall</code></td>
                             </tr>
                         </tbody>
                     </table>
