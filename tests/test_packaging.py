@@ -29,6 +29,11 @@ class TestPackagingLogic(unittest.TestCase):
         self.assertEqual(ver, "1.0.0")
         self.assertEqual(rel, "beta.1-12345")
 
+        # Packaging revision suffix format
+        ver, rel = split_version("2.5.5-4923483625488384.1")
+        self.assertEqual(ver, "2.5.5")
+        self.assertEqual(rel, "4923483625488384.1")
+
     def test_upstream_regex_matching(self):
         sample_html = """
         <a href="https://storage.googleapis.com/antigravity-public/antigravity-hub/2.18.1-4945794252537856/linux-x64/Antigravity.tar.gz">Download</a>
@@ -260,6 +265,15 @@ class TestPackagingLogic(unittest.TestCase):
         self.assertEqual(ide_b, "1234567890123456")
         self.assertEqual(hub_ver, "2.20.0")
         self.assertEqual(hub_b, "9876543210987654")
+
+        # Test revision tag parsing
+        revision_tag = "v2.5.5-4923483625488384.1_hub-2.19.1-6046815158665216"
+        parsed_rev = parse_release_tag(revision_tag)
+        self.assertIsNotNone(parsed_rev)
+        self.assertEqual(parsed_rev[0], "2.5.5")
+        self.assertEqual(parsed_rev[1], "4923483625488384.1")
+        self.assertEqual(parsed_rev[2], "2.19.1")
+        self.assertEqual(parsed_rev[3], "6046815158665216")
 
         # Test HTML injection
         template_file = repo_root / "templates" / "index.html"

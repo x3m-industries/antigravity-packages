@@ -17,12 +17,12 @@ def parse_release_tag(tag: str):
     if not tag or tag in ["latest", "vlatest"]:
         return None
     # Combined tag: v<ide_ver>-<ide_build>_hub-<hub_ver>-<hub_build>
-    m = re.match(r"^v([0-9\.]+)(?:-([0-9]+))?_hub-([0-9\.]+)(?:-([0-9]+))?", tag)
+    m = re.match(r"^v([0-9\.]+)(?:-([0-9a-zA-Z\.\-]+))?_hub-([0-9\.]+)(?:-([0-9a-zA-Z\.\-]+))?", tag)
     if m:
         return m.groups()
 
     # Single tag fallback: v<ver>-<build>
-    m_simple = re.match(r"^v([0-9\.]+)(?:-([0-9]+))?", tag)
+    m_simple = re.match(r"^v([0-9\.]+)(?:-([0-9a-zA-Z\.\-]+))?", tag)
     if m_simple:
         ver, b = m_simple.groups()
         return ver, b, ver, b

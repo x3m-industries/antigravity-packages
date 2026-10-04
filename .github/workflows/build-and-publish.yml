@@ -20,6 +20,11 @@ on:
         required: false
         type: boolean
         default: false
+      pkg_revision:
+        description: 'Packaging release revision suffix (e.g. 1)'
+        required: false
+        type: string
+        default: ''
 
 permissions:
   contents: write
@@ -62,6 +67,7 @@ jobs:
           FORCE_BUILD: ${{ inputs.force_build }}
           FORCE_IDE: ${{ inputs.force_ide }}
           FORCE_HUB: ${{ inputs.force_hub }}
+          PKG_REVISION: ${{ inputs.pkg_revision }}
         run: |
           python3 scripts/check_upstream.py
 

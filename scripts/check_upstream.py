@@ -85,14 +85,20 @@ def main():
     if force_hub:
         hub_needs_build = True
 
-    has_update = ide_needs_build or hub_needs_build
+    pkg_revision = os.environ.get("PKG_REVISION", "").strip()
+    if pkg_revision:
+        ide_ver_output = f"{ide_ver}.{pkg_revision}"
+        has_update = True
+        ide_needs_build = True
+    else:
+        ide_ver_output = ide_ver
 
     # Target tag name combines both versions so it is always unique when either updates
-    tag_name = f"v{ide_ver}_hub-{hub_ver}"
+    tag_name = f"v{ide_ver_output}_hub-{hub_ver}"
     if not prev_tag:
-        tag_name = f"v{ide_ver}"
+        tag_name = f"v{ide_ver_output}"
 
-    print(f"ide_needs_build: {ide_needs_build} (upstream: {ide_ver}, present: {ide_present})")
+    print(f"ide_needs_build: {ide_needs_build} (upstream: {ide_ver}, output: {ide_ver_output}, present: {ide_present})")
     print(f"hub_needs_build: {hub_needs_build} (upstream: {hub_ver}, present: {hub_present})")
     print(f"has_update: {has_update}, target tag: {tag_name}")
 
@@ -104,7 +110,7 @@ def main():
             f.write(f"hub_needs_build={'true' if hub_needs_build else 'false'}\n")
             f.write(f"tag_name={tag_name}\n")
             f.write(f"prev_tag={prev_tag}\n")
-            f.write(f"ide_version={ide_ver}\n")
+            f.write(f"ide_version={ide_ver_output}\n")
             f.write(f"ide_url_x64={upstream['antigravity-ide']['url_x64'] or ''}\n")
             f.write(f"ide_url_arm64={upstream['antigravity-ide']['url_arm64'] or ''}\n")
             f.write(f"hub_version={hub_ver}\n")

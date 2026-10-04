@@ -119,6 +119,18 @@ cp "{icon_file}" %{{buildroot}}/usr/share/pixmaps/{package_name}.png
 /usr/share/pixmaps/{package_name}.png
 """
 
+    nautilus_install = ""
+    nautilus_files = ""
+    repo_root = Path(__file__).resolve().parent.parent
+    nautilus_src = repo_root / "desktop" / "nautilus" / "open-in-antigravity-ide.py"
+    if package_name == "antigravity-ide" and nautilus_src.exists():
+        nautilus_install = f"""
+mkdir -p %{{buildroot}}/usr/share/nautilus-python/extensions
+cp "{nautilus_src}" %{{buildroot}}/usr/share/nautilus-python/extensions/open-in-antigravity-ide.py
+chmod 0644 %{{buildroot}}/usr/share/nautilus-python/extensions/open-in-antigravity-ide.py
+"""
+        nautilus_files = "/usr/share/nautilus-python/extensions/open-in-antigravity-ide.py"
+
     spec_content = f"""
 %define _topdir {rpm_root}
 %define _rpmdir {output_dir}
@@ -157,12 +169,14 @@ ln -sf "{bin_target}" "%{{buildroot}}/usr/bin/{package_name}"
 mkdir -p "%{{buildroot}}/usr/share/applications"
 cp "{desktop_file}" "%{{buildroot}}/usr/share/applications/{package_name}.desktop"
 {icon_install}
+{nautilus_install}
 
 %files
 {install_dest}
 /usr/bin/{package_name}
 /usr/share/applications/{package_name}.desktop
 {icon_files}
+{nautilus_files}
 
 %post
 update-desktop-database /usr/share/applications &> /dev/null || true
@@ -215,6 +229,15 @@ def build_deb(package_name, version, release, arch, app_source_dir, output_dir, 
         pix_dir.mkdir(parents=True, exist_ok=True)
         shutil.copy(icon_file, icon_dir / f"{package_name}.png")
         shutil.copy(icon_file, pix_dir / f"{package_name}.png")
+
+    # Nautilus extension
+    repo_root = Path(__file__).resolve().parent.parent
+    nautilus_src = repo_root / "desktop" / "nautilus" / "open-in-antigravity-ide.py"
+    if package_name == "antigravity-ide" and nautilus_src.exists():
+        nautilus_dir = stage_dir / "usr" / "share" / "nautilus-python" / "extensions"
+        nautilus_dir.mkdir(parents=True, exist_ok=True)
+        shutil.copy(nautilus_src, nautilus_dir / "open-in-antigravity-ide.py")
+        os.chmod(nautilus_dir / "open-in-antigravity-ide.py", 0o644)
 
     # DEBIAN control
     debian_dir = stage_dir / "DEBIAN"
@@ -271,12 +294,15 @@ def main():
     parser.add_argument("--arch", default="x86_64")
     parser.add_argument("--output-dir", default="./dist/packages")
     parser.add_argument("--tarball", help="Optional local tarball path instead of downloading")
+    parser.add_argument("--pkg-revision", help="Optional packaging release revision (e.g. 1)")
     args = parser.parse_args()
 
     out_dir = Path(args.output_dir)
     out_dir.mkdir(parents=True, exist_ok=True)
 
     version, release = split_version(args.version_full)
+    if args.pkg_revision:
+        release = f"{release}.{args.pkg_revision}"
     work_dir = Path(f"/tmp/pkg-work-{args.package}-{args.arch}")
     if work_dir.exists():
         shutil.rmtree(work_dir)
