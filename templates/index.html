@@ -549,6 +549,26 @@
             border-color: rgba(16, 185, 129, 0.55);
             color: #34d399;
         }
+        .manual-docs-link {
+            font-size: 0.78rem;
+            color: var(--text-muted);
+            text-decoration: none;
+            padding: 4px 10px;
+            border-radius: 8px;
+            background: rgba(255, 255, 255, 0.04);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+            white-space: nowrap;
+            font-weight: 600;
+            display: inline-flex;
+            align-items: center;
+        }
+        .manual-docs-link:hover {
+            color: var(--accent);
+            border-color: rgba(56, 189, 248, 0.4);
+            background: rgba(56, 189, 248, 0.1);
+            transform: translateY(-1px);
+        }
         .terminal-sim-drawer {
             border-top: 1px solid rgba(255, 255, 255, 0.08);
             background: #030712;
@@ -980,12 +1000,9 @@
                             <span class="dot dot-yellow"></span>
                             <span class="dot dot-green"></span>
                         </div>
-                        <!-- Segmented Distro Switcher -->
+                        <!-- Mode Switcher -->
                         <div class="terminal-tabs" role="tablist">
-                            <button class="tab-btn active" data-tab="universal" onclick="switchTab('universal', this)" role="tab" aria-selected="true">⚡ 1-Click Universal</button>
-                            <button class="tab-btn" data-tab="rpm" onclick="switchTab('rpm', this)" role="tab" aria-selected="false">Fedora / RHEL (DNF)</button>
-                            <button class="tab-btn" data-tab="deb" onclick="switchTab('deb', this)" role="tab" aria-selected="false">Ubuntu / Debian (APT)</button>
-                            <button class="tab-btn" data-tab="suse" onclick="switchTab('suse', this)" role="tab" aria-selected="false">openSUSE (Zypper)</button>
+                            <button class="tab-btn active" data-tab="universal" onclick="switchTab('universal', this)" role="tab" aria-selected="true">⚡ Universal 1-Liner (Recommended)</button>
                             <button class="tab-btn" data-tab="cli" onclick="switchTab('cli', this)" role="tab" aria-selected="false">Antigravity CLI ('agy')</button>
                         </div>
                     </div>
@@ -1003,12 +1020,13 @@
                 </div>
 
                 <div class="terminal-footer">
-                    <span id="tab-desc">Smart universal installer with interactive menu, auto-detection &amp; desktop integration.</span>
+                    <span id="tab-desc">One command auto-detects Fedora, Ubuntu, Debian, openSUSE, RHEL &amp; Arch with native packages.</span>
                     <div class="terminal-footer-actions">
                         <span id="detected-pill" class="detected-tag" style="display:none;">
                             <span class="detected-dot"></span>
                             <span id="detected-name">Detected OS</span>
                         </span>
+                        <a href="docs.html#manual-repos" class="manual-docs-link" title="Manual APT, DNF and Zypper repository setup without curl">Manual Distro Repos →</a>
                         <button id="sim-toggle-btn" class="sim-toggle-btn" onclick="toggleSimDrawer()" aria-expanded="false" aria-controls="terminal-sim-drawer" title="Toggle interactive terminal playback">
                             <span id="sim-play-icon" class="sim-play-icon">▶</span>
                             <span id="sim-toggle-text">Preview Shell Run</span>
@@ -1204,23 +1222,23 @@
         const COMMANDS = {
             universal: {
                 cmd: "curl -fsSL https://x3m-industries.github.io/antigravity-packages/install.sh | bash",
-                desc: "Smart universal installer with interactive menu, auto-detection & desktop integration."
-            },
-            rpm: {
-                cmd: "sudo curl -fsSL https://x3m-industries.github.io/antigravity-packages/rpm/antigravity.repo -o /etc/yum.repos.d/antigravity.repo && sudo dnf install antigravity-ide antigravity",
-                desc: "Direct native RPM repository integration for Fedora, RHEL, CentOS, Rocky & AlmaLinux."
-            },
-            deb: {
-                cmd: "sudo mkdir -p /etc/apt/keyrings && sudo curl -fsSL https://x3m-industries.github.io/antigravity-packages/deb/antigravity.gpg -o /etc/apt/keyrings/antigravity.gpg && sudo curl -fsSL https://x3m-industries.github.io/antigravity-packages/deb/antigravity.sources -o /etc/apt/sources.list.d/antigravity.sources && sudo apt update && sudo apt install antigravity-ide antigravity",
-                desc: "Direct native DEB822 repository integration for Ubuntu, Debian, Linux Mint & Pop!_OS."
-            },
-            suse: {
-                cmd: "sudo zypper addrepo -f https://x3m-industries.github.io/antigravity-packages/rpm/ antigravity && sudo rpm --import https://x3m-industries.github.io/antigravity-packages/rpm/RPM-GPG-KEY-antigravity && sudo zypper install antigravity-ide antigravity",
-                desc: "Direct native RPM repository integration for openSUSE Leap & Tumbleweed."
+                desc: "One command auto-detects Fedora, Ubuntu, Debian, openSUSE, RHEL & Arch with native packages."
             },
             cli: {
                 cmd: "curl -fsSL https://x3m-industries.github.io/antigravity-packages/install.sh | bash -s -- --cli-only",
                 desc: "Install only Google Antigravity CLI ('agy') into ~/.local/bin/agy (no sudo needed)."
+            },
+            rpm: {
+                cmd: "curl -fsSL https://x3m-industries.github.io/antigravity-packages/install.sh | bash",
+                desc: "One command auto-detects Fedora, Ubuntu, Debian, openSUSE, RHEL & Arch with native packages."
+            },
+            deb: {
+                cmd: "curl -fsSL https://x3m-industries.github.io/antigravity-packages/install.sh | bash",
+                desc: "One command auto-detects Fedora, Ubuntu, Debian, openSUSE, RHEL & Arch with native packages."
+            },
+            suse: {
+                cmd: "curl -fsSL https://x3m-industries.github.io/antigravity-packages/install.sh | bash",
+                desc: "One command auto-detects Fedora, Ubuntu, Debian, openSUSE, RHEL & Arch with native packages."
             }
         };
 
@@ -1292,46 +1310,29 @@
         function detectOSAndInitTabs() {
             // Check hash
             const hash = (window.location.hash || '').toLowerCase().replace('#', '');
-            if (['deb', 'apt', 'ubuntu', 'debian', 'mint', 'pop'].includes(hash)) {
-                switchTab('deb', null, false); return;
-            }
-            if (['rpm', 'dnf', 'yum', 'fedora', 'rhel', 'centos', 'rocky', 'alma'].includes(hash)) {
-                switchTab('rpm', null, false); return;
-            }
-            if (['suse', 'opensuse', 'zypper'].includes(hash)) {
-                switchTab('suse', null, false); return;
-            }
             if (['cli', 'agy'].includes(hash)) {
-                switchTab('cli', null, false); return;
+                switchTab('cli', null, false);
+            } else {
+                switchTab('universal', null, false);
             }
 
-            // Check localStorage
-            try {
-                const saved = localStorage.getItem('preferred_distro_tab');
-                if (saved && COMMANDS[saved]) {
-                    switchTab(saved, null, false);
-                    return;
-                }
-            } catch(e){}
-
-            // Detect userAgent
+            // Detect userAgent and show confirmation that their OS is supported out-of-the-box!
             const ua = (navigator.userAgent || '').toLowerCase();
             let detected = null;
-            let targetTab = null;
 
-            if (/fedora/.test(ua)) { detected = 'Fedora Linux'; targetTab = 'rpm'; }
-            else if (/red hat|rhel/.test(ua)) { detected = 'RHEL'; targetTab = 'rpm'; }
-            else if (/centos/.test(ua)) { detected = 'CentOS'; targetTab = 'rpm'; }
-            else if (/rocky/.test(ua)) { detected = 'Rocky Linux'; targetTab = 'rpm'; }
-            else if (/alma/.test(ua)) { detected = 'AlmaLinux'; targetTab = 'rpm'; }
-            else if (/ubuntu/.test(ua)) { detected = 'Ubuntu'; targetTab = 'deb'; }
-            else if (/debian/.test(ua)) { detected = 'Debian'; targetTab = 'deb'; }
-            else if (/mint/.test(ua)) { detected = 'Linux Mint'; targetTab = 'deb'; }
-            else if (/pop!?_os/.test(ua)) { detected = 'Pop!_OS'; targetTab = 'deb'; }
-            else if (/suse/.test(ua)) { detected = 'openSUSE'; targetTab = 'suse'; }
+            if (/fedora/.test(ua)) { detected = 'Fedora Linux (Auto-Supported)'; }
+            else if (/red hat|rhel/.test(ua)) { detected = 'RHEL (Auto-Supported)'; }
+            else if (/centos/.test(ua)) { detected = 'CentOS (Auto-Supported)'; }
+            else if (/rocky/.test(ua)) { detected = 'Rocky Linux (Auto-Supported)'; }
+            else if (/alma/.test(ua)) { detected = 'AlmaLinux (Auto-Supported)'; }
+            else if (/ubuntu/.test(ua)) { detected = 'Ubuntu Linux (Auto-Supported)'; }
+            else if (/debian/.test(ua)) { detected = 'Debian (Auto-Supported)'; }
+            else if (/mint/.test(ua)) { detected = 'Linux Mint (Auto-Supported)'; }
+            else if (/pop!?_os/.test(ua)) { detected = 'Pop!_OS (Auto-Supported)'; }
+            else if (/suse/.test(ua)) { detected = 'openSUSE (Auto-Supported)'; }
+            else if (/arch/.test(ua)) { detected = 'Arch Linux (Auto-Supported)'; }
 
-            if (targetTab && detected) {
-                switchTab(targetTab, null, false);
+            if (detected) {
                 const pill = document.getElementById('detected-pill');
                 const name = document.getElementById('detected-name');
                 if (pill && name) {
