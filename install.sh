@@ -381,6 +381,33 @@ show_status() {
         echo -e "  • ${GREEN}Shell Completions:${RESET}    Bash & Zsh ${GREEN}[Active]${RESET}"
     fi
     echo ""
+
+    # Legacy / Manual installation conflicts (e.g. from manual /opt extractions)
+    local has_legacy=false
+    if [ -L /usr/local/bin/antigravity ] || [ -L /usr/local/bin/antigravity-ide ] || [ -f "${TARGET_HOME}/.local/share/applications/antigravity.desktop" ]; then
+        for b in antigravity antigravity-ide; do
+            if [ -L "/usr/local/bin/${b}" ]; then
+                local link_tgt
+                link_tgt=$(readlink -f "/usr/local/bin/${b}" 2>/dev/null || true)
+                if echo "${link_tgt}" | grep -q "/opt/"; then
+                    [ "${has_legacy}" = false ] && echo -e "${YELLOW}${BOLD}Legacy / Manual Installation Conflicts Detected:${RESET}"
+                    echo -e "  • ${YELLOW}Warning:${RESET} /usr/local/bin/${b} shadows /usr/bin/${b} in \$PATH! (points to ${link_tgt})"
+                    has_legacy=true
+                fi
+            fi
+        done
+        for d in antigravity.desktop antigravity-ide.desktop; do
+            local user_d="${TARGET_HOME}/.local/share/applications/${d}"
+            if [ -f "${user_d}" ] && grep -q "/opt/" "${user_d}" 2>/dev/null; then
+                [ "${has_legacy}" = false ] && echo -e "${YELLOW}${BOLD}Legacy / Manual Installation Conflicts Detected:${RESET}"
+                echo -e "  • ${YELLOW}Warning:${RESET} ${user_d} shadows system desktop menu! (points to /opt/)"
+                has_legacy=true
+            fi
+        done
+        if [ "${has_legacy}" = true ]; then
+            echo -e "  ${DIM}Run the installer to automatically clean up obsolete manual symlinks & launchers.${RESET}\n"
+        fi
+    fi
 }
 
 # ------------------------------------------------------------------------------
@@ -597,6 +624,39 @@ fix_chrome_sandbox() {
     if [ -f "${target}" ]; then
         ${SUDO} chown root:root "${target}" 2>/dev/null || true
         ${SUDO} chmod 4755 "${target}" 2>/dev/null || true
+    fi
+}
+
+clean_legacy_conflicts() {
+    # 1. Obsolete symlinks in /usr/local/bin pointing to /opt
+    for b in antigravity antigravity-ide; do
+        if [ -L "/usr/local/bin/${b}" ]; then
+            local target
+            target=$(readlink -f "/usr/local/bin/${b}" 2>/dev/null || true)
+            if echo "${target}" | grep -q "/opt/"; then
+                warn "Detected legacy manual symlink /usr/local/bin/${b} -> ${target}"
+                info "Removing obsolete symlink so /usr/bin/${b} takes precedence in \$PATH..."
+                ${SUDO} rm -f "/usr/local/bin/${b}"
+            fi
+        fi
+    done
+
+    # 2. Obsolete user desktop entries shadowing system package launchers
+    for d in antigravity.desktop antigravity-ide.desktop; do
+        local user_d="${TARGET_HOME}/.local/share/applications/${d}"
+        if [ -f "${user_d}" ] && grep -q "/opt/" "${user_d}" 2>/dev/null; then
+            warn "Detected legacy user desktop file ${user_d} pointing to /opt/."
+            info "Renaming to ${user_d}.bak to activate native package desktop entry..."
+            mv -f "${user_d}" "${user_d}.bak" 2>/dev/null || ${SUDO} mv -f "${user_d}" "${user_d}.bak" || true
+        fi
+    done
+
+    # 3. Google's deprecated/broken APT repository configuration
+    local old_list="/etc/apt/sources.list.d/antigravity.list"
+    if [ -f "${old_list}" ] && ! grep -q "x3m-industries" "${old_list}" 2>/dev/null; then
+        warn "Detected legacy Google APT configuration at ${old_list}."
+        info "Removing obsolete APT list to prevent duplicate repository conflicts..."
+        ${SUDO} rm -f "${old_list}"
     fi
 }
 
@@ -905,6 +965,7 @@ install_cli() {
 
 # 6. Execute System Package Installations (IDE / Hub)
 if [ "${INSTALL_IDE}" = true ] || [ "${INSTALL_HUB}" = true ]; then
+    clean_legacy_conflicts
     case "${DISTRO_ID}" in
         fedora|rhel|centos|rocky|almalinux|amzn|nobara)
             install_rpm

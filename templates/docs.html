@@ -771,7 +771,12 @@
                 <details class="faq-item">
                     <summary>Why should I use native RPM or DEB packages instead of extracting tarballs to /opt?</summary>
                     <div class="faq-answer">
-                        Basic community scripts unpack tarballs directly into <code>/opt</code> using custom bash loops. This bypasses your package manager, leaving files unindexed and updates manual. Our native RPM and DEB packages integrate directly with DNF, APT, and Zypper. You benefit from automatic updates, cryptographic GPG signature checks, standard dependency resolution, hardened Chromium sandboxing permissions, and clean uninstallation.
+                        Manual tutorials often instruct users to unpack Google tarballs into <code>/opt/antigravity</code>. While this seems simple initially, it creates severe real-world problems:<br>
+                        • <strong>Broken In-App Auto-Updates:</strong> Because <code>/opt</code> is owned by <code>root</code>, Electron's unprivileged auto-updater fails silently with permission errors, trapping you in manual update cycles.<br>
+                        • <strong>Missing High-Res Icons:</strong> Google bundles the Hub's icon inside <code>app.asar</code>. Manual installers get stuck with generic desktop gear icons. Our packages dynamically parse the ASAR header and register native 512x512 icons.<br>
+                        • <strong>Broken Google OAuth Logins:</strong> Manual desktop files omit URL protocol handlers (<code>antigravity://</code> and <code>antigravity-ide://</code>), causing browser login redirects to fail.<br>
+                        • <strong>Hardened Chromium Sandboxing:</strong> Ubuntu 24.04+ restricts unprivileged user namespaces via AppArmor. Without hardened <code>4755 root:root</code> permissions on <code>chrome-sandbox</code>, Electron apps crash.<br>
+                        • <strong>Package Manager Integration:</strong> Native RPM &amp; DEB packages update seamlessly via <code>apt upgrade</code> or <code>dnf update</code>, verify GPG signatures, resolve shared libraries, and uninstall cleanly without orphaned files.
                     </div>
                 </details>
 

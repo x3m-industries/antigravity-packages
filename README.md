@@ -49,12 +49,21 @@ Unlike basic community scripts that download Google tarballs and manually unpack
 | Architectural Feature | Raw Tarball Extractors (`/opt`) | X3M Native Repositories (RPM & DEB) |
 | :--- | :--- | :--- |
 | **Package Manager Integration** | ❌ None (system database is unaware of files) | ✅ **Native DNF, APT & Zypper** integration |
-| **Automated System Updates** | ❌ Must remember custom script to update | ✅ **Seamless updates** (`sudo dnf update` / `sudo apt upgrade`) |
+| **Automated System Updates** | ❌ Broken (unprivileged updater cannot write to root-owned `/opt`) | ✅ **Seamless updates** (`sudo dnf update` / `sudo apt upgrade`) |
 | **Cryptographic Signing** | ❌ No signature verification | ✅ **GPG signed** packages & repository metadata (`7A48CA4D7E7B6601`) |
 | **Dependency Resolution** | ❌ Prone to missing shared libraries | ✅ **Automatic system dependency resolution** |
-| **Sandboxing & Permissions** | ⚠️ Often breaks Chromium SUID sandboxing | ✅ **Hardened `chrome-sandbox` permissions** (`04755 root:root`) |
+| **Application Icons** | ⚠️ Generic fallback gear icon (Google hides Hub icon in `app.asar`) | ✅ **High-res 512x512 icons** extracted from ASAR and indexed in hicolor/pixmaps |
+| **OAuth Protocol Handling** | ❌ Broken login redirect (missing FreeDesktop scheme handler) | ✅ **Registered `antigravity://` & `antigravity-ide://` OAuth handlers** |
+| **Sandboxing & Permissions** | ⚠️ Electron crashes under Ubuntu 24.04+ restricted namespaces | ✅ **Hardened `chrome-sandbox` permissions** (`04755 root:root`) |
 | **Desktop & Shell Integration** | ⚠️ Minimal launchers | ✅ **Full FreeDesktop menus, OAuth handlers, multi-desktop right-click (GNOME, KDE, Mint, MATE, COSMIC), shell completions** |
+| **Legacy Conflict Cleanup** | ⚠️ `$PATH` & desktop collisions from obsolete manual symlinks | ✅ **Automatic detection & remediation of legacy `/opt` artifacts** |
 | **Clean, Reversible Removal** | ⚠️ Risk of orphaned files across `/usr` | ✅ **Complete removal** (`dnf remove`, `apt purge`, or `--uninstall`) |
+
+### 📋 System Requirements & Compatibility
+- **glibc**: `≥ 2.28` (Ubuntu 20.04+, Debian 10+, Fedora 29+, RHEL/CentOS/Rocky 8+, openSUSE Leap 15.2+)
+- **libstdc++**: `≥ 3.4.25`
+- **Architectures**: `x86_64` (amd64) and `aarch64` (arm64)
+- **Desktop Environments**: GNOME (Files/Nautilus), KDE Plasma (Dolphin), Cinnamon (Nemo), MATE (Caja), COSMIC, XFCE
 
 ---
 
