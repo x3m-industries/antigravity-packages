@@ -1,3 +1,6 @@
 [tools]
 python = "latest"
 gh = "latest"
+bun = "latest"
+node = "lts"
+

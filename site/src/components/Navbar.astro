@@ -1,0 +1,32 @@
+---
+import { siteConfig } from '../data/siteConfig';
+
+interface Props {
+  currentPage?: 'home' | 'docs';
+}
+
+const { currentPage = 'home' } = Astro.props;
+const isHome = currentPage === 'home';
+const homePrefix = isHome ? '' : 'index.html';
+---
+
+<nav class="site-nav" aria-label="Main Navigation">
+  <div class="nav-inner">
+    <a href={isHome ? "#quickstart" : "index.html"} class="nav-brand" aria-label="Antigravity Linux Home">
+      <img src="assets/logo.png" alt="Antigravity Logo" width="28" height="28" />
+      <span>Antigravity Linux</span>
+    </a>
+    <div class="nav-links">
+      <a href={`${homePrefix}#quickstart`} class="nav-link">Quickstart</a>
+      <a href={`${homePrefix}#features`} class="nav-link">Features</a>
+      <a href={`${homePrefix}#why-native`} class="nav-link">Why Native?</a>
+      <a href={`${homePrefix}#faq`} class="nav-link">FAQ</a>
+      <a href="docs.html#manual-repos" class="nav-link" style="color:var(--accent); font-weight:600;">Manual Repos ↗</a>
+      <a href="docs.html" class={`nav-link ${currentPage === 'docs' ? 'active' : ''}`} style={currentPage === 'docs' ? 'color:#fff; font-weight:700;' : ''}>Docs &amp; CLI ↗</a>
+      <a href={siteConfig.repo.githubUrl} target="_blank" rel="noopener noreferrer" class="nav-btn" aria-label="GitHub Repository">
+        <span>GitHub</span>
+        <span>★</span>
+      </a>
+    </div>
+  </div>
+</nav>

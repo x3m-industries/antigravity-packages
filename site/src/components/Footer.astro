@@ -1,0 +1,49 @@
+---
+import { siteConfig } from '../data/siteConfig';
+---
+
+<footer class="mt-16 pt-8 border-t border-white/10 text-center text-sm text-slate-400">
+  <div class="max-w-4xl mx-auto px-4 space-y-6">
+    <!-- GPG Verification Summary -->
+    <div class="p-4 rounded-xl bg-slate-900/60 border border-white/10 text-xs text-left max-w-2xl mx-auto space-y-2">
+      <div class="flex items-center justify-between flex-wrap gap-2 text-slate-300 font-semibold">
+        <span>🔐 Cryptographic Integrity (GPG)</span>
+        <span class="font-mono text-sky-400">Key ID: {siteConfig.gpg.keyId}</span>
+      </div>
+      <p class="text-slate-400 font-mono text-[11px] break-all">
+        Fingerprint: {siteConfig.gpg.fingerprint}
+      </p>
+      <div class="flex items-center gap-2 pt-1 flex-wrap">
+        <a href="RPM-GPG-KEY-antigravity" class="py-2 px-2 text-sky-400 hover:underline inline-flex items-center" download>Download RPM/APT Key (.asc)</a>
+        <a href="antigravity.gpg" class="py-2 px-2 text-sky-400 hover:underline inline-flex items-center" download>Download Binary Keyring (.gpg)</a>
+        <a href="docs.html#security" class="py-2 px-2 text-slate-300 hover:text-white hover:underline inline-flex items-center">Verification Guide →</a>
+      </div>
+    </div>
+
+    <!-- Links -->
+    <div class="flex flex-wrap justify-center items-center gap-2 text-xs text-slate-400">
+      <a href="docs.html" class="px-3 py-2 rounded-md hover:bg-white/5 hover:text-white transition inline-flex items-center">Documentation</a>
+      <a href="docs.html#manual-repos" class="px-3 py-2 rounded-md hover:bg-white/5 hover:text-white transition inline-flex items-center">Manual Repositories</a>
+      <a href="llms.txt" class="px-3 py-2 rounded-md hover:bg-white/5 hover:text-white transition inline-flex items-center">LLM Summary (llms.txt)</a>
+      <a href="llms-full.txt" class="px-3 py-2 rounded-md hover:bg-white/5 hover:text-white transition inline-flex items-center">Full Guide (llms-full.txt)</a>
+      <a href="sitemap.xml" class="px-3 py-2 rounded-md hover:bg-white/5 hover:text-white transition inline-flex items-center">Sitemap</a>
+      <a href={siteConfig.repo.releasesUrl} target="_blank" rel="noopener noreferrer" class="px-3 py-2 rounded-md hover:bg-white/5 hover:text-white transition inline-flex items-center">GitHub Releases</a>
+    </div>
+
+    <!-- Attribution & Copyright -->
+    <div class="space-y-1 text-xs text-slate-500">
+      <p class="py-1">
+        Maintained by <a href={siteConfig.author.url} target="_blank" rel="noopener noreferrer" class="py-1 px-1 text-sky-400 hover:underline inline-flex items-center">Steven Ceuppens · X3M Industries</a>
+        &bull;
+        <a href={siteConfig.author.linkedin} target="_blank" rel="noopener noreferrer" class="py-1 px-1 hover:underline inline-flex items-center">LinkedIn</a>
+        &bull;
+        <a href={siteConfig.author.x} target="_blank" rel="noopener noreferrer" class="py-1 px-1 hover:underline inline-flex items-center">X (@stevenceuppens)</a>
+        &bull;
+        <a href={siteConfig.author.github} target="_blank" rel="noopener noreferrer" class="py-1 px-1 hover:underline inline-flex items-center">GitHub</a>
+      </p>
+      <p class="text-[11px]">
+        Google and Antigravity are trademarks of Google LLC. This is an open-source community distribution project and is not affiliated with Google.
+      </p>
+    </div>
+  </div>
+</footer>

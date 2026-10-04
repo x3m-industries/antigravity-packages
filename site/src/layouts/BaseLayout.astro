@@ -1,0 +1,125 @@
+---
+import Navbar from '../components/Navbar.astro';
+import Footer from '../components/Footer.astro';
+import { siteConfig } from '../data/siteConfig';
+import '../styles/global.css';
+
+interface Props {
+  title?: string;
+  description?: string;
+  currentPage?: 'home' | 'docs';
+  canonicalUrl?: string;
+}
+
+const {
+  title = siteConfig.title,
+  description = siteConfig.description,
+  currentPage = 'home',
+  canonicalUrl = currentPage === 'docs'
+    ? `${siteConfig.siteUrl}docs.html`
+    : siteConfig.siteUrl,
+} = Astro.props;
+
+const structuredData = {
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "SoftwareApplication",
+      "name": "Google Antigravity Linux Packages",
+      "applicationCategory": "DeveloperApplication",
+      "operatingSystem": "Linux",
+      "offers": {
+        "@type": "Offer",
+        "price": "0",
+        "priceCurrency": "USD",
+      },
+      "publisher": {
+        "@type": "Organization",
+        "name": "X3M Industries",
+        "url": "https://x3m.industries",
+      },
+    },
+    {
+      "@type": "FAQPage",
+      "mainEntity": siteConfig.faqs.map((faq) => ({
+        "@type": "Question",
+        "name": faq.q,
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": faq.a,
+        },
+      })),
+    },
+  ],
+};
+---
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <!-- Google tag (gtag.js) -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-XXTD2B1XB0"></script>
+  <script is:inline>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'G-XXTD2B1XB0');
+  </script>
+
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <title>{title}</title>
+  <meta name="description" content={description} />
+  <meta name="keywords" content="Google Antigravity, Antigravity Linux, Antigravity IDE, Antigravity RPM, Antigravity DEB, Fedora Antigravity, Ubuntu Antigravity, Debian Antigravity, Arch Linux Antigravity, RHEL Antigravity, google antigravity rpm, antigravity fedora, fedora antigravity, antigravity apt, how to update antigravity ide in ubuntu, download antigravity linux, google antigravity download linux, install google antigravity, AI code editor, DeepMind Antigravity, DNF repository, APT repository, x86_64, aarch64, arm64, AUR antigravity, antigravity 2.0 linux" />
+  <meta name="author" content={siteConfig.author.name} />
+  <link rel="author" href={siteConfig.author.linkedin} />
+  <link rel="me" href={siteConfig.author.linkedin} />
+  <link rel="me" href={siteConfig.author.x} />
+  <link rel="me" href={siteConfig.author.github} />
+  <link rel="me" href={siteConfig.author.url} />
+  <link rel="canonical" href={canonicalUrl} />
+  <link rel="alternate" type="text/plain" href="llms.txt" title="LLM Context" />
+  <meta name="robots" content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1" />
+
+  <!-- Favicon & Icons -->
+  <link rel="icon" type="image/png" href="favicon.png" />
+  <link rel="apple-touch-icon" href="favicon.png" />
+
+  <!-- Open Graph -->
+  <meta property="og:type" content="website" />
+  <meta property="og:site_name" content="Google Antigravity Linux Repositories" />
+  <meta property="og:title" content={title} />
+  <meta property="og:description" content={description} />
+  <meta property="og:url" content={canonicalUrl} />
+  <meta property="og:image" content="https://x3m-industries.github.io/antigravity-packages/assets/og-banner.png" />
+  <meta property="og:image:secure_url" content="https://x3m-industries.github.io/antigravity-packages/assets/og-banner.png" />
+  <meta property="og:image:type" content="image/png" />
+  <meta property="og:image:width" content="1200" />
+  <meta property="og:image:height" content="630" />
+  <meta property="og:image:alt" content="Google Antigravity IDE, Hub, and CLI for Linux — Native Packages" />
+  <meta property="og:locale" content="en_US" />
+
+  <!-- Twitter / X Cards -->
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:creator" content="@stevenceuppens" />
+  <meta name="twitter:site" content="@stevenceuppens" />
+  <meta name="twitter:title" content={title} />
+  <meta name="twitter:description" content={description} />
+  <meta name="twitter:image" content="https://x3m-industries.github.io/antigravity-packages/assets/og-banner.png" />
+
+  <!-- Schema.org JSON-LD Structured Data -->
+  <script type="application/ld+json" set:html={JSON.stringify(structuredData)} />
+
+  <!-- Preconnect & Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
+</head>
+<body>
+  <Navbar currentPage={currentPage} />
+  <div class="container">
+    <slot />
+  </div>
+  <Footer />
+</body>
+</html>

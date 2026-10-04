@@ -219,7 +219,17 @@ jobs:
           mkdir -p ./dist/rpm
           cp ./dist/packages/*.rpm ./dist/rpm/
 
-      - name: Generate Repository Metadata
+      - name: Setup Bun for Site Generation
+        uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: latest
+
+      - name: Install Site Dependencies
+        run: |
+          cd site
+          bun install --frozen-lockfile
+
+      - name: Generate Repository Metadata & Astro Site
         run: |
           ./scripts/generate_repos.sh "${{ needs.check.outputs.tag_name }}" ./dist
 

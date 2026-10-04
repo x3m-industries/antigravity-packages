@@ -6,6 +6,7 @@ on:
       - main
     paths:
       - 'scripts/generate_repos.sh'
+      - 'site/**'
       - 'templates/**'
       - 'assets/**'
       - 'desktop/**'
@@ -31,6 +32,16 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v7
+
+      - name: Setup Bun
+        uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: latest
+
+      - name: Install Site Dependencies
+        run: |
+          cd site
+          bun install --frozen-lockfile
 
       - name: Install repository metadata tools
         run: |

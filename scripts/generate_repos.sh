@@ -106,17 +106,36 @@ if [ -d "assets" ]; then
     cp assets/favicon.png "${DIST_DIR}/favicon.png" 2>/dev/null || true
 fi
 
-# Copy landing page template
+# Build and deploy landing page & documentation
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 REPO_ROOT="$(dirname "${SCRIPT_DIR}")"
-# Copy HTML templates and inject release versions
-for tmpl in "${REPO_ROOT}/templates/"*.html; do
+
+if [ -d "${REPO_ROOT}/site" ]; then
+    echo "=== Building Astro Landing Page & Docs ==="
+    (
+        cd "${REPO_ROOT}/site" || exit 1
+        export RELEASE_TAG="${RELEASE_TAG:-latest}"
+        if command -v bun > /dev/null 2>&1; then
+            bun run build
+        elif command -v npm > /dev/null 2>&1; then
+            npm run build
+        fi
+    )
+    if [ -d "${REPO_ROOT}/site/dist" ]; then
+        cp -r "${REPO_ROOT}/site/dist/"* "${DIST_DIR}/"
+        # Sync generated HTML to templates/ for parity & test coverage
+        mkdir -p "${REPO_ROOT}/templates"
+        cp "${REPO_ROOT}/site/dist/index.html" "${REPO_ROOT}/templates/index.html" 2>/dev/null || true
+        cp "${REPO_ROOT}/site/dist/docs.html" "${REPO_ROOT}/templates/docs.html" 2>/dev/null || true
+    fi
+fi
+
+# Fallback or post-processing: ensure version injection if tag provided
+for tmpl in "${DIST_DIR}/"*.html; do
     if [ -f "$tmpl" ]; then
-        filename="$(basename "$tmpl")"
-        cp "$tmpl" "${DIST_DIR}/${filename}"
         if [ -n "${RELEASE_TAG:-}" ] && [ "${RELEASE_TAG}" != "latest" ] && [ "${RELEASE_TAG}" != "vlatest" ]; then
             if [ -f "${SCRIPT_DIR}/inject_versions.py" ]; then
-                python3 "${SCRIPT_DIR}/inject_versions.py" "${RELEASE_TAG}" "${DIST_DIR}/${filename}" || true
+                python3 "${SCRIPT_DIR}/inject_versions.py" "${RELEASE_TAG}" "$tmpl" || true
             fi
         fi
     fi

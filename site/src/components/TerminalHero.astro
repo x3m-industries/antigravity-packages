@@ -1,0 +1,480 @@
+---
+import { siteConfig, currentVersions } from '../data/siteConfig';
+---
+
+<header>
+  <div class="dual-logo-container">
+    <picture>
+      <source srcset="assets/logo.webp" type="image/webp" />
+      <img src="assets/logo.png" alt="Antigravity IDE Logo" class="brand-logo" width="76" height="76" fetchpriority="high" loading="eager" />
+    </picture>
+    <span class="logo-connector">✦</span>
+    <picture>
+      <source srcset="assets/hub-logo.webp" type="image/webp" />
+      <img src="assets/hub-logo.png" alt="Antigravity Hub Logo" class="brand-logo" width="76" height="76" fetchpriority="high" loading="eager" />
+    </picture>
+  </div>
+
+  <h1>Google Antigravity for Linux</h1>
+  <p class="subtitle">Official native RPM &amp; DEB repositories with automatic daily updates. Install with one command or native system package managers.</p>
+
+  <div class="badges-group">
+    <span class="badge highlight"><span class="badge-dot"></span> Daily Upstream Sync</span>
+    <span class="badge">x86_64 &amp; aarch64</span>
+    <span class="badge">GPG Signed</span>
+    <a
+      href="https://github.com/x3m-industries/antigravity-packages/releases/latest"
+      class="version-pill header-version-pill card-version-pill"
+      data-version-full="ide"
+      title={`Latest packaged release: ${currentVersions.ideSemver}-${currentVersions.ideBuild}`}
+      target="_blank"
+      rel="noopener noreferrer"
+    >
+      <span class="version-dot"></span>
+      <span>IDE</span>
+      <span data-version="ide-semver">v{currentVersions.ideSemver}</span>
+    </a>
+    <a
+      href="https://github.com/x3m-industries/antigravity-packages/releases/latest"
+      class="version-pill header-version-pill card-version-pill"
+      data-version-full="hub"
+      title={`Latest packaged release: ${currentVersions.hubSemver}-${currentVersions.hubBuild}`}
+      target="_blank"
+      rel="noopener noreferrer"
+    >
+      <span class="version-dot"></span>
+      <span>Hub</span>
+      <span data-version="hub-semver">v{currentVersions.hubSemver}</span>
+    </a>
+    <a href={siteConfig.repo.githubUrl} target="_blank" rel="noopener noreferrer" class="inline-flex items-center" title="Star on GitHub">
+      <img src="https://img.shields.io/github/stars/x3m-industries/antigravity-packages?style=flat-square&logo=github&color=f59e0b&label=Star" alt="GitHub Stars" width="85" height="24" loading="lazy" />
+    </a>
+    <a href={siteConfig.repo.releasesUrl} target="_blank" rel="noopener noreferrer" class="inline-flex items-center" title="Total Package Downloads on GitHub">
+      <img src="https://img.shields.io/github/downloads/x3m-industries/antigravity-packages/total?color=8b5cf6&logo=github&label=Downloads&style=flat-square" alt="Total Downloads" width="150" height="24" loading="lazy" />
+    </a>
+  </div>
+</header>
+
+<!-- Unified Hero Terminal (The Crown Jewel) -->
+<section class="terminal-card" id="quickstart" aria-label="Terminal Installation Command">
+  <div class="terminal-header">
+    <div class="terminal-header-left">
+      <div class="terminal-dots">
+        <span class="dot dot-red"></span>
+        <span class="dot dot-yellow"></span>
+        <span class="dot dot-green"></span>
+      </div>
+      <div class="terminal-tabs" role="tablist" aria-label="Installer Modes">
+        <button class="tab-btn active" data-tab="universal" onclick="switchTab('universal', this)" role="tab" aria-selected="true">⚡ Universal 1-Liner (Recommended)</button>
+        <button class="tab-btn" data-tab="cli" onclick="switchTab('cli', this)" role="tab" aria-selected="false">Antigravity CLI ('agy')</button>
+      </div>
+    </div>
+    <button class="terminal-copy" id="terminal-copy-btn" onclick="copyTerminalCmd()" title="Copy command to clipboard" aria-label="Copy installation command">
+      <svg class="copy-icon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+        <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+      </svg>
+      <svg class="check-icon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <polyline points="20 6 9 17 4 12"></polyline>
+      </svg>
+    </button>
+  </div>
+
+  <div class="terminal-body">
+    <div class="terminal-prompt">
+      <span class="prompt-symbol">$</span>
+      <code id="terminal-cmd" class="terminal-code">{siteConfig.commands.universal.cmd}</code>
+    </div>
+  </div>
+
+  <div class="terminal-footer">
+    <span id="tab-desc">{siteConfig.commands.universal.desc}</span>
+    <div class="terminal-footer-actions">
+      <span id="detected-pill" class="detected-tag" style="display:none;">
+        <span class="detected-dot"></span>
+        <span id="detected-name">Detected OS</span>
+      </span>
+      <a href="docs.html#manual-repos" class="manual-docs-link" title="Manual APT, DNF and Zypper repository setup without curl">Manual Distro Repos →</a>
+      <button id="sim-toggle-btn" class="sim-toggle-btn" onclick="toggleSimDrawer()" aria-expanded="false" aria-controls="terminal-sim-drawer" title="Toggle interactive terminal playback">
+        <span id="sim-play-icon" class="sim-play-icon">▶</span>
+        <span id="sim-toggle-text">Preview Shell Run</span>
+      </button>
+    </div>
+  </div>
+
+  <!-- Terminal Simulation Drawer -->
+  <div id="terminal-sim-drawer" class="terminal-sim-drawer">
+    <div class="sim-bar">
+      <span id="sim-terminal-title" class="sim-title">bash — user@fedora:~ (Universal Installer)</span>
+      <div class="sim-controls">
+        <button id="sim-ctrl-play" class="sim-btn" onclick="toggleSimPlayPause()" title="Pause or Resume playback">❚❚ Pause</button>
+        <button id="sim-ctrl-replay" class="sim-btn" onclick="replaySimulation()" title="Replay from beginning">↻ Replay</button>
+        <button id="sim-ctrl-fast" class="sim-btn" onclick="finishSimulationInstant()" title="Instantly output full execution">⏭ Skip</button>
+        <select id="sim-ctrl-speed" class="sim-speed-select" onchange="changeSimSpeed(this.value)" title="Playback Speed">
+          <option value="1">1x</option>
+          <option value="2" selected>2x</option>
+          <option value="4">4x</option>
+        </select>
+        <button class="sim-btn" onclick="copySimLog(this)" title="Copy terminal log">Copy Log</button>
+      </div>
+    </div>
+    <div id="sim-output" class="sim-output" aria-live="polite"></div>
+    <div class="sim-status-bar">
+      <div>
+        <span id="sim-status-indicator" class="sim-pulse-dot"></span>
+        <span id="sim-status-text">Simulating execution...</span>
+      </div>
+      <span>Interactive Terminal Preview</span>
+    </div>
+  </div>
+</section>
+
+<script is:inline>
+  const COMMANDS = {
+    universal: {
+      cmd: "curl -fsSL https://x3m-industries.github.io/antigravity-packages/install.sh | bash",
+      desc: "One command auto-detects Fedora, Ubuntu, Debian, openSUSE, RHEL & Arch with native packages."
+    },
+    cli: {
+      cmd: "curl -fsSL https://x3m-industries.github.io/antigravity-packages/install.sh | bash -s -- --cli-only",
+      desc: "Install only Google Antigravity CLI ('agy') into ~/.local/bin/agy (no sudo needed)."
+    },
+    rpm: {
+      cmd: "curl -fsSL https://x3m-industries.github.io/antigravity-packages/install.sh | bash",
+      desc: "One command auto-detects Fedora, Ubuntu, Debian, openSUSE, RHEL & Arch with native packages."
+    },
+    deb: {
+      cmd: "curl -fsSL https://x3m-industries.github.io/antigravity-packages/install.sh | bash",
+      desc: "One command auto-detects Fedora, Ubuntu, Debian, openSUSE, RHEL & Arch with native packages."
+    },
+    suse: {
+      cmd: "curl -fsSL https://x3m-industries.github.io/antigravity-packages/install.sh | bash",
+      desc: "One command auto-detects Fedora, Ubuntu, Debian, openSUSE, RHEL & Arch with native packages."
+    }
+  };
+
+  let activeTab = 'universal';
+
+  function copyTerminalCmd() {
+    const cmdEl = document.getElementById('terminal-cmd');
+    const copyBtn = document.getElementById('terminal-copy-btn');
+    if (!cmdEl || !copyBtn) return;
+
+    const textToCopy = cmdEl.innerText || cmdEl.textContent;
+    navigator.clipboard.writeText(textToCopy).then(() => {
+      copyBtn.classList.add('copied');
+      copyBtn.setAttribute('title', 'Copied to clipboard!');
+      setTimeout(() => {
+        copyBtn.classList.remove('copied');
+        copyBtn.setAttribute('title', 'Copy command to clipboard');
+      }, 2000);
+
+      if (typeof gtag === 'function') {
+        gtag('event', 'copy_universal_installer', {
+          event_category: 'conversion',
+          event_label: activeTab,
+          command: textToCopy
+        });
+      }
+    }).catch(err => {
+      console.error('Failed to copy command: ', err);
+    });
+  }
+
+  function switchTab(tabKey, _btnElem, trackEvent) {
+    if (trackEvent === undefined) trackEvent = true;
+    activeTab = tabKey;
+
+    const cmdData = COMMANDS[tabKey] || COMMANDS.universal;
+    const cmdEl = document.getElementById('terminal-cmd');
+    const descEl = document.getElementById('tab-desc');
+
+    if (cmdEl) cmdEl.textContent = cmdData.cmd;
+    if (descEl) descEl.textContent = cmdData.desc;
+
+    document.querySelectorAll('.tab-btn').forEach(btn => {
+      const isTarget = btn.getAttribute('data-tab') === tabKey;
+      btn.classList.toggle('active', isTarget);
+      btn.setAttribute('aria-selected', isTarget ? 'true' : 'false');
+    });
+
+    if (simState.isOpen) {
+      setSimScenario(tabKey);
+    }
+
+    if (trackEvent && typeof gtag === 'function') {
+      gtag('event', 'select_distro_tab', {
+        event_category: 'engagement',
+        event_label: tabKey,
+        distro: tabKey
+      });
+    }
+  }
+
+  function detectOSAndInitTabs() {
+    const hash = (window.location.hash || '').toLowerCase().replace('#', '');
+    if (['cli', 'agy'].includes(hash)) {
+      switchTab('cli', null, false);
+    } else {
+      switchTab('universal', null, false);
+    }
+
+    const ua = (navigator.userAgent || '').toLowerCase();
+    let detected = null;
+
+    if (/fedora/.test(ua)) { detected = 'Fedora Linux (Auto-Supported)'; }
+    else if (/red hat|rhel/.test(ua)) { detected = 'RHEL (Auto-Supported)'; }
+    else if (/centos/.test(ua)) { detected = 'CentOS (Auto-Supported)'; }
+    else if (/rocky/.test(ua)) { detected = 'Rocky Linux (Auto-Supported)'; }
+    else if (/alma/.test(ua)) { detected = 'AlmaLinux (Auto-Supported)'; }
+    else if (/ubuntu/.test(ua)) { detected = 'Ubuntu Linux (Auto-Supported)'; }
+    else if (/debian/.test(ua)) { detected = 'Debian (Auto-Supported)'; }
+    else if (/mint/.test(ua)) { detected = 'Linux Mint (Auto-Supported)'; }
+    else if (/pop!?_os/.test(ua)) { detected = 'Pop!_OS (Auto-Supported)'; }
+    else if (/suse/.test(ua)) { detected = 'openSUSE (Auto-Supported)'; }
+    else if (/arch/.test(ua)) { detected = 'Arch Linux (Auto-Supported)'; }
+
+    if (detected) {
+      const pill = document.getElementById('detected-pill');
+      const name = document.getElementById('detected-name');
+      if (pill && name) {
+        name.textContent = detected;
+        pill.style.display = 'inline-flex';
+      }
+    }
+  }
+
+  // Terminal simulation engine
+  const SIM_BANNER = `   ___          __  _                     _ __         
+  / _ | ___  __/ /_(_)__ ________ __  __ (_) /___ __  
+ / __ |/ _ \\/ __/ / _ \`/ __/ _ \`/ |/ / / / __/ // /  
+/_/ |_/_//_/\\__/_/\\_, /_/  \\_,_/|___/_/_/\\__/\\_, /   
+                 /___/                      /___/    
+Google Antigravity Linux Universal Installer & Package Manager
+Repository: https://x3m-industries.github.io/antigravity-packages/`;
+
+  const SIM_SCENARIOS = {
+    universal: {
+      title: "bash — user@fedora:~ (Universal Installer)",
+      lines: [
+        { type: "input", text: "curl -fsSL https://x3m-industries.github.io/antigravity-packages/install.sh | bash", delay: 200 },
+        { type: "banner", text: SIM_BANNER, delay: 120 },
+        { type: "text", text: "\nSelect components to install / update:\n  [1] Antigravity IDE        AI-first standalone code editor (RPM/DEB)     [Not installed]\n  [2] Antigravity Hub        Antigravity 2.0 desktop agent hub (RPM/DEB)   [Not installed]\n  [3] Antigravity CLI (agy)  Terminal agent with auto-updating             [Not installed]\n", delay: 60 },
+        { type: "prompt", text: "Enter selection [Default: 1, 2, 3 (All)] or press ENTER: ", delay: 250 },
+        { type: "choice", text: "1, 2, 3\n", delay: 150 },
+        { type: "info", text: "==> Installation plan:\n  • Antigravity IDE (Native package & desktop launcher)\n  • Antigravity Hub (Antigravity 2.0 agent platform)\n  • Antigravity CLI ('agy') (Terminal agent with auto-updater)\n  • GNOME Nautilus Integration ('Open in Antigravity IDE' context menu)\n", delay: 80 },
+        { type: "info", text: "==> Requesting sudo privileges to configure package repositories...", delay: 80 },
+        { type: "info", text: "==> Configuring DNF/YUM repository...", delay: 100 },
+        { type: "success", text: "✓ Added /etc/yum.repos.d/antigravity.repo", delay: 80 },
+        { type: "info", text: "==> Installing antigravity-ide antigravity...", delay: 120 },
+        { type: "progress", text: "Downloading Packages:\n(1/2): antigravity-2.19.1.x86_64.rpm           38.2 MB/s | 114.2 MB  00:03\n(2/2): antigravity-ide-2.5.5.x86_64.rpm       42.1 MB/s | 128.7 MB  00:03\nTotal                                         40.1 MB/s | 242.9 MB  00:06", delay: 350 },
+        { type: "dim", text: "Running transaction check...\nRunning transaction...\n  Installing : antigravity-2.19.1.x86_64                                1/2\n  Installing : antigravity-ide-2.5.5.x86_64                            2/2\nInstalled:\n  antigravity.x86_64 2.19.1-6046815158665216\n  antigravity-ide.x86_64 2.5.5-4923483625488384\nComplete!", delay: 200 },
+        { type: "success", text: "✓ Created short CLI shortcut 'agy-ide' -> /usr/bin/antigravity-ide", delay: 50 },
+        { type: "success", text: "✓ Created short CLI shortcut 'agy-hub' -> /usr/bin/antigravity", delay: 50 },
+        { type: "info", text: "==> Configuring GNOME Files / Nautilus right-click context menu...", delay: 80 },
+        { type: "success", text: "✓ Installed Nautilus extension: /usr/share/nautilus-python/extensions/open-in-antigravity-ide.py", delay: 70 },
+        { type: "info", text: "==> Installing Antigravity CLI ('agy') via official Google installer...", delay: 120 },
+        { type: "success", text: "✓ Antigravity CLI installed successfully into ~/.local/bin/agy\n", delay: 70 },
+        { type: "success-card", text: "✓ Installation completed successfully!\n\nQuick Start:\n  • Launch IDE:   agy-ide ./my-project (or antigravity-ide)\n  • Launch Hub:   agy-hub (or antigravity)\n  • Launch CLI:   agy", delay: 50 }
+      ]
+    },
+    cli: {
+      title: "bash — user@workstation:~ (Antigravity CLI)",
+      lines: [
+        { type: "input", text: "curl -fsSL https://x3m-industries.github.io/antigravity-packages/install.sh | bash -s -- --cli-only", delay: 200 },
+        { type: "banner", text: SIM_BANNER, delay: 120 },
+        { type: "info", text: "==> Installation plan:\n  • Antigravity CLI ('agy') (Terminal agent with auto-updater)\n", delay: 80 },
+        { type: "info", text: "==> Installing Antigravity CLI ('agy') via official Google installer into ~/.local/bin/agy...", delay: 120 },
+        { type: "dim", text: "Downloading https://storage.googleapis.com/antigravity-public/agy/latest/agy-linux-x64.tar.gz...\nExtracted agy -> /home/user/.local/bin/agy\nAuto-update timer registered (checks upstream every 15 min)", delay: 220 },
+        { type: "success", text: "✓ Antigravity CLI installed successfully (no root/sudo required)", delay: 70 },
+        { type: "success-card", text: "✓ Ready! Run 'agy' in any directory to start your terminal AI coding session.", delay: 50 }
+      ]
+    }
+  };
+
+  const simState = {
+    isOpen: false,
+    currentTab: 'universal',
+    stepIndex: 0,
+    isPaused: false,
+    speed: 2,
+    timer: null,
+    fullLog: ''
+  };
+
+  function toggleSimDrawer() {
+    simState.isOpen = !simState.isOpen;
+    const drawer = document.getElementById('terminal-sim-drawer');
+    const toggleBtn = document.getElementById('sim-toggle-btn');
+    const playIcon = document.getElementById('sim-play-icon');
+    const toggleText = document.getElementById('sim-toggle-text');
+
+    if (simState.isOpen) {
+      drawer.style.display = 'block';
+      toggleBtn.classList.add('active');
+      toggleBtn.setAttribute('aria-expanded', 'true');
+      if (playIcon) playIcon.textContent = '▼';
+      if (toggleText) toggleText.textContent = 'Hide Shell Run';
+
+      const activeTabBtn = document.querySelector('.tab-btn.active');
+      const tabId = activeTabBtn ? activeTabBtn.getAttribute('data-tab') : 'universal';
+      setSimScenario(tabId);
+    } else {
+      drawer.style.display = 'none';
+      toggleBtn.classList.remove('active');
+      toggleBtn.setAttribute('aria-expanded', 'false');
+      if (playIcon) playIcon.textContent = '▶';
+      if (toggleText) toggleText.textContent = 'Preview Shell Run';
+      if (simState.timer) clearTimeout(simState.timer);
+    }
+  }
+
+  function setSimScenario(tabId) {
+    simState.currentTab = tabId;
+    const scenario = SIM_SCENARIOS[tabId] || SIM_SCENARIOS.universal;
+    const titleEl = document.getElementById('sim-terminal-title');
+    if (titleEl) titleEl.textContent = scenario.title;
+    replaySimulation();
+  }
+
+  function toggleSimPlayPause() {
+    simState.isPaused = !simState.isPaused;
+    const btn = document.getElementById('sim-ctrl-play');
+    const statusText = document.getElementById('sim-status-text');
+
+    if (simState.isPaused) {
+      if (btn) btn.textContent = '▶ Resume';
+      if (statusText) statusText.textContent = 'Paused';
+      if (simState.timer) clearTimeout(simState.timer);
+    } else {
+      if (btn) btn.textContent = '❚❚ Pause';
+      if (statusText) statusText.textContent = 'Simulating execution...';
+      runNextSimStep();
+    }
+  }
+
+  function replaySimulation() {
+    if (simState.timer) clearTimeout(simState.timer);
+    simState.stepIndex = 0;
+    simState.isPaused = false;
+    simState.fullLog = '';
+
+    const outputEl = document.getElementById('sim-output');
+    if (outputEl) outputEl.innerHTML = '';
+
+    const btn = document.getElementById('sim-ctrl-play');
+    if (btn) btn.textContent = '❚❚ Pause';
+
+    const statusText = document.getElementById('sim-status-text');
+    if (statusText) statusText.textContent = 'Simulating execution...';
+
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+      finishSimulationInstant();
+      return;
+    }
+
+    runNextSimStep();
+  }
+
+  function finishSimulationInstant() {
+    if (simState.timer) clearTimeout(simState.timer);
+    const scenario = SIM_SCENARIOS[simState.currentTab] || SIM_SCENARIOS.universal;
+    const outputEl = document.getElementById('sim-output');
+    if (!outputEl) return;
+
+    outputEl.innerHTML = '';
+    simState.fullLog = '';
+
+    for (let i = 0; i < scenario.lines.length; i++) {
+      appendSimLineDOM(scenario.lines[i]);
+    }
+    simState.stepIndex = scenario.lines.length;
+    updateSimStatusComplete();
+    outputEl.scrollTop = outputEl.scrollHeight;
+  }
+
+  function changeSimSpeed(val) {
+    simState.speed = parseFloat(val) || 2;
+  }
+
+  function copySimLog(btn) {
+    if (!simState.fullLog) return;
+    navigator.clipboard.writeText(simState.fullLog).then(() => {
+      const oldText = btn.textContent;
+      btn.textContent = '✓ Copied!';
+      setTimeout(() => { btn.textContent = oldText; }, 2000);
+    });
+  }
+
+  function escapeSimHtml(str) {
+    return str.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+  }
+
+  function appendSimLineDOM(lineData) {
+    const outputEl = document.getElementById('sim-output');
+    if (!outputEl) return;
+
+    const div = document.createElement('div');
+    div.className = 'sim-line';
+    simState.fullLog += lineData.text + '\n';
+
+    if (lineData.type === 'input') {
+      div.innerHTML = `<span class="sim-line-prompt-sym">$ </span><span class="sim-line-input">${escapeSimHtml(lineData.text)}</span>`;
+    } else if (lineData.type === 'banner') {
+      div.innerHTML = `<span class="sim-line-banner">${escapeSimHtml(lineData.text)}</span>`;
+    } else if (lineData.type === 'prompt') {
+      div.innerHTML = `<span>${escapeSimHtml(lineData.text)}</span>`;
+    } else if (lineData.type === 'choice') {
+      div.innerHTML = `<span class="sim-line-choice">${escapeSimHtml(lineData.text)}</span>`;
+    } else if (lineData.type === 'info') {
+      div.innerHTML = `<span class="sim-line-info">==&gt;</span> <span style="font-weight:600;">${escapeSimHtml(lineData.text.replace('==> ', ''))}</span>`;
+    } else if (lineData.type === 'success') {
+      div.innerHTML = `<span class="sim-line-success">✓</span> <span>${escapeSimHtml(lineData.text.replace('✓ ', ''))}</span>`;
+    } else if (lineData.type === 'dim') {
+      div.innerHTML = `<span class="sim-line-dim">${escapeSimHtml(lineData.text)}</span>`;
+    } else if (lineData.type === 'progress') {
+      div.innerHTML = `<span class="sim-line-progress">${escapeSimHtml(lineData.text)}</span>`;
+    } else if (lineData.type === 'success-card') {
+      div.innerHTML = `<div class="sim-success-card">${escapeSimHtml(lineData.text)}</div>`;
+    } else {
+      div.textContent = lineData.text;
+    }
+
+    outputEl.appendChild(div);
+  }
+
+  function updateSimStatusComplete() {
+    const statusText = document.getElementById('sim-status-text');
+    const playBtn = document.getElementById('sim-ctrl-play');
+    if (statusText) statusText.textContent = 'Execution finished (Ready)';
+    if (playBtn) playBtn.textContent = '▶ Completed';
+  }
+
+  function runNextSimStep() {
+    if (simState.isPaused) return;
+
+    const scenario = SIM_SCENARIOS[simState.currentTab] || SIM_SCENARIOS.universal;
+    if (simState.stepIndex >= scenario.lines.length) {
+      updateSimStatusComplete();
+      return;
+    }
+
+    const currentLine = scenario.lines[simState.stepIndex];
+    appendSimLineDOM(currentLine);
+    simState.stepIndex++;
+
+    const outputEl = document.getElementById('sim-output');
+    if (outputEl) outputEl.scrollTop = outputEl.scrollHeight;
+
+    const rawDelay = currentLine.delay || 100;
+    const adjustedDelay = Math.max(25, rawDelay / simState.speed);
+    simState.timer = setTimeout(runNextSimStep, adjustedDelay);
+  }
+
+  // Initialize tabs and OS detection on load
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', detectOSAndInitTabs);
+  } else {
+    detectOSAndInitTabs();
+  }
+</script>

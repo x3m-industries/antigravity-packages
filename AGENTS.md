@@ -48,15 +48,23 @@ antigravity-packages/
 │   ├── inject_versions.py         # Injects release versions from GitHub release tags into HTML landing pages during repo generation
 │   ├── smoke_test.sh              # Containerized end-to-end installation test for Fedora and Ubuntu (Docker / Podman)
 │   └── stats.py                   # CLI analytics tool querying GitHub Releases API to track package downloads across arch and formats
-├── templates/
-│   └── index.html                 # Complete landing page with distro tabs, one-line installer commands, GPG verification guides, and JSON-LD SEO schema
+├── site/                          # Astro + Tailwind CSS web frontend (managed with Bun)
+│   ├── astro.config.mjs           # Astro configuration (base /antigravity-packages, static file format)
+│   ├── package.json               # Dependencies (Astro, Tailwind v4, TypeScript)
+│   └── src/
+│       ├── components/            # Reusable UI components (Navbar, Footer, TerminalHero, Features, Faq)
+│       ├── data/siteConfig.ts     # Single source of truth (release versions, commands, GPG keys, FAQs)
+│       ├── layouts/BaseLayout.astro # Common SEO, OpenGraph, JSON-LD schema, and analytics layout
+│       ├── pages/                 # Static pages (index.astro, docs.astro)
+│       └── styles/global.css      # Tailwind v4 theme styling and terminal CSS
+├── templates/                     # Pre-rendered HTML templates for fallback and test backwards compatibility
 ├── tests/
 │   └── test_packaging.py          # Python unit test suite (version parsing, upstream regex matching, stats processing, desktop entries, templates)
 ├── AGENTS.md                      # This technical guide for AI agents and maintainers
 ├── antigravity.gpg                # Binary GPG public keyring for APT (/etc/apt/keyrings/antigravity.gpg)
 ├── google676aa476e852c7b0.html    # Google Search Console domain ownership verification
 ├── install.sh                     # Universal one-line shell installer script for client systems
-├── mise.toml                      # Mise tool environment definition (Python, gh CLI)
+├── mise.toml                      # Mise tool environment definition (Python, gh, bun, node)
 ├── README.md                      # User-facing documentation and installation guide
 └── RPM-GPG-KEY-antigravity        # ASCII-armored GPG public key for RPM (DNF/YUM) and APT (.asc)
 ```
@@ -323,23 +331,26 @@ Before submitting any changes, always run the validation suite:
 # 1. Run unit tests
 python3 -m unittest discover tests -v
 
-# 2. Run ShellCheck on scripts (if shellcheck is available)
+# 2. Validate Astro site type safety and static build
+cd site && bun run check && bun run build && cd ..
+
+# 3. Run ShellCheck on scripts (if shellcheck is available)
 shellcheck --severity=warning scripts/generate_repos.sh scripts/smoke_test.sh install.sh
 
-# 3. Validate desktop entries (if desktop-file-utils is available)
+# 4. Validate desktop entries (if desktop-file-utils is available)
 desktop-file-validate desktop/*.desktop
 
-# 4. Test upstream detection logic (safe read-only HTTP request)
+# 5. Test upstream detection logic (safe read-only HTTP request)
 python3 scripts/check_upstream.py
 ```
 
 ### 7.2 Safety & Best Practices for Agents
-1. **Never Commit Large Binaries**: Never commit `.rpm`, `.deb`, `.tar.gz`, or `./dist` build artifacts to git. The `.gitignore` is configured to ignore `dist/`, `tmp/`, and package files. Releases host the binaries.
+1. **Never Commit Large Binaries**: Never commit `.rpm`, `.deb`, `.tar.gz`, or `./dist` build artifacts to git. The `.gitignore` is configured to ignore `dist/`, `tmp/`, `site/dist/`, `site/node_modules/`, and package files. Releases host the binaries.
 2. **Preserve Path Sanitization**: Google's upstream IDE tarballs expand to folders containing spaces (e.g. `Antigravity IDE/`). Any changes to `scripts/build_packages.py` must maintain sanitization (`app_dir = work_dir / "app_source"`) and path quoting.
 3. **Synchronize Documentation, Templates & Installers**:
-   - If changing package dependencies, repository URLs, or GPG keys, update **all four locations**:
+   - If changing package dependencies, repository URLs, or GPG keys, update:
      1. `README.md`
-     2. `templates/index.html`
+     2. `site/src/data/siteConfig.ts` (single source of truth for web pages)
      3. `install.sh`
      4. `scripts/generate_repos.sh`
 4. **Desktop Entry Protocol Handlers**:

@@ -1,0 +1,34 @@
+---
+import { siteConfig } from '../data/siteConfig';
+---
+
+<section class="bento-section" id="features" aria-labelledby="features-title">
+  <h2 class="section-title" id="features-title">Engineered for Linux Developers</h2>
+  <p class="section-desc">Google publishes standalone archives without Linux repositories. We bridge that gap with enterprise-grade packaging infrastructure.</p>
+
+  <div class="bento-grid">
+    <div class="bento-card">
+      <span class="bento-icon" aria-hidden="true">📦</span>
+      <h3>Real Package Management</h3>
+      <p>Direct integration with <code>dnf</code>, <code>apt</code>, and <code>zypper</code>. No dumping files into <code>/opt</code>, no manual tarball extractions, and clean uninstalls.</p>
+    </div>
+
+    <div class="bento-card">
+      <span class="bento-icon" aria-hidden="true">⚡</span>
+      <h3>Daily Upstream Sync</h3>
+      <p>Automated daily CI/CD pipeline tracks Google's official release CDN at 05:00 UTC. Releases are tested in Fedora and Ubuntu containers before publishing.</p>
+    </div>
+
+    <div class="bento-card">
+      <span class="bento-icon" aria-hidden="true">📂</span>
+      <h3>Multi-Desktop Right-Click</h3>
+      <p>Native context menus for GNOME Files (Nautilus), KDE (Dolphin), Linux Mint (Nemo), MATE (Caja), and COSMIC Desktop to instantly <strong>Open in Antigravity IDE</strong>.</p>
+    </div>
+
+    <div class="bento-card">
+      <span class="bento-icon" aria-hidden="true">🔐</span>
+      <h3>Cryptographically Signed</h3>
+      <p>All RPM repodata, APT releases, and binaries are signed with the official <code>{siteConfig.gpg.maintainer.split('<')[0].trim()}</code> GPG key (Fingerprint: <code>{siteConfig.gpg.fingerprint}</code>).</p>
+    </div>
+  </div>
+</section>

@@ -42,3 +42,9 @@ tmp/
 *~
 .vscode/
 .idea/
+
+# Node / Bun / Astro
+node_modules/
+.astro/
+site/dist/
+

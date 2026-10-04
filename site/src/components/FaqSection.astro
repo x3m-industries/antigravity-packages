@@ -1,0 +1,17 @@
+---
+import { siteConfig } from '../data/siteConfig';
+---
+
+<section class="faq-section" id="faq" aria-labelledby="faq-title">
+  <h2 class="section-title" id="faq-title">Frequently Asked Questions</h2>
+  <p class="section-desc">Quick answers to common questions. For advanced topics, check our documentation.</p>
+
+  {siteConfig.faqs.map((faq, index) => (
+    <details class="faq-item" open={index === 0}>
+      <summary>{faq.q}</summary>
+      <div class="faq-answer">
+        {faq.a}
+      </div>
+    </details>
+  ))}
+</section>

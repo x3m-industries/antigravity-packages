@@ -1,0 +1,57 @@
+---
+// Comparison Matrix: Why Native Packages vs Tarball Extractors
+---
+
+<section class="comparison-section" id="why-native" aria-labelledby="why-native-title">
+  <h2 class="section-title" id="why-native-title">Why Native Packages vs Tarball Scripts?</h2>
+  <p class="section-desc">Basic community scripts unpack raw tarballs into <code>/opt</code>. Here is how native repositories differ:</p>
+
+  <div class="table-card">
+    <table class="comp-table">
+      <thead>
+        <tr>
+          <th>Feature</th>
+          <th>Raw Tarball Extractors (in <code>/opt</code>)</th>
+          <th>Native Repositories (X3M Industries)</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>System Updates</strong></td>
+          <td><span class="cross-badge">✕</span> Manual custom scripts</td>
+          <td><span class="check-badge">✓</span> Included in <code>dnf update</code> &amp; <code>apt upgrade</code></td>
+        </tr>
+        <tr>
+          <td><strong>GPG Security</strong></td>
+          <td><span class="cross-badge">✕</span> Unsigned files</td>
+          <td><span class="check-badge">✓</span> Cryptographically verified GPG signatures</td>
+        </tr>
+        <tr>
+          <td><strong>Package Database</strong></td>
+          <td><span class="cross-badge">✕</span> OS is unaware of files</td>
+          <td><span class="check-badge">✓</span> Registered in system package database</td>
+        </tr>
+        <tr>
+          <td><strong>Chromium Sandboxing</strong></td>
+          <td><span class="cross-badge">✕</span> Frequent SUID permissions errors</td>
+          <td><span class="check-badge">✓</span> Hardened <code>04755 root:root</code> sandbox permissions</td>
+        </tr>
+        <tr>
+          <td><strong>Desktop Integration</strong></td>
+          <td><span class="cross-badge">✕</span> None or GNOME-only script</td>
+          <td><span class="check-badge">✓</span> Native right-click on GNOME, KDE, Mint, MATE &amp; COSMIC</td>
+        </tr>
+        <tr>
+          <td><strong>Terminal Ergonomics</strong></td>
+          <td><span class="cross-badge">✕</span> Manual paths, zero completion</td>
+          <td><span class="check-badge">✓</span> Fast shortcuts (<code>agy-ide</code>, <code>agy-hub</code>) &amp; Bash/Zsh tab completion</td>
+        </tr>
+        <tr>
+          <td><strong>Clean Uninstallation</strong></td>
+          <td><span class="cross-badge">✕</span> Leaves orphaned files &amp; icons in <code>/opt</code></td>
+          <td><span class="check-badge">✓</span> Atomic removal via <code>dnf</code>, <code>apt</code>, or <code>--uninstall</code></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</section>

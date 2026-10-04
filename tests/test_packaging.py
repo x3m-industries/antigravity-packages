@@ -361,6 +361,26 @@ class TestPackagingLogic(unittest.TestCase):
         self.assertIn('perms=$(stat -c "%a" "$cs")', smoke_script)
         self.assertIn('expected 4755', smoke_script)
 
+    def test_astro_site_components(self):
+        site_dir = repo_root / "site"
+        self.assertTrue(site_dir.exists())
+
+        config_file = site_dir / "src" / "data" / "siteConfig.ts"
+        self.assertTrue(config_file.exists())
+        config_content = config_file.read_text(encoding="utf-8")
+        self.assertIn("7A48CA4D7E7B6601", config_content)
+        self.assertIn("E83A 23BC", config_content)
+        self.assertIn("parseReleaseTag", config_content)
+
+        index_astro = site_dir / "src" / "pages" / "index.astro"
+        docs_astro = site_dir / "src" / "pages" / "docs.astro"
+        self.assertTrue(index_astro.exists())
+        self.assertTrue(docs_astro.exists())
+
+        astro_config = site_dir / "astro.config.mjs"
+        self.assertTrue(astro_config.exists())
+        self.assertIn("format: 'file'", astro_config.read_text(encoding="utf-8"))
+
 
 if __name__ == "__main__":
     unittest.main()

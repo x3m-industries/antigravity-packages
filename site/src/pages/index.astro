@@ -1,0 +1,18 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import TerminalHero from '../components/TerminalHero.astro';
+import Features from '../components/Features.astro';
+import ComparisonMatrix from '../components/ComparisonMatrix.astro';
+import FaqSection from '../components/FaqSection.astro';
+import DocsCta from '../components/DocsCta.astro';
+---
+
+<BaseLayout currentPage="home">
+  <main id="main-content">
+    <TerminalHero />
+    <Features />
+    <ComparisonMatrix />
+    <FaqSection />
+    <DocsCta />
+  </main>
+</BaseLayout>
