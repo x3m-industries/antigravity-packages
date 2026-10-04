@@ -147,5 +147,13 @@ Because Google versions them separately (e.g. IDE 2.5.5 vs Hub 2.19.1), X3M Indu
       q: "How do I check installation status or cleanly uninstall?",
       a: `Run <code>curl -fsSL https://x3m-industries.github.io/antigravity-packages/install.sh | bash -s -- --status</code> to inspect installed components, or pass <code>--uninstall</code> to cleanly remove packages, repos, and extensions without touching your personal projects.`,
     },
+    {
+      q: "How do I fix the 'chrome-sandbox SUID' or permission error on Ubuntu 24.04?",
+      a: `Ubuntu 24.04 Noble Numbat and hardened Linux kernels restrict unprivileged user namespaces via AppArmor. When extracting raw tarballs, Electron crashes with <code>The SUID sandbox helper binary was found, but is not configured properly</code>. Our native <code>.deb</code> and <code>.rpm</code> packages automatically configure hardened <code>04755 root:root</code> permissions on <code>chrome-sandbox</code> during package installation, completely preventing this issue.`,
+    },
+    {
+      q: "How do I fix Google login or browser OAuth redirect (antigravity-ide://) not opening?",
+      a: `Google login redirects use custom URL protocol schemes (<code>antigravity-ide://</code> and <code>antigravity://</code>). When tarballs are extracted manually without desktop protocol handler registration, browsers fail to hand the authentication token back to the editor. Our packages automatically register FreeDesktop URL handlers via <code>/usr/share/applications/antigravity-ide-url-handler.desktop</code> so browser OAuth login redirects complete seamlessly.`,
+    },
   ],
 };

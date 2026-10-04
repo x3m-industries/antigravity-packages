@@ -26,6 +26,7 @@ import { siteConfig } from '../data/siteConfig';
     <a href="#manual-repos" class="toc-link">🐧 Manual Repositories</a>
     <a href="#nautilus" class="toc-link">📂 GNOME Files (Nautilus)</a>
     <a href="#arch" class="toc-link">🏹 Arch Linux Setup</a>
+    <a href="#troubleshooting" class="toc-link">🛠️ Troubleshooting &amp; Fixes</a>
     <a href="#security" class="toc-link">🔐 GPG Verification</a>
     <a href="#faq" class="toc-link">❓ Complete FAQ Archive</a>
   </nav>
@@ -314,7 +315,49 @@ import { siteConfig } from '../data/siteConfig';
       </div>
     </section>
 
-    <!-- Section 7: Complete FAQ Archive -->
+    <!-- Section 7: Troubleshooting & Common Fixes -->
+    <section class="doc-section" id="troubleshooting">
+      <h2 class="section-heading"><span>🛠️</span> Troubleshooting &amp; High-Impact Fixes</h2>
+      <p class="section-desc">Diagnose and resolve common Linux runtime issues, sandboxing permission errors, and browser authentication redirects.</p>
+
+      <div class="doc-card">
+        <h3 class="card-subtitle">Ubuntu 24.04+ SUID Sandbox Error (The SUID sandbox helper binary was found...)</h3>
+        <p class="section-desc">Starting with Ubuntu 24.04 (Noble Numbat), the Linux kernel blocks unprivileged user namespaces via AppArmor. Raw tarballs extracted into <code>/opt</code> crash with <code>The SUID sandbox helper binary was found, but is not configured properly</code>. Our native <code>.deb</code> and <code>.rpm</code> packages automatically set hardened SUID permissions (<code>04755 root:root</code>) during package installation. If fixing an existing manual extraction:</p>
+        <div class="code-block">
+          <code>sudo chown root:root /usr/share/antigravity-ide/chrome-sandbox &amp;&amp; sudo chmod 4755 /usr/share/antigravity-ide/chrome-sandbox</code>
+          <button class="copy-btn" onclick="copyCode(this)" aria-label="Copy to clipboard" title="Copy to clipboard">
+            <svg class="copy-icon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
+            <svg class="check-icon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#34d399" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
+          </button>
+        </div>
+      </div>
+
+      <div class="doc-card">
+        <h3 class="card-subtitle">Google OAuth Browser Redirects Failing (antigravity-ide:// and antigravity://)</h3>
+        <p class="section-desc">When logging into your Google account, your browser redirects to an <code>antigravity-ide://</code> URI callback. If this handler is unregistered, login fails silently. Our packages register these automatically. To verify or manually register with FreeDesktop:</p>
+        <div class="code-block">
+          <code>xdg-mime default antigravity-ide-url-handler.desktop x-scheme-handler/antigravity-ide &amp;&amp; xdg-mime default antigravity.desktop x-scheme-handler/antigravity</code>
+          <button class="copy-btn" onclick="copyCode(this)" aria-label="Copy to clipboard" title="Copy to clipboard">
+            <svg class="copy-icon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
+            <svg class="check-icon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#34d399" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
+          </button>
+        </div>
+      </div>
+
+      <div class="doc-card">
+        <h3 class="card-subtitle">Updating Applications to the Latest Release</h3>
+        <p class="section-desc">To upgrade your installed Antigravity packages via your system package manager:</p>
+        <div class="code-block">
+          <code># Fedora / RHEL / Rocky (DNF):&#10;sudo dnf update antigravity-ide antigravity&#10;&#10;# Ubuntu / Debian (APT):&#10;sudo apt update &amp;&amp; sudo apt install --only-upgrade antigravity-ide antigravity&#10;&#10;# openSUSE (Zypper):&#10;sudo zypper update antigravity-ide antigravity</code>
+          <button class="copy-btn" onclick="copyCode(this)" aria-label="Copy to clipboard" title="Copy to clipboard">
+            <svg class="copy-icon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
+            <svg class="check-icon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#34d399" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <!-- Section 8: Complete FAQ Archive -->
     <section class="doc-section" id="faq">
       <h2 class="section-heading"><span>❓</span> Complete FAQ Archive</h2>
       <p class="section-desc">Frequently asked questions regarding architecture, packaging, sandboxing, and updates.</p>
