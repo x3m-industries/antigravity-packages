@@ -1,7 +1,7 @@
 [Desktop Entry]
 Type=Service
 ServiceTypes=KonqPopupMenu/Plugin
-MimeType=inode/directory;application/octet-stream;
+MimeType=all/allfiles;inode/directory;
 Actions=openInAntigravityIde;
 X-KDE-Priority=TopLevel
 X-KDE-StartupNotify=true
@@ -9,4 +9,4 @@ X-KDE-StartupNotify=true
 [Desktop Action openInAntigravityIde]
 Name=Open in Antigravity IDE
 Icon=antigravity-ide
-Exec=antigravity-ide %u
+Exec=antigravity-ide %F

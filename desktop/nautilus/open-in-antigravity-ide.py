@@ -7,30 +7,37 @@ Adds right-click options:
 Maintained by X3M Industries (https://github.com/x3m-industries/antigravity-packages)
 """
 
+import importlib
+import os
 import subprocess
+import sys
 from urllib.parse import unquote, urlparse
 import gi
 from gi.repository import GObject
 
-for _ver in ["4.1", "4.0", "3.0"]:
-    try:
-        gi.require_version("Nautilus", _ver)
-        break
-    except (ValueError, AttributeError):
-        pass
+_TYPELIB_VERSIONS = {
+    "Nautilus": ["4.1", "4.0", "3.0"],
+    "Caja": ["3.0", "2.0"],
+}
 
-for _ver in ["3.0", "2.0"]:
-    try:
-        gi.require_version("Caja", _ver)
-        break
-    except (ValueError, AttributeError):
-        pass
+# Prefer the module of the file manager hosting this extension; when it cannot be
+# determined, fall back to Nautilus first, then Caja.
+_host = os.path.basename(sys.argv[0]).lower() if sys.argv and sys.argv[0] else ""
+_candidates = ["Caja", "Nautilus"] if "caja" in _host else ["Nautilus", "Caja"]
 
-try:
-    from gi.repository import Nautilus as FM
-except ImportError:
+FM = None
+for _name in _candidates:
+    for _ver in _TYPELIB_VERSIONS[_name]:
+        try:
+            gi.require_version(_name, _ver)
+            break
+        except (ValueError, AttributeError):
+            continue
+    else:
+        continue
     try:
-        from gi.repository import Caja as FM
+        FM = importlib.import_module(f"gi.repository.{_name}")
+        break
     except ImportError:
         FM = None
 

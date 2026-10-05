@@ -1,0 +1,16 @@
+{
+  "$schema": "https://openapi.vercel.sh/vercel.json",
+  "redirects": [
+    {
+      "source": "/deb/pool/main/:file",
+      "destination": "https://github.com/x3m-industries/antigravity-packages/releases/latest/download/:file",
+      "permanent": false
+    }
+  ],
+  "rewrites": [
+    {
+      "source": "/deb/:path*",
+      "destination": "https://x3m-industries.github.io/antigravity-packages/deb/:path*"
+    }
+  ]
+}

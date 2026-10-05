@@ -74,8 +74,8 @@ sudo dnf update antigravity-ide antigravity
 ```bash
 # Add GPG key and modern DEB822 source
 sudo mkdir -p /etc/apt/keyrings
-sudo curl -fsSL https://x3m-industries.github.io/antigravity-packages/deb/antigravity.gpg -o /etc/apt/keyrings/antigravity.gpg
-sudo curl -fsSL https://x3m-industries.github.io/antigravity-packages/deb/antigravity.sources -o /etc/apt/sources.list.d/antigravity.sources
+sudo curl -fsSL https://apt.x3m.industries/deb/antigravity.gpg -o /etc/apt/keyrings/antigravity.gpg
+sudo curl -fsSL https://apt.x3m.industries/deb/antigravity.sources -o /etc/apt/sources.list.d/antigravity.sources
 
 # Install
 sudo apt update

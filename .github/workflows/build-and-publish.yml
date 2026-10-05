@@ -21,7 +21,7 @@ on:
         type: boolean
         default: false
       pkg_revision:
-        description: 'Packaging release revision suffix (e.g. 1)'
+        description: 'Packaging release revision suffix (e.g. 1). Applies to the forced app(s), or both when none is forced.'
         required: false
         type: string
         default: ''
@@ -31,9 +31,14 @@ permissions:
   pages: write
   id-token: write
 
+# Shared with deploy-pages.yml: releases and Pages deployments are serialized so a
+# landing-page push can never deploy stale repository metadata over a fresh release.
 concurrency:
-  group: "packaging"
+  group: "packages-and-pages"
   cancel-in-progress: false
+
+env:
+  BUN_VERSION: '1.4.2'
 
 jobs:
   check:
@@ -94,17 +99,21 @@ jobs:
         env:
           GPG_PRIVATE_KEY: ${{ secrets.GPG_PRIVATE_KEY }}
         run: |
-          if [ -n "$GPG_PRIVATE_KEY" ]; then
-            echo "$GPG_PRIVATE_KEY" | gpg --batch --import
-            rm -rf ~/.rpmmacros
-            {
-              echo "%_openpgp_sign_id E83A23BC57FE6953E4B5F4657A48CA4D7E7B6601"
-              echo "%_gpg_name E83A23BC57FE6953E4B5F4657A48CA4D7E7B6601"
-              echo "%_gpg_sign_cmd_extra_args --batch --pinentry-mode loopback"
-            } > ~/.rpmmacros
+          if [ -z "$GPG_PRIVATE_KEY" ]; then
+            echo "::error::GPG_PRIVATE_KEY secret is not set. Refusing to build unsigned packages."
+            exit 1
           fi
+          echo "$GPG_PRIVATE_KEY" | gpg --batch --import
+          rm -rf ~/.rpmmacros
+          {
+            echo "%_openpgp_sign_id E83A23BC57FE6953E4B5F4657A48CA4D7E7B6601"
+            echo "%_gpg_name E83A23BC57FE6953E4B5F4657A48CA4D7E7B6601"
+            echo "%_gpg_sign_cmd_extra_args --batch --pinentry-mode loopback"
+          } > ~/.rpmmacros
 
-      # Reuse prebuilt packages if only one of the apps changed
+      # Reuse prebuilt packages if only one of the apps changed.
+      # No "|| true": a failed download must fail the job, otherwise those packages
+      # would silently vanish from the repositories (they only reference the new release).
       - name: Reuse prebuilt Antigravity Hub packages
         if: needs.check.outputs.hub_needs_build != 'true' && needs.check.outputs.prev_tag != ''
         env:
@@ -115,7 +124,7 @@ jobs:
           gh release download "${{ needs.check.outputs.prev_tag }}" \
             --pattern "antigravity-${{ needs.check.outputs.hub_version }}*" \
             --pattern "antigravity_${{ needs.check.outputs.hub_version }}*" \
-            --dir ./dist/packages || true
+            --dir ./dist/packages
 
       - name: Reuse prebuilt Antigravity IDE packages
         if: needs.check.outputs.ide_needs_build != 'true' && needs.check.outputs.prev_tag != ''
@@ -127,11 +136,11 @@ jobs:
           gh release download "${{ needs.check.outputs.prev_tag }}" \
             --pattern "antigravity-ide-${{ needs.check.outputs.ide_version }}*" \
             --pattern "antigravity-ide_${{ needs.check.outputs.ide_version }}*" \
-            --dir ./dist/packages || true
+            --dir ./dist/packages
 
       # Build Antigravity IDE only if needed
       - name: Build Antigravity IDE (x86_64)
-        if: needs.check.outputs.ide_needs_build == 'true' && needs.check.outputs.ide_url_x64 != ''
+        if: needs.check.outputs.ide_needs_build == 'true'
         run: |
           python3 scripts/build_packages.py \
             --package antigravity-ide \
@@ -141,7 +150,7 @@ jobs:
             --output-dir ./dist/packages
 
       - name: Build Antigravity IDE (aarch64 / arm64)
-        if: needs.check.outputs.ide_needs_build == 'true' && needs.check.outputs.ide_url_arm64 != ''
+        if: needs.check.outputs.ide_needs_build == 'true'
         run: |
           python3 scripts/build_packages.py \
             --package antigravity-ide \
@@ -152,7 +161,7 @@ jobs:
 
       # Build Antigravity Hub only if needed
       - name: Build Antigravity Hub (x86_64)
-        if: needs.check.outputs.hub_needs_build == 'true' && needs.check.outputs.hub_url_x64 != ''
+        if: needs.check.outputs.hub_needs_build == 'true'
         run: |
           python3 scripts/build_packages.py \
             --package antigravity \
@@ -162,7 +171,7 @@ jobs:
             --output-dir ./dist/packages
 
       - name: Build Antigravity Hub (aarch64 / arm64)
-        if: needs.check.outputs.hub_needs_build == 'true' && needs.check.outputs.hub_url_arm64 != ''
+        if: needs.check.outputs.hub_needs_build == 'true'
         run: |
           python3 scripts/build_packages.py \
             --package antigravity \
@@ -177,42 +186,69 @@ jobs:
           find ./dist/packages -mindepth 1 -type d -delete
           ls -la ./dist/packages
 
+      - name: Verify complete package set
+        run: |
+          ./scripts/verify_packages.sh ./dist/packages
+
       - name: Sign RPM packages with GPG
-        env:
-          GPG_PRIVATE_KEY: ${{ secrets.GPG_PRIVATE_KEY }}
         run: |
-          if [ -n "$GPG_PRIVATE_KEY" ]; then
-            for f in ./dist/packages/*.rpm; do
-              [ -e "$f" ] || continue
-              if ! rpm -qpi "$f" | grep -q "Signature.*(none)"; then
-                echo "$f is already signed."
-                continue
-              fi
-              echo "Signing $f..."
-              rpmsign --addsign "$f"
-              if rpm -qpi "$f" | grep -q "Signature.*(none)"; then
-                echo "Error: $f was not signed!"
-                exit 1
-              fi
-            done
-          fi
+          for f in ./dist/packages/*.rpm; do
+            if ! rpm -qpi "$f" | grep -q "Signature.*(none)"; then
+              echo "$f is already signed."
+              continue
+            fi
+            echo "Signing $f..."
+            rpmsign --addsign "$f"
+            if rpm -qpi "$f" | grep -q "Signature.*(none)"; then
+              echo "::error::$f was not signed!"
+              exit 1
+            fi
+          done
 
-      - name: Run Container Package Smoke Tests
+      - name: Verify RPM signatures against the published public key
         run: |
-          ./scripts/smoke_test.sh ./dist/packages
+          # Catches a signing secret that does not match RPM-GPG-KEY-antigravity (users would get gpgcheck failures)
+          sudo rpm --import RPM-GPG-KEY-antigravity
+          rpm -K ./dist/packages/*.rpm
 
+      - name: Set up QEMU (arm64 smoke tests)
+        uses: docker/setup-qemu-action@v3
+        with:
+          platforms: arm64
+
+      - name: Run Container Package Smoke Tests (x86_64)
+        run: |
+          SMOKE_ARCH=x86_64 ./scripts/smoke_test.sh ./dist/packages
+
+      - name: Run Container Package Smoke Tests (aarch64 via QEMU)
+        run: |
+          SMOKE_ARCH=aarch64 ./scripts/smoke_test.sh ./dist/packages
+
+      # Publish atomically: assets are uploaded to a draft (invisible to users) and only
+      # then made public. An existing release with the same tag is updated in place instead
+      # of being deleted first, so a failed upload can never leave Pages pointing at a missing release.
       - name: Publish GitHub Release
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           TAG="${{ needs.check.outputs.tag_name }}"
-          gh release delete "$TAG" --yes 2>/dev/null || true
-          git tag -d "$TAG" 2>/dev/null || true
-          git push origin ":refs/tags/$TAG" 2>/dev/null || true
+          TITLE="Antigravity Packages - $TAG"
+          NOTES="Automated release of Google Antigravity & Antigravity IDE for Linux. IDE: ${{ needs.check.outputs.ide_version }} | Hub: ${{ needs.check.outputs.hub_version }}"
 
-          gh release create "$TAG" ./dist/packages/* \
-            --title "Antigravity Packages - $TAG" \
-            --notes "Automated release of Google Antigravity & Antigravity IDE for Linux. IDE: ${{ needs.check.outputs.ide_version }} | Hub: ${{ needs.check.outputs.hub_version }}"
+          if gh release view "$TAG" > /dev/null 2>&1; then
+            echo "Release $TAG exists; updating assets in place."
+            gh release upload "$TAG" ./dist/packages/* --clobber
+            for asset in $(gh release view "$TAG" --json assets --jq '.assets[].name'); do
+              if [ ! -e "./dist/packages/$asset" ]; then
+                echo "Removing stale asset $asset"
+                gh release delete-asset "$TAG" "$asset" --yes
+              fi
+            done
+            gh release edit "$TAG" --title "$TITLE" --notes "$NOTES"
+          else
+            gh release create "$TAG" ./dist/packages/* --draft --title "$TITLE" --notes "$NOTES"
+            gh release edit "$TAG" --draft=false
+          fi
 
       - name: Prepare RPM files for repository metadata
         run: |
@@ -222,7 +258,7 @@ jobs:
       - name: Setup Bun for Site Generation
         uses: oven-sh/setup-bun@v2
         with:
-          bun-version: latest
+          bun-version: ${{ env.BUN_VERSION }}
 
       - name: Install Site Dependencies
         run: |
@@ -230,6 +266,11 @@ jobs:
           bun install --frozen-lockfile
 
       - name: Generate Repository Metadata & Astro Site
+        env:
+          REQUIRE_SIGNING: 'true'
+          # Transition: legacy clients still use the github.io APT URL. Set to 'false' to drop the
+          # ~640 MB .deb pool from Pages once they have migrated to https://apt.x3m.industries/deb
+          KEEP_DEB_POOL: 'true'
         run: |
           ./scripts/generate_repos.sh "${{ needs.check.outputs.tag_name }}" ./dist
 
@@ -237,6 +278,10 @@ jobs:
         run: |
           rm -rf ./dist/packages
           rm -f ./dist/rpm/*.rpm
+
+      - name: Check Pages artifact size
+        run: |
+          ./scripts/check_pages_size.sh ./dist
 
       - name: Upload GitHub Pages artifact
         uses: actions/upload-pages-artifact@v5

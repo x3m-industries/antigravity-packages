@@ -104,7 +104,7 @@ import { siteConfig } from '../data/siteConfig';
             </tr>
             <tr>
               <td><code>--no-nautilus</code></td>
-              <td>Skip GNOME Files / Nautilus context menu integration</td>
+              <td>Remove the file manager integrations shipped with the IDE package (alias: <code>--no-desktop-integrations</code>)</td>
               <td><span class="badge-pill root">Sudo required</span></td>
             </tr>
             <tr>
@@ -189,7 +189,7 @@ import { siteConfig } from '../data/siteConfig';
         <h3 class="card-subtitle">Ubuntu, Debian, Linux Mint, Pop!_OS (APT)</h3>
         <p class="section-desc">1. Add the binary GPG keyring and modern DEB822 repository definition:</p>
         <div class="code-block">
-          <code>sudo mkdir -p /etc/apt/keyrings &amp;&amp; sudo curl -fsSL https://x3m-industries.github.io/antigravity-packages/deb/antigravity.gpg -o /etc/apt/keyrings/antigravity.gpg &amp;&amp; sudo curl -fsSL https://x3m-industries.github.io/antigravity-packages/deb/antigravity.sources -o /etc/apt/sources.list.d/antigravity.sources</code>
+          <code>sudo mkdir -p /etc/apt/keyrings &amp;&amp; sudo curl -fsSL https://apt.x3m.industries/deb/antigravity.gpg -o /etc/apt/keyrings/antigravity.gpg &amp;&amp; sudo curl -fsSL https://apt.x3m.industries/deb/antigravity.sources -o /etc/apt/sources.list.d/antigravity.sources</code>
           <button class="copy-btn" onclick="copyCode(this)" aria-label="Copy to clipboard" title="Copy to clipboard">
             <svg class="copy-icon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
             <svg class="check-icon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#34d399" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>

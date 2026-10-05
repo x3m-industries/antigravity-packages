@@ -9,6 +9,7 @@ repo_root = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(repo_root / "scripts"))
 
 from build_packages import split_version
+from check_upstream import compute_build_plan, validate_upstream, UpstreamError, app_complete
 from stats import analyze_downloads
 
 
@@ -137,7 +138,8 @@ class TestPackagingLogic(unittest.TestCase):
         self.assertIn("Type=Service", dolphin_content)
         self.assertIn("KonqPopupMenu/Plugin", dolphin_content)
         self.assertIn("openInAntigravityIde", dolphin_content)
-        self.assertIn("Exec=antigravity-ide %u", dolphin_content)
+        self.assertIn("Exec=antigravity-ide %F", dolphin_content)
+        self.assertIn("all/allfiles;", dolphin_content)
 
         # Nemo Action
         nemo_file = desktop_dir / "nemo" / "open-in-antigravity-ide.nemo_action"
@@ -150,7 +152,7 @@ class TestPackagingLogic(unittest.TestCase):
         # Build script packaging recommendations
         build_script = (repo_root / "scripts" / "build_packages.py").read_text(encoding="utf-8")
         self.assertIn("Recommends:     nautilus-python", build_script)
-        self.assertIn("Recommends: python3-nautilus", build_script)
+        self.assertIn("python3-nautilus", build_script)
 
         # Installer integration checks
         installer = (repo_root / "install.sh").read_text(encoding="utf-8")
@@ -173,6 +175,30 @@ class TestPackagingLogic(unittest.TestCase):
         self.assertIn("https://x3m-industries.github.io/antigravity-packages/", llms_full_content)
         self.assertIn("dnf install antigravity-ide antigravity", llms_full_content)
         self.assertIn("apt install antigravity-ide antigravity", llms_full_content)
+
+    def test_vercel_apt_redirect_config(self):
+        import json
+        cfg = json.loads((repo_root / "vercel-apt" / "vercel.json").read_text())
+        redirect = cfg["redirects"][0]
+        self.assertEqual(redirect["source"], "/deb/pool/main/:file")
+        self.assertEqual(
+            redirect["destination"],
+            "https://github.com/x3m-industries/antigravity-packages/releases/latest/download/:file",
+        )
+        self.assertFalse(redirect["permanent"])
+        rewrite = cfg["rewrites"][0]
+        self.assertEqual(rewrite["source"], "/deb/:path*")
+        self.assertTrue(rewrite["destination"].startswith("https://x3m-industries.github.io/antigravity-packages/deb/"))
+
+        # Client-facing APT URL must be the redirecting host everywhere
+        for rel in ("scripts/generate_repos.sh", "install.sh", "README.md"):
+            content = (repo_root / rel).read_text()
+            self.assertIn("https://apt.x3m.industries/deb", content, rel)
+            self.assertNotIn("x3m-industries.github.io/antigravity-packages/deb", content, rel)
+
+        # The pool is dropped from Pages unless explicitly kept
+        gen = (repo_root / "scripts" / "generate_repos.sh").read_text()
+        self.assertIn("KEEP_DEB_POOL", gen)
 
     def test_installer_script(self):
         import subprocess
@@ -360,6 +386,186 @@ class TestPackagingLogic(unittest.TestCase):
         self.assertIn('-rwsr-xr-x', smoke_script)
         self.assertIn('perms=$(stat -c "%a" "$cs")', smoke_script)
         self.assertIn('expected 4755', smoke_script)
+
+    # ------------------------------------------------------------------
+    # check_upstream: build planning
+    # ------------------------------------------------------------------
+    IDE_VER = "2.5.5-4923483625488384"
+    HUB_VER = "2.19.1-6046815158665216"
+
+    def _upstream(self, **overrides):
+        up = {
+            "antigravity": {
+                "version_full": self.HUB_VER,
+                "url_x64": "https://example/hub-x64.tar.gz",
+                "url_arm64": "https://example/hub-arm.tar.gz",
+            },
+            "antigravity-ide": {
+                "version_full": self.IDE_VER,
+                "url_x64": "https://example/ide-x64.tar.gz",
+                "url_arm64": "https://example/ide-arm.tar.gz",
+            },
+        }
+        for key, value in overrides.items():
+            pkg, field = key.split("__")
+            up[pkg.replace("_", "-")][field] = value
+        return up
+
+    def _assets(self, ide=None, hub=None):
+        ide = ide or self.IDE_VER
+        hub = hub or self.HUB_VER
+        return [
+            f"antigravity-ide-{ide}.x86_64.rpm", f"antigravity-ide-{ide}.aarch64.rpm",
+            f"antigravity-ide_{ide}_amd64.deb", f"antigravity-ide_{ide}_arm64.deb",
+            f"antigravity-{hub}.x86_64.rpm", f"antigravity-{hub}.aarch64.rpm",
+            f"antigravity_{hub}_amd64.deb", f"antigravity_{hub}_arm64.deb",
+        ]
+
+    def test_build_plan_nothing_to_do(self):
+        # Regression: this path used to crash with UnboundLocalError (has_update unset)
+        plan = compute_build_plan(self._upstream(), "v-prev", self._assets(), {})
+        self.assertFalse(plan["has_update"])
+        self.assertFalse(plan["ide_needs_build"])
+        self.assertFalse(plan["hub_needs_build"])
+        self.assertEqual(plan["tag_name"], f"v{self.IDE_VER}_hub-{self.HUB_VER}")
+
+    def test_build_plan_single_app_update(self):
+        up = self._upstream(antigravity__version_full="2.20.0-111")
+        plan = compute_build_plan(up, "v-prev", self._assets(), {})
+        self.assertTrue(plan["has_update"])
+        self.assertTrue(plan["hub_needs_build"])
+        self.assertFalse(plan["ide_needs_build"])
+        self.assertEqual(plan["hub_version"], "2.20.0-111")
+        self.assertEqual(plan["tag_name"], f"v{self.IDE_VER}_hub-2.20.0-111")
+
+    def test_build_plan_incomplete_release_triggers_rebuild(self):
+        # A previous release missing e.g. the arm64 deb must not count as "present"
+        assets = [a for a in self._assets() if not a.endswith("_arm64.deb") or "ide" not in a]
+        plan = compute_build_plan(self._upstream(), "v-prev", assets, {})
+        self.assertTrue(plan["ide_needs_build"])
+        self.assertFalse(plan["hub_needs_build"])
+
+    def test_build_plan_first_release(self):
+        plan = compute_build_plan(self._upstream(), "", [], {})
+        self.assertTrue(plan["has_update"])
+        self.assertTrue(plan["ide_needs_build"])
+        self.assertTrue(plan["hub_needs_build"])
+
+    def test_build_plan_reuses_published_revision(self):
+        # IDE was re-rolled as revision .2 earlier; the tag/version must reflect what is shipped
+        assets = self._assets(ide=f"{self.IDE_VER}.2")
+        up = self._upstream(antigravity__version_full="2.20.0-111")
+        plan = compute_build_plan(up, "v-prev", assets, {})
+        self.assertFalse(plan["ide_needs_build"])
+        self.assertEqual(plan["ide_version"], f"{self.IDE_VER}.2")
+        self.assertEqual(plan["tag_name"], f"v{self.IDE_VER}.2_hub-2.20.0-111")
+
+    def test_build_plan_force_flags_and_revision(self):
+        plan = compute_build_plan(self._upstream(), "v-prev", self._assets(), {"FORCE_IDE": "true"})
+        self.assertTrue(plan["ide_needs_build"])
+        self.assertFalse(plan["hub_needs_build"])
+
+        # Revision applies to the forced app only
+        plan = compute_build_plan(self._upstream(), "v-prev", self._assets(),
+                                  {"FORCE_HUB": "true", "PKG_REVISION": "1"})
+        self.assertTrue(plan["hub_needs_build"])
+        self.assertEqual(plan["hub_version"], f"{self.HUB_VER}.1")
+        self.assertFalse(plan["ide_needs_build"])
+        self.assertEqual(plan["ide_version"], self.IDE_VER)
+
+        # Revision without a forced app re-rolls both
+        plan = compute_build_plan(self._upstream(), "v-prev", self._assets(), {"PKG_REVISION": "3"})
+        self.assertEqual(plan["ide_version"], f"{self.IDE_VER}.3")
+        self.assertEqual(plan["hub_version"], f"{self.HUB_VER}.3")
+        self.assertTrue(plan["has_update"])
+
+        plan = compute_build_plan(self._upstream(), "v-prev", self._assets(), {"FORCE_BUILD": "1"})
+        self.assertTrue(plan["ide_needs_build"] and plan["hub_needs_build"])
+
+    def test_build_plan_rejects_incomplete_upstream(self):
+        # A partial scrape must never produce a release (e.g. tag "..._hub-None")
+        for override in (
+            {"antigravity__version_full": None},
+            {"antigravity__url_arm64": None},
+            {"antigravity_ide__url_x64": None},
+        ):
+            with self.assertRaises(UpstreamError):
+                compute_build_plan(self._upstream(**override), "v-prev", self._assets(), {})
+        with self.assertRaises(UpstreamError):
+            validate_upstream({"antigravity": {}, "antigravity-ide": {}})
+
+    def test_app_complete_does_not_confuse_hub_and_ide(self):
+        assets = self._assets()
+        self.assertTrue(app_complete("antigravity", self.HUB_VER, assets))
+        self.assertTrue(app_complete("antigravity-ide", self.IDE_VER, assets))
+        only_ide = [a for a in assets if "ide" in a]
+        self.assertFalse(app_complete("antigravity", self.HUB_VER, only_ide))
+
+    # ------------------------------------------------------------------
+    # Release / repository safety nets
+    # ------------------------------------------------------------------
+    def test_verify_packages_script(self):
+        import subprocess
+        import tempfile
+        script = repo_root / "scripts" / "verify_packages.sh"
+        with tempfile.TemporaryDirectory() as tmp:
+            tmp_path = Path(tmp)
+            res = subprocess.run([str(script), tmp], capture_output=True, text=True)
+            self.assertNotEqual(res.returncode, 0)
+
+            for name in self._assets():
+                (tmp_path / name).write_bytes(b"")
+            res = subprocess.run([str(script), tmp], capture_output=True, text=True)
+            self.assertEqual(res.returncode, 0, res.stderr)
+
+            # Removing any single package must be detected (hub rpm must not be satisfied by the ide rpm)
+            (tmp_path / f"antigravity-{self.HUB_VER}.aarch64.rpm").unlink()
+            res = subprocess.run([str(script), tmp], capture_output=True, text=True)
+            self.assertNotEqual(res.returncode, 0)
+            self.assertIn("antigravity-[0-9]*.aarch64.rpm", res.stderr)
+
+    def test_signing_is_mandatory_in_ci(self):
+        gen = (repo_root / "scripts" / "generate_repos.sh").read_text(encoding="utf-8")
+        self.assertIn("REQUIRE_SIGNING", gen)
+        self.assertIn("repomd.xml.asc", gen)
+        self.assertIn("repo_gpgcheck=1", gen)
+        self.assertNotIn("2>/dev/null || true", gen.split("Generating DEB Repository Metadata")[1].split("Generate Release file")[0])
+
+        publish = (repo_root / ".github" / "workflows" / "build-and-publish.yml").read_text(encoding="utf-8")
+        pages = (repo_root / ".github" / "workflows" / "deploy-pages.yml").read_text(encoding="utf-8")
+        for wf in (publish, pages):
+            self.assertIn("REQUIRE_SIGNING: 'true'", wf)
+            self.assertIn("GPG_PRIVATE_KEY secret is not set", wf)
+            self.assertIn("verify_packages.sh", wf)
+            self.assertIn("check_pages_size.sh", wf)
+            self.assertIn('group: "packages-and-pages"', wf)
+            self.assertNotIn("bun-version: latest", wf)
+        self.assertNotIn("|| true", publish.split("Reuse prebuilt Antigravity Hub packages")[1].split("# Build Antigravity IDE")[0])
+        self.assertIn("--draft", publish)
+        self.assertNotIn('gh release delete "', publish)  # never delete a live release before its replacement exists
+
+    def test_package_dependencies(self):
+        build_script = (repo_root / "scripts" / "build_packages.py").read_text(encoding="utf-8")
+        # Electron needs libgbm; soname-based RPM deps resolve on Fedora and openSUSE
+        self.assertIn("libgbm.so.1()(64bit)", build_script)
+        self.assertIn("libgtk-3.so.0()(64bit)", build_script)
+        self.assertIn("libgbm1", build_script)
+        self.assertIn("libasound2t64 | libasound2", build_script)
+        self.assertIn("%defattr(-,root,root,-)", build_script)
+        self.assertIn("Installed-Size", build_script)
+        self.assertIn('filter="tar"', build_script)
+
+    def test_smoke_test_is_strict(self):
+        smoke = (repo_root / "scripts" / "smoke_test.sh").read_text(encoding="utf-8")
+        self.assertIn("SMOKE_ARCH", smoke)
+        self.assertIn("not found", smoke)  # ldd unresolved-library check
+        self.assertNotIn("rpm -q antigravity || true", smoke)
+        self.assertNotIn("dpkg -s antigravity 2>/dev/null || true", smoke)
+
+    def test_installer_does_not_duplicate_packaged_files(self):
+        installer = (repo_root / "install.sh").read_text(encoding="utf-8")
+        for marker in ("NAUTILUS_EOF", "KDE_EOF", "NEMO_EOF"):
+            self.assertNotIn(marker, installer)
 
     def test_astro_site_components(self):
         site_dir = repo_root / "site"

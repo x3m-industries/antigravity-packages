@@ -132,7 +132,7 @@ bash <(curl -fsSL https://x3m-industries.github.io/antigravity-packages/install.
 | `--no-cli` | Skip Antigravity CLI installation (desktop packages only) | Sudo |
 | `--no-ide` | Skip Antigravity IDE installation | Sudo / User |
 | `--no-hub` | Skip Antigravity Hub installation | Sudo / User |
-| `--no-nautilus` | Skip GNOME Files / Nautilus context menu integration | Sudo |
+| `--no-nautilus` | Remove the file manager integrations shipped with the IDE package (alias of `--no-desktop-integrations`) | Sudo |
 | `--dry-run` | Preview what would be installed and exit without making changes | None |
 | `-h`, `--help` | Display the built-in help menu and usage examples | None |
 
@@ -161,8 +161,8 @@ sudo dnf update antigravity-ide
 ```bash
 # 1. Add the GPG key & APT sources (modern DEB822 format)
 sudo mkdir -p /etc/apt/keyrings
-sudo curl -fsSL https://x3m-industries.github.io/antigravity-packages/deb/antigravity.gpg -o /etc/apt/keyrings/antigravity.gpg
-sudo curl -fsSL https://x3m-industries.github.io/antigravity-packages/deb/antigravity.sources -o /etc/apt/sources.list.d/antigravity.sources
+sudo curl -fsSL https://apt.x3m.industries/deb/antigravity.gpg -o /etc/apt/keyrings/antigravity.gpg
+sudo curl -fsSL https://apt.x3m.industries/deb/antigravity.sources -o /etc/apt/sources.list.d/antigravity.sources
 
 # 2. Update and install
 sudo apt update
@@ -291,7 +291,7 @@ When Antigravity IDE is installed via our native packages or universal installer
 * **Linux Mint / Cinnamon (Nemo):** Native Nemo Action installed to `/usr/share/nemo/actions/open-in-antigravity-ide.nemo_action`. Right-click any folder or file in Linux Mint.
 * **MATE (Caja):** Extension installed to `/usr/share/caja-python/extensions/open-in-antigravity-ide.py`.
 * **COSMIC Desktop:** Full MIME type registration (`inode/directory`, `application/x-code-workspace`) gives native **"Open With"** integration in `cosmic-files` and fast keyword indexing in `cosmic-launcher`.
-* **Opt-Out:** If you prefer not to install desktop file manager extensions, pass `--no-desktop-integrations`:
+* **Opt-Out:** The extensions ship inside the `antigravity-ide` package. If you prefer not to have them, pass `--no-desktop-integrations` to have the installer remove them (a later package upgrade restores them):
   ```bash
   curl -fsSL https://x3m-industries.github.io/antigravity-packages/install.sh | bash -s -- --no-desktop-integrations
   ```

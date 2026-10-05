@@ -43,10 +43,12 @@ antigravity-packages/
 │   └── nemo/                      # Linux Mint / Cinnamon right-click Nemo Action
 ├── scripts/                       # Core Python & Bash build, automation, and diagnostic scripts
 │   ├── build_packages.py          # Downloads upstream tarballs, normalizes permissions, extracts icons, and builds .rpm & .deb packages
-│   ├── check_upstream.py          # Scrapes Google's download page for new releases, compares against latest GitHub Release, and sets CI outputs
+│   ├── check_upstream.py          # Scrapes Google's download page for new releases, compares against latest GitHub Release, and sets CI outputs (pure `compute_build_plan()` is unit-tested; fails hard on incomplete scrapes)
+│   ├── check_pages_size.sh        # Fails the deploy if the Pages artifact approaches GitHub's 1 GB limit (relevant while the APT pool is kept on Pages)
 │   ├── generate_repos.sh          # Generates RPM (createrepo_c) and APT (dpkg-scanpackages) repository metadata, signs releases, prepares Pages dist/
 │   ├── inject_versions.py         # Injects release versions from GitHub release tags into HTML landing pages during repo generation
-│   ├── smoke_test.sh              # Containerized end-to-end installation test for Fedora and Ubuntu (Docker / Podman)
+│   ├── smoke_test.sh              # Containerized end-to-end installation test for Fedora and Ubuntu (Docker / Podman); x86_64 native, aarch64 via QEMU (`SMOKE_ARCH`)
+│   ├── verify_packages.sh         # Asserts the complete set of 8 packages (2 apps x 2 arches x rpm/deb) exists before publishing / regenerating metadata
 │   └── stats.py                   # CLI analytics tool querying GitHub Releases API to track package downloads across arch and formats
 ├── site/                          # Astro + Tailwind CSS web frontend (managed with Bun)
 │   ├── astro.config.mjs           # Astro configuration (base /antigravity-packages, static file format)
@@ -57,6 +59,7 @@ antigravity-packages/
 │       ├── layouts/BaseLayout.astro # Common SEO, OpenGraph, JSON-LD schema, and analytics layout
 │       ├── pages/                 # Static pages (index.astro, docs.astro)
 │       └── styles/global.css      # Tailwind v4 theme styling and terminal CSS
+├── vercel-apt/                    # Static Vercel project (apt.x3m.industries): redirects .deb pool downloads to GitHub Releases, proxies APT metadata from Pages
 ├── templates/                     # Pre-rendered HTML templates for fallback and test backwards compatibility
 ├── tests/
 │   └── test_packaging.py          # Python unit test suite (version parsing, upstream regex matching, stats processing, desktop entries, templates)
@@ -105,7 +108,9 @@ flowchart TD
   - Sets output variables `ide_needs_build` and `hub_needs_build`.
   - If only one application was updated upstream, the CI workflow downloads the pre-built packages for the unchanged application from the previous release tag (`gh release download "$prev_tag"`), saving build time and avoiding redundant packaging.
 - **Target Release Tag**: Format `v{ide_version}_hub-{hub_version}`, ensuring unique release tags whenever either app updates.
-- **Manual Overrides**: Supports `FORCE_BUILD=true`, `FORCE_IDE=true`, and `FORCE_HUB=true` via workflow dispatch inputs or environment variables.
+  - An app only counts as "present" when the release ships **all** four of its files (rpm x86_64/aarch64, deb amd64/arm64). When an app is reused, the exact published version string (including any `.N` revision) is kept, so the tag reflects what is really shipped.
+- **Fail-Fast on Partial Scrapes**: If the download page lacks any version or x64/arm64 URL, `check_upstream.py` exits non-zero. The RPM/APT repositories only reference the newest release, so a release with missing packages would make them vanish for users.
+- **Manual Overrides**: Supports `FORCE_BUILD=true`, `FORCE_IDE=true`, and `FORCE_HUB=true` via workflow dispatch inputs or environment variables. `PKG_REVISION=<n>` appends a `.n` packaging revision to the forced app(s), or to both apps when none is forced.
 
 ### 3.2 Packaging Pipeline (`scripts/build_packages.py`)
 
@@ -138,7 +143,8 @@ python3 scripts/build_packages.py \
    - Creates RPM build tree: `BUILD`, `RPMS`, `SOURCES`, `SPECS`, `SRPMS`.
    - Generates `.spec` file:
      - Sets `AutoReqProv: no` to avoid pulling unnecessary internal Electron bundled shared libraries.
-     - Declares explicit system dependencies: `gtk3, libnotify, nss, alsa-lib, libXScrnSaver`.
+     - Declares soname-based dependencies (resolve on Fedora/RHEL **and** openSUSE): `libgtk-3.so.0, libnotify.so.4, libnss3.so, libasound.so.2, libXss.so.1, libgbm.so.1, libxkbfile.so.1` (all `()(64bit)`) plus `xdg-utils`; `libsecret` is a weak dependency.
+     - Uses `%defattr(-,root,root,-)` so files are root-owned regardless of who runs `rpmbuild`; permission modes come from `sanitize_tree_permissions()` (no duplicated find/chmod logic).
      - Places application files in `/usr/share/<package_name>/`.
      - Creates symlink `/usr/bin/<package_name>`.
      - Installs desktop entry in `/usr/share/applications/<package_name>.desktop`.
@@ -147,13 +153,14 @@ python3 scripts/build_packages.py \
    - Invokes `rpmbuild -bb --target <rpm_arch> <spec_file>`.
 5. **DEB Generation (`build_deb`)**:
    - Creates Debian staging directory structure: `usr/share/<package_name>`, `usr/bin`, `usr/share/applications`, `usr/share/icons`, `usr/share/pixmaps`, `DEBIAN`.
-   - Generates `DEBIAN/control` with package metadata, version (`<ver>-<rel>`), architecture (`amd64` or `arm64`), and system dependencies (`libgtk-3-0, libnotify4, libnss3, libxss1, libasound2`).
+   - Generates `DEBIAN/control` with package metadata, version (`<ver>-<rel>`), architecture (`amd64` or `arm64`), and system dependencies (`libgtk-3-0t64 | libgtk-3-0, libnotify4, libnss3, libxss1, libasound2t64 | libasound2, libgbm1, libxkbfile1, xdg-utils`; `libsecret-1-0` recommended), `Installed-Size`, `Homepage`, and `md5sums`.
    - Generates executable `postinst` and `postrm` scripts that update desktop database and GTK icon cache if present.
    - Invokes `dpkg-deb --build --root-owner-group <stage_dir> <output_deb>`.
 
 ### 3.3 Package Signing
 - **RPM Signing**: In CI, private key `GPG_PRIVATE_KEY` is imported, and RPMs are signed using `rpmsign --addsign ./dist/packages/*.rpm` configured with `~/.rpmmacros`. A verification check runs `rpm -qpi` to guarantee that no unsigned package is released.
 - **DEB Signing**: The APT `Release` index is signed during repository generation (see Section 4).
+- **Signing is mandatory in CI**: the workflows fail if `GPG_PRIVATE_KEY` is missing, `generate_repos.sh` runs with `REQUIRE_SIGNING=true`, and a step verifies every RPM (`rpm -K`) against the committed `RPM-GPG-KEY-antigravity`.
 - **GPG Identity**:
   - Key ID: `7A48CA4D7E7B6601`
   - Fingerprint: `E83A 23BC 57FE 6953 E4B5  F465 7A48 CA4D 7E7B 6601`
@@ -189,7 +196,7 @@ The script `scripts/generate_repos.sh <RELEASE_TAG> <DIST_DIR>` builds the deplo
 │   └── RPM-GPG-KEY-antigravity
 └── deb/
     ├── pool/
-    │   └── main/                # DEB packages during generation
+    │   └── main/                # DEB packages during generation (only kept when KEEP_DEB_POOL=true)
     ├── dists/
     │   └── stable/
     │       ├── Release          # APT Release file
@@ -214,7 +221,8 @@ The script `scripts/generate_repos.sh <RELEASE_TAG> <DIST_DIR>` builds the deplo
   createrepo_c -u "https://github.com/x3m-industries/antigravity-packages/releases/download/${RELEASE_TAG}/" "${RPM_DIR}"
   ```
   The `-u` parameter directs DNF/RPM to download the `.rpm` binaries directly from GitHub Releases CDN. This is critical because **GitHub Pages has strict storage and bandwidth limits** and GitHub Releases provides high-speed CDN delivery for large (>100MB) binary packages.
-- **Client Configuration**: `dist/rpm/antigravity.repo` points to `baseurl=https://x3m-industries.github.io/antigravity-packages/rpm/` with `gpgcheck=1`.
+- **Signed Metadata**: `repodata/repomd.xml` is detached-signed (`repomd.xml.asc`, plus `repomd.xml.key`), which `zypper` requires.
+- **Client Configuration**: `dist/rpm/antigravity.repo` points to `baseurl=https://x3m-industries.github.io/antigravity-packages/rpm/` with `gpgcheck=1` and `repo_gpgcheck=1`.
 
 ### 4.3 DEB Repository Generation (APT)
 - **Package Scanning**: `dpkg-scanpackages --arch <arch> --multiversion pool/main` generates `Packages` and `Packages.gz` for `amd64` and `arm64`.
@@ -232,11 +240,22 @@ Before publishing to GitHub Pages via `actions/upload-pages-artifact@v5`:
 rm -rf ./dist/packages
 rm -f ./dist/rpm/*.rpm
 ```
-**All heavy binary packages are purged from `dist/`**. Only the lightweight repository metadata index files (`repodata/`, `Packages.gz`, `Release`), HTML landing page, scripts, and static assets are uploaded to Pages.
+**RPMs and the staging `dist/packages` are purged from `dist/`**. 
+
+### 4.4.1 APT Delivery via `apt.x3m.industries` (Vercel redirect)
+APT resolves `Filename:` relative to the repository URL and does not accept absolute URLs there. APT *does* follow HTTP redirects, but GitHub Pages is static and cannot emit them. The repo therefore ships a tiny, static Vercel project in `vercel-apt/` (Vercel team `x3m-industries`, project `antigravity-apt`, custom domain `apt.x3m.industries`):
+- `redirects`: `/deb/pool/main/:file` → `https://github.com/x3m-industries/antigravity-packages/releases/latest/download/:file` (307). The `.deb` bytes come from GitHub Releases, so Vercel serves only a redirect.
+- `rewrites`: `/deb/:path*` → `https://x3m-industries.github.io/antigravity-packages/deb/:path*`. Signed metadata (`InRelease`, `Packages`, keys, `.sources`) is proxied unchanged from Pages, so the signatures stay valid.
+- Clients use `https://apt.x3m.industries/deb` (`antigravity.sources`, `antigravity.list` and `install.sh` all point there). The Vercel config is static and deployed manually (`cd vercel-apt && vercel deploy --prod --scope x3m-industries`); the project is **not** linked to GitHub, so pushes do not trigger deployments. It only needs redeploying when `vercel-apt/` changes.
+- `generate_repos.sh` removes `dist/deb/pool` after indexing, unless `KEEP_DEB_POOL=true`. Both workflows currently set `KEEP_DEB_POOL: 'true'` as a transition for legacy clients that still use the github.io APT URL (their download path needs the pool on Pages). Set it to `'false'` in `build-and-publish.yml` and `deploy-pages.yml` to drop the ~640 MB pool from Pages once legacy clients have migrated (`install.sh` rewrites the APT sources on every run).
+- Constraints: Vercel Hobby is free for non-commercial use (100 GB/month, hard caps); `releases/latest` always contains all 8 assets; a client with a stale `Packages` index can get a 404 immediately after a release (same as before).
+- `scripts/check_pages_size.sh` warns at 700 MB and fails the deploy at 950 MB (hard Pages limit: 1 GB) while the pool is still on Pages.
 
 ### 4.5 GitHub Pages Workflows
 1. **`build-and-publish.yml`**: Runs nightly or on demand; updates metadata after publishing a new binary release.
-2. **`deploy-pages.yml`**: Triggers on `push` to `main` whenever landing page templates, assets, or scripts change, downloading existing release packages to rebuild and deploy updated repository metadata without needing a new binary release.
+2. **`deploy-pages.yml`**: Triggers on `push` to `main` whenever landing page templates, assets, or scripts change, downloading existing release packages to rebuild and deploy updated repository metadata without needing a new binary release. It fails (instead of deploying broken metadata) if the release download, the 8-package check, or signing fails.
+
+Both workflows share the concurrency group `packages-and-pages` (queued, never cancelled), so a landing-page deploy can never overwrite metadata from a newer release. Releases are published atomically: assets go to a draft that is published afterwards; an existing release with the same tag is updated in place rather than deleted first.
 
 ---
 
@@ -266,7 +285,7 @@ flowchart LR
    Validates compliance with FreeDesktop desktop entry specifications (valid categories, action keys, URL handlers, syntax).
 2. **Bash Script Linting**:
    ```bash
-   shellcheck --severity=warning scripts/generate_repos.sh scripts/smoke_test.sh install.sh
+   shellcheck --severity=warning scripts/generate_repos.sh scripts/smoke_test.sh scripts/verify_packages.sh scripts/check_pages_size.sh install.sh
    ```
    Ensures POSIX / bash compliance, safe quoting, correct error trapping, and zero syntax errors.
 
@@ -278,6 +297,8 @@ python3 -m unittest discover tests -v
 
 The test suite covers:
 - **`test_split_version`**: Tests version/release splitting for standard Google build numbers (`2.5.5-4923483625488384`), semver (`2.18.1`), and complex pre-release tags.
+- **`test_build_plan_*` / `test_app_complete_*`**: Tests `check_upstream.compute_build_plan()` (no-op runs, single-app updates, incomplete releases, revisions, force flags, rejection of partial scrapes).
+- **`test_verify_packages_script`, `test_signing_is_mandatory_in_ci`, `test_package_dependencies`, `test_smoke_test_is_strict`**: Guard the release safety nets (complete package set, mandatory signing, dependency lists, strict smoke tests).
 - **`test_upstream_regex_matching`**: Tests Google download page HTML scraping regexes against real HTML markup for both Hub and IDE, on both x64 and arm.
 - **`test_analyze_downloads`**: Tests `scripts/stats.py` metrics aggregation (by package, format, architecture, asset size).
 - **`test_desktop_files`**: Validates required sections (`[Desktop Entry]`), keys (`Exec`, `Icon`, `Type`), and invokes `desktop-file-validate` if installed.
@@ -297,6 +318,8 @@ Runs inside `.github/workflows/build-and-publish.yml` immediately after packages
   - Updates apt and installs DEBs using `apt-get install -y /packages/*amd64.deb`.
   - Verifies package database: `dpkg -s antigravity`, `dpkg -s antigravity-ide`.
   - Verifies binary execution and desktop entries.
+- **Strict checks**: every expected binary, symlink and desktop entry is required (no `|| true`); all ELF files at the top of the install dir are `ldd`-checked for unresolved libraries (catches missing package dependencies); RPM file ownership (`root`) and DEB `md5sums` are verified; `antigravity-ide --version` is run informationally.
+- **aarch64**: `SMOKE_ARCH=aarch64 ./scripts/smoke_test.sh` runs the same checks under QEMU (`docker/setup-qemu-action` in CI).
 - **Fallback**: If no container engine (Docker or Podman) is available, it performs structural header inspection using `rpm -qpi` and `dpkg-deb -I`.
 
 ---
@@ -335,7 +358,7 @@ python3 -m unittest discover tests -v
 cd site && bun run check && bun run build && cd ..
 
 # 3. Run ShellCheck on scripts (if shellcheck is available)
-shellcheck --severity=warning scripts/generate_repos.sh scripts/smoke_test.sh install.sh
+shellcheck --severity=warning scripts/generate_repos.sh scripts/smoke_test.sh scripts/verify_packages.sh scripts/check_pages_size.sh install.sh
 
 # 4. Validate desktop entries (if desktop-file-utils is available)
 desktop-file-validate desktop/*.desktop
@@ -353,11 +376,12 @@ python3 scripts/check_upstream.py
      2. `site/src/data/siteConfig.ts` (single source of truth for web pages)
      3. `install.sh`
      4. `scripts/generate_repos.sh`
-4. **Desktop Entry Protocol Handlers**:
+4. **File Manager Integrations Are Package-Owned**: Nautilus/Caja/Dolphin/Nemo files and shell completions are installed by the `antigravity-ide` RPM/DEB from `desktop/`. `install.sh` must not write them (it only removes them on `--no-desktop-integrations` and installs `python3-nautilus`/`nautilus-python`).
+5. **Desktop Entry Protocol Handlers**:
    - Keep `MimeType=...;x-scheme-handler/antigravity;` in `desktop/antigravity.desktop`.
    - Keep `MimeType=x-scheme-handler/antigravity-ide;` in `desktop/antigravity-ide-url-handler.desktop` with `NoDisplay=true`.
    These handlers are required for Google OAuth browser login redirects to work.
-5. **GPG Key Integrity**:
+6. **GPG Key Integrity**:
    - Maintainer: `X3M Antigravity Packagers <packaging@x3m.industries>`
    - Fingerprint: `E83A 23BC 57FE 6953 E4B5  F465 7A48 CA4D 7E7B 6601`
    - Public keys are stored as `RPM-GPG-KEY-antigravity` (ASCII) and `antigravity.gpg` (binary keyring). Do not modify these files unless rotating keys.

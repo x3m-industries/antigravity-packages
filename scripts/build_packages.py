@@ -7,6 +7,7 @@ Supports x86_64 and aarch64 / arm64.
 
 import os
 import sys
+import hashlib
 import shutil
 import subprocess
 import tarfile
@@ -147,7 +148,11 @@ mkdir -p %{{buildroot}}/usr/share/caja-python/extensions
 cp "{nautilus_src}" %{{buildroot}}/usr/share/caja-python/extensions/open-in-antigravity-ide.py
 chmod 0644 %{{buildroot}}/usr/share/caja-python/extensions/open-in-antigravity-ide.py
 """
-            extra_files += """/usr/share/nautilus-python/extensions/open-in-antigravity-ide.py
+            extra_files += """%dir /usr/share/nautilus-python
+%dir /usr/share/nautilus-python/extensions
+%dir /usr/share/caja-python
+%dir /usr/share/caja-python/extensions
+/usr/share/nautilus-python/extensions/open-in-antigravity-ide.py
 /usr/share/caja-python/extensions/open-in-antigravity-ide.py
 """
 
@@ -159,7 +164,11 @@ cp "{dolphin_src}" %{{buildroot}}/usr/share/kio/servicemenus/open-in-antigravity
 chmod 0644 %{{buildroot}}/usr/share/kio/servicemenus/open-in-antigravity-ide.desktop
 ln -sf /usr/share/kio/servicemenus/open-in-antigravity-ide.desktop %{{buildroot}}/usr/share/kservices5/ServiceMenus/open-in-antigravity-ide.desktop
 """
-            extra_files += """/usr/share/kio/servicemenus/open-in-antigravity-ide.desktop
+            extra_files += """%dir /usr/share/kio
+%dir /usr/share/kio/servicemenus
+%dir /usr/share/kservices5
+%dir /usr/share/kservices5/ServiceMenus
+/usr/share/kio/servicemenus/open-in-antigravity-ide.desktop
 /usr/share/kservices5/ServiceMenus/open-in-antigravity-ide.desktop
 """
 
@@ -169,24 +178,30 @@ mkdir -p %{{buildroot}}/usr/share/nemo/actions
 cp "{nemo_src}" %{{buildroot}}/usr/share/nemo/actions/open-in-antigravity-ide.nemo_action
 chmod 0644 %{{buildroot}}/usr/share/nemo/actions/open-in-antigravity-ide.nemo_action
 """
-            extra_files += "/usr/share/nemo/actions/open-in-antigravity-ide.nemo_action\n"
-
-        extra_install += f"""
-mkdir -p %{{buildroot}}/usr/share/bash-completion/completions
-if [ -f "%{{buildroot}}{install_dest}/resources/completions/bash/antigravity-ide" ]; then
-    cp "%{{buildroot}}{install_dest}/resources/completions/bash/antigravity-ide" "%{{buildroot}}/usr/share/bash-completion/completions/antigravity-ide"
-    ln -sf antigravity-ide "%{{buildroot}}/usr/share/bash-completion/completions/agy-ide"
-fi
-
-mkdir -p %{{buildroot}}/usr/share/zsh/site-functions
-if [ -f "%{{buildroot}}{install_dest}/resources/completions/zsh/_antigravity-ide" ]; then
-    cp "%{{buildroot}}{install_dest}/resources/completions/zsh/_antigravity-ide" "%{{buildroot}}/usr/share/zsh/site-functions/_antigravity-ide"
-    ln -sf _antigravity-ide "%{{buildroot}}/usr/share/zsh/site-functions/_agy-ide"
-fi
+            extra_files += """%dir /usr/share/nemo
+%dir /usr/share/nemo/actions
+/usr/share/nemo/actions/open-in-antigravity-ide.nemo_action
 """
-        extra_files += """/usr/share/bash-completion/completions/antigravity-ide
+
+        bash_comp = Path(app_source_dir) / "resources" / "completions" / "bash" / "antigravity-ide"
+        if bash_comp.exists():
+            extra_install += f"""
+mkdir -p %{{buildroot}}/usr/share/bash-completion/completions
+cp "%{{buildroot}}{install_dest}/resources/completions/bash/antigravity-ide" "%{{buildroot}}/usr/share/bash-completion/completions/antigravity-ide"
+ln -sf antigravity-ide "%{{buildroot}}/usr/share/bash-completion/completions/agy-ide"
+"""
+            extra_files += """/usr/share/bash-completion/completions/antigravity-ide
 /usr/share/bash-completion/completions/agy-ide
-/usr/share/zsh/site-functions/_antigravity-ide
+"""
+
+        zsh_comp = Path(app_source_dir) / "resources" / "completions" / "zsh" / "_antigravity-ide"
+        if zsh_comp.exists():
+            extra_install += f"""
+mkdir -p %{{buildroot}}/usr/share/zsh/site-functions
+cp "%{{buildroot}}{install_dest}/resources/completions/zsh/_antigravity-ide" "%{{buildroot}}/usr/share/zsh/site-functions/_antigravity-ide"
+ln -sf _antigravity-ide "%{{buildroot}}/usr/share/zsh/site-functions/_agy-ide"
+"""
+            extra_files += """/usr/share/zsh/site-functions/_antigravity-ide
 /usr/share/zsh/site-functions/_agy-ide
 """
 
@@ -205,7 +220,9 @@ License:        Proprietary
 URL:            https://antigravity.google
 AutoReqProv:    no
 
-Requires:       gtk3, libnotify, nss, alsa-lib, libXScrnSaver{"\nRecommends:     nautilus-python" if package_name == "antigravity-ide" else ""}
+# Soname-based dependencies resolve on both Fedora/RHEL and openSUSE (package names differ there)
+Requires:       libgtk-3.so.0()(64bit), libnotify.so.4()(64bit), libnss3.so()(64bit), libasound.so.2()(64bit), libXss.so.1()(64bit), libgbm.so.1()(64bit), libxkbfile.so.1()(64bit), xdg-utils
+Recommends:     libsecret-1.so.0()(64bit){"\nRecommends:     nautilus-python" if package_name == "antigravity-ide" else ""}
 
 %description
 Google Antigravity packages distributed for Linux.
@@ -214,11 +231,9 @@ Google Antigravity packages distributed for Linux.
 mkdir -p "%{{buildroot}}{install_dest}"
 cp -a "{app_source_dir}"/* "%{{buildroot}}{install_dest}/"
 
-# Permissions
-find "%{{buildroot}}{install_dest}" -type d -exec chmod 0755 {{}} +
-find "%{{buildroot}}{install_dest}" -type f -exec chmod 0644 {{}} +
-find "%{{buildroot}}{install_dest}" -type f \\( -name "*.sh" -o -name "*.so*" -o -name "{package_name}" -o -name "chrome_crashpad_handler" -o -name "language_server*" -o -name "webm_encoder" -o -name "rg" -o -path "*/bin/*" \\) -exec chmod 0755 {{}} +
-find "%{{buildroot}}{install_dest}" -type f -exec sh -c 'for f; do if head -c 4 "$f" 2>/dev/null | grep -q "^.ELF"; then chmod 0755 "$f"; fi; done' _ {{}} +
+# Modes were normalized by sanitize_tree_permissions() before packaging and are
+# preserved by cp -a; ownership is forced to root:root via defattr in the files section.
+chmod 0755 "%{{buildroot}}{install_dest}"
 if [ -f "%{{buildroot}}{install_dest}/chrome-sandbox" ]; then
     chmod 4755 "%{{buildroot}}{install_dest}/chrome-sandbox"
 fi
@@ -235,6 +250,7 @@ cp "{desktop_file}" "%{{buildroot}}/usr/share/applications/{package_name}.deskto
 {extra_install}
 
 %files
+%defattr(-,root,root,-)
 {install_dest}
 /usr/bin/{package_name}
 /usr/bin/{short_bin}
@@ -258,7 +274,11 @@ gtk-update-icon-cache -f /usr/share/icons/hicolor &> /dev/null || true
     with open(spec_file, "w") as f:
         f.write(spec_content)
 
-    subprocess.run(["rpmbuild", "-bb", "--target", rpm_arch, str(spec_file)], check=True)
+    try:
+        subprocess.run(["rpmbuild", "-bb", "--target", rpm_arch, str(spec_file)], check=True)
+    finally:
+        # The build tree holds a full copy of the application (~1 GB)
+        shutil.rmtree(work_dir, ignore_errors=True)
     print("RPM build successful.")
 
 def build_deb(package_name, version, release, arch, app_source_dir, output_dir, desktop_file, icon_file):
@@ -365,15 +385,41 @@ def build_deb(package_name, version, release, arch, app_source_dir, output_dir, 
     # DEBIAN control
     debian_dir = stage_dir / "DEBIAN"
     debian_dir.mkdir(parents=True, exist_ok=True)
-    
-    recommends_deb = "\nRecommends: python3-nautilus" if package_name == "antigravity-ide" else ""
+
+    # md5sums + Installed-Size (computed on the staged payload, excluding DEBIAN/)
+    installed_bytes = 0
+    md5_lines = []
+    for root, dirs, files in os.walk(stage_dir):
+        if Path(root) == stage_dir:
+            dirs[:] = [d for d in dirs if d != "DEBIAN"]
+        for name in sorted(files):
+            path = Path(root) / name
+            if path.is_symlink():
+                continue
+            installed_bytes += path.stat().st_size
+            digest = hashlib.md5()
+            with open(path, "rb") as fp:
+                for chunk in iter(lambda: fp.read(1024 * 1024), b""):
+                    digest.update(chunk)
+            md5_lines.append(f"{digest.hexdigest()}  {path.relative_to(stage_dir).as_posix()}")
+    installed_size_kb = (installed_bytes + 1023) // 1024
+    with open(debian_dir / "md5sums", "w") as f:
+        f.write("\n".join(sorted(md5_lines, key=lambda l: l.split("  ", 1)[1])) + "\n")
+
+    recommends_deb = "libsecret-1-0"
+    if package_name == "antigravity-ide":
+        recommends_deb += ", python3-nautilus"
+    # libgtk-3-0 / libasound2 are provided by their t64 replacements on Ubuntu 24.04+ / Debian 13+
     control_content = f"""Package: {package_name}
 Version: {deb_version}
 Section: devel
 Priority: optional
 Architecture: {deb_arch}
-Depends: libgtk-3-0, libnotify4, libnss3, libxss1, libasound2{recommends_deb}
+Installed-Size: {installed_size_kb}
+Depends: libgtk-3-0t64 | libgtk-3-0, libnotify4, libnss3, libxss1, libasound2t64 | libasound2, libgbm1, libxkbfile1, xdg-utils
+Recommends: {recommends_deb}
 Maintainer: X3M Antigravity Packagers <packaging@x3m.industries>
+Homepage: https://github.com/x3m-industries/antigravity-packages
 Description: Google Antigravity - {"Agentic IDE" if "ide" in package_name else "Agent Platform"}
  Google Antigravity packages for Debian and Ubuntu based distributions.
 """
@@ -411,7 +457,11 @@ fi
     os.chmod(debian_dir / "postrm", 0o755)
 
     output_deb = Path(output_dir) / f"{package_name}_{deb_version}_{deb_arch}.deb"
-    subprocess.run(["dpkg-deb", "--build", "--root-owner-group", str(stage_dir), str(output_deb)], check=True)
+    try:
+        subprocess.run(["dpkg-deb", "--build", "--root-owner-group", str(stage_dir), str(output_deb)], check=True)
+    finally:
+        # The staging tree holds a full copy of the application (~1 GB)
+        shutil.rmtree(stage_dir.parent, ignore_errors=True)
     print(f"DEB build successful: {output_deb}")
 
 def main():
@@ -436,51 +486,64 @@ def main():
         shutil.rmtree(work_dir)
     work_dir.mkdir(parents=True, exist_ok=True)
 
-    tar_path = args.tarball
-    if not tar_path or not os.path.exists(tar_path):
-        tar_path = str(work_dir / "download.tar.gz")
-        download_file(args.url, tar_path)
+    try:
+        tar_path = args.tarball
+        if not tar_path or not os.path.exists(tar_path):
+            tar_path = str(work_dir / "download.tar.gz")
+            download_file(args.url, tar_path)
 
-    print(f"Extracting {tar_path}...")
-    with tarfile.open(tar_path, "r:gz") as t:
-        t.extractall(work_dir)
+        print(f"Extracting {tar_path}...")
+        with tarfile.open(tar_path, "r:gz") as t:
+            # Pin the filter so extraction semantics are identical on Python 3.12 (CI) and 3.14+
+            # (whose default is the stricter "data" filter that strips special mode bits).
+            if hasattr(tarfile, "tar_filter"):
+                t.extractall(work_dir, filter="tar")
+            else:
+                t.extractall(work_dir)
 
-    # Identify unpacked directory and rename it to a clean path with no spaces
-    dirs = [d for d in work_dir.iterdir() if d.is_dir() and d.name != "app_source"]
-    raw_dir = dirs[0]
-    app_dir = work_dir / "app_source"
-    raw_dir.rename(app_dir)
-    print(f"App directory sanitized: {app_dir}")
-    sanitize_tree_permissions(app_dir)
+        # Identify unpacked directory and rename it to a clean path with no spaces
+        dirs = [d for d in work_dir.iterdir() if d.is_dir() and d.name != "app_source"]
+        if len(dirs) != 1:
+            raise SystemExit(
+                f"Error: expected exactly one top-level directory in {tar_path}, "
+                f"found {len(dirs)}: {sorted(d.name for d in dirs)}"
+            )
+        raw_dir = dirs[0]
+        app_dir = work_dir / "app_source"
+        raw_dir.rename(app_dir)
+        print(f"App directory sanitized: {app_dir}")
+        sanitize_tree_permissions(app_dir)
 
-    # Desktop & icon setup
-    repo_root = Path(__file__).resolve().parent.parent
-    desktop_file = repo_root / "desktop" / f"{args.package}.desktop"
-    icon_file = work_dir / f"{args.package}.png"
+        # Desktop & icon setup
+        repo_root = Path(__file__).resolve().parent.parent
+        desktop_file = repo_root / "desktop" / f"{args.package}.desktop"
+        icon_file = work_dir / f"{args.package}.png"
 
-    if args.package == "antigravity-ide":
-        ide_icon = app_dir / "resources" / "app" / "resources" / "linux" / "code.png"
-        if ide_icon.exists():
-            shutil.copy(ide_icon, icon_file)
-    else:
-        asar_path = app_dir / "resources" / "app.asar"
-        extracted = False
-        if asar_path.exists():
-            extracted = extract_asar_file(str(asar_path), "icon.png", str(icon_file))
-        if not extracted or not icon_file.exists() or icon_file.stat().st_size == 0:
-            fallback_icon = repo_root / "assets" / "icon.png"
-            if fallback_icon.exists():
-                print(f"Using fallback icon: {fallback_icon}")
-                shutil.copy(fallback_icon, icon_file)
+        if args.package == "antigravity-ide":
+            ide_icon = app_dir / "resources" / "app" / "resources" / "linux" / "code.png"
+            if ide_icon.exists():
+                shutil.copy(ide_icon, icon_file)
+        else:
+            asar_path = app_dir / "resources" / "app.asar"
+            extracted = False
+            if asar_path.exists():
+                extracted = extract_asar_file(str(asar_path), "icon.png", str(icon_file))
+            if not extracted or not icon_file.exists() or icon_file.stat().st_size == 0:
+                fallback_icon = repo_root / "assets" / "icon.png"
+                if fallback_icon.exists():
+                    print(f"Using fallback icon: {fallback_icon}")
+                    shutil.copy(fallback_icon, icon_file)
 
-    # Build RPM
-    build_rpm(args.package, version, release, args.arch, str(app_dir), str(out_dir), str(desktop_file), str(icon_file))
+        # Build RPM
+        build_rpm(args.package, version, release, args.arch, str(app_dir), str(out_dir), str(desktop_file), str(icon_file))
 
-    # Build DEB if dpkg-deb available
-    if shutil.which("dpkg-deb"):
-        build_deb(args.package, version, release, args.arch, str(app_dir), str(out_dir), str(desktop_file), str(icon_file))
-    else:
-        print("Note: dpkg-deb not found on this system, skipping local DEB build.")
+        # Build DEB if dpkg-deb available
+        if shutil.which("dpkg-deb"):
+            build_deb(args.package, version, release, args.arch, str(app_dir), str(out_dir), str(desktop_file), str(icon_file))
+        else:
+            print("Note: dpkg-deb not found on this system, skipping local DEB build.")
+    finally:
+        shutil.rmtree(work_dir, ignore_errors=True)
 
 if __name__ == "__main__":
     main()

@@ -30,7 +30,7 @@ jobs:
 
       - name: Run ShellCheck on Bash Scripts
         run: |
-          shellcheck --severity=warning scripts/generate_repos.sh scripts/smoke_test.sh install.sh
+          shellcheck --severity=warning scripts/generate_repos.sh scripts/smoke_test.sh scripts/verify_packages.sh scripts/check_pages_size.sh install.sh
 
       - name: Run Unit Tests
         run: |
@@ -39,7 +39,7 @@ jobs:
       - name: Setup Bun
         uses: oven-sh/setup-bun@v2
         with:
-          bun-version: latest
+          bun-version: 1.4.2
 
       - name: Validate Astro Site & Type Safety
         run: |
