@@ -16,7 +16,7 @@ Theme tokens and layout match templates/index.html (Next.js / @vercel/og style):
 """
 
 from pathlib import Path
-from PIL import Image, ImageDraw, ImageFont, ImageFilter
+from PIL import Image, ImageDraw, ImageFont, ImageFilter, ImageChops
 
 ASSETS_DIR = Path("assets")
 POSTS_ASSETS_DIR = Path("posts/assets")
@@ -97,15 +97,18 @@ def create_base_canvas(width, height):
     return canvas
 
 def round_corners(img, radius):
-    """Applies smooth rounded corners with antialiased mask."""
-    mask = Image.new('L', (img.width * 2, img.height * 2), 0)
+    """Applies smooth rounded corners with antialiased mask without edge darkening."""
+    scale = 4
+    mask = Image.new('L', (img.width * scale, img.height * scale), 0)
     mdraw = ImageDraw.Draw(mask)
-    mdraw.rounded_rectangle([(0, 0), (img.width * 2, img.height * 2)], radius=radius * 2, fill=255)
+    mdraw.rounded_rectangle([(0, 0), (img.width * scale, img.height * scale)], radius=radius * scale, fill=255)
     mask = mask.resize(img.size, Image.Resampling.LANCZOS)
     
-    rounded = Image.new('RGBA', img.size, (0, 0, 0, 0))
-    rounded.paste(img, (0, 0), mask=mask)
-    return rounded
+    out = img.copy().convert('RGBA')
+    r, g, b, a = out.split()
+    new_a = ImageChops.multiply(a, mask)
+    out.putalpha(new_a)
+    return out
 
 def draw_window_dots(draw, x, y):
     """Draws macOS / GNOME terminal header dots."""
