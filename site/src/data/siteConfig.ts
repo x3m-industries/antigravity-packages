@@ -106,6 +106,18 @@ Because Google versions them separately (e.g. IDE 2.5.5 vs Hub 2.19.1), X3M Indu
       q: "Does this include GNOME Files (Nautilus) right-click integration?",
       a: `Yes! When Antigravity IDE is installed, the installer automatically configures a GNOME Files (Nautilus) Python extension. You can right-click any file, project directory, or directory background in Nautilus and select <strong>"Open in Antigravity IDE"</strong>.`,
     },
+    {
+      q: "How do I install Google Antigravity on Fedora using DNF?",
+      a: `To install Google Antigravity on Fedora 38, 39, 40+, RHEL 8/9, CentOS Stream, Rocky Linux, or AlmaLinux using DNF, add our official RPM repository file: <code>sudo curl -fsSL https://x3m-industries.github.io/antigravity-packages/rpm/antigravity.repo -o /etc/yum.repos.d/antigravity.repo</code> and run <code>sudo dnf install antigravity-ide antigravity</code>. Automated system updates arrive with your regular <code>sudo dnf update</code>.`,
+    },
+    {
+      q: "How do I add the Antigravity Ubuntu PPA or APT repository?",
+      a: `For Ubuntu 22.04 LTS (Jammy), 24.04 LTS (Noble), Debian 11/12, Pop!_OS, and Linux Mint, add our signed GPG keyring and modern DEB822 source file: <code>sudo mkdir -p /etc/apt/keyrings && sudo curl -fsSL https://apt.x3m.industries/deb/antigravity.gpg -o /etc/apt/keyrings/antigravity.gpg && sudo curl -fsSL https://apt.x3m.industries/deb/antigravity.sources -o /etc/apt/sources.list.d/antigravity.sources</code>. Then update and install via <code>sudo apt update && sudo apt install antigravity-ide antigravity</code>.`,
+    },
+    {
+      q: "How do I install Google Antigravity on openSUSE with Zypper?",
+      a: `On openSUSE Tumbleweed and Leap 15.5+, add the Antigravity repository and import the GPG key with: <code>sudo zypper addrepo -f https://x3m-industries.github.io/antigravity-packages/rpm/ antigravity && sudo rpm --import https://x3m-industries.github.io/antigravity-packages/rpm/RPM-GPG-KEY-antigravity</code>. Then install via <code>sudo zypper install antigravity-ide antigravity</code>.`,
+    },
   ],
   docsFaqs: [
     {
@@ -154,6 +166,22 @@ Because Google versions them separately (e.g. IDE 2.5.5 vs Hub 2.19.1), X3M Indu
     {
       q: "How do I fix Google login or browser OAuth redirect (antigravity-ide://) not opening?",
       a: `Google login redirects use custom URL protocol schemes (<code>antigravity-ide://</code> and <code>antigravity://</code>). When tarballs are extracted manually without desktop protocol handler registration, browsers fail to hand the authentication token back to the editor. Our packages automatically register FreeDesktop URL handlers via <code>/usr/share/applications/antigravity-ide-url-handler.desktop</code> so browser OAuth login redirects complete seamlessly.`,
+    },
+    {
+      q: "How do I install Google Antigravity on Fedora using DNF?",
+      a: `To configure the Antigravity Fedora DNF repository, add our official repository file: <code>sudo curl -fsSL https://x3m-industries.github.io/antigravity-packages/rpm/antigravity.repo -o /etc/yum.repos.d/antigravity.repo</code> and run <code>sudo dnf install antigravity-ide antigravity</code>. Works seamlessly on Fedora 38, 39, 40+, RHEL 8/9, CentOS Stream, Rocky Linux, and AlmaLinux.`,
+    },
+    {
+      q: "How do I add the Antigravity Ubuntu PPA or APT repository?",
+      a: `For Ubuntu 22.04 LTS (Jammy), 24.04 LTS (Noble), Debian 11/12, Pop!_OS, and Linux Mint, add our signed GPG keyring and modern DEB822 source file: <code>sudo mkdir -p /etc/apt/keyrings && sudo curl -fsSL https://apt.x3m.industries/deb/antigravity.gpg -o /etc/apt/keyrings/antigravity.gpg && sudo curl -fsSL https://apt.x3m.industries/deb/antigravity.sources -o /etc/apt/sources.list.d/antigravity.sources</code>. Then run <code>sudo apt update && sudo apt install antigravity-ide antigravity</code>.`,
+    },
+    {
+      q: "How do I install Google Antigravity on openSUSE with Zypper?",
+      a: `On openSUSE Tumbleweed and Leap 15.5+, add the repository and import the ASCII-armored GPG key: <code>sudo zypper addrepo -f https://x3m-industries.github.io/antigravity-packages/rpm/ antigravity && sudo rpm --import https://x3m-industries.github.io/antigravity-packages/rpm/RPM-GPG-KEY-antigravity</code>. Then install using <code>sudo zypper install antigravity-ide antigravity</code>.`,
+    },
+    {
+      q: "How do I install Antigravity on Arch Linux, Manjaro, or EndeavourOS?",
+      a: `Arch Linux users can install Antigravity by converting our signed Debian packages via debtap: <code>curl -fsSLO https://github.com/x3m-industries/antigravity-packages/releases/latest/download/antigravity-ide_latest_amd64.deb && debtap -u && debtap antigravity-ide_latest_amd64.deb && sudo pacman -U antigravity-ide-*.pkg.tar.zst</code>, or by extracting the RPM package directly with rpmextract.`,
     },
   ],
 };

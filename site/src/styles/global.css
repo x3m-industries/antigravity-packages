@@ -220,8 +220,54 @@ h1 {
     border-radius: 16px;
     overflow: hidden;
     box-shadow: 0 20px 40px -15px rgba(0, 0, 0, 0.65), 0 0 40px -10px rgba(79, 70, 229, 0.25);
-    margin-bottom: 48px;
+    margin-bottom: 20px;
     backdrop-filter: blur(12px);
+}
+
+/* Distro Quick-Anchors Bar (Direct Deep-Links) */
+.distro-anchors-bar {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-bottom: 48px;
+    padding: 10px 16px;
+    background: rgba(255, 255, 255, 0.02);
+    border: 1px solid var(--card-border);
+    border-radius: 12px;
+}
+.distro-anchors-label {
+    font-size: 0.8rem;
+    font-weight: 700;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin-right: 4px;
+}
+.distro-anchor-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 5px 12px;
+    font-size: 0.82rem;
+    font-weight: 600;
+    color: var(--text-main);
+    background: rgba(255, 255, 255, 0.04);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 8px;
+    text-decoration: none;
+    transition: all 0.2s ease;
+}
+.distro-anchor-pill:hover {
+    color: var(--accent);
+    background: rgba(99, 102, 241, 0.12);
+    border-color: rgba(99, 102, 241, 0.35);
+    transform: translateY(-1px);
+}
+.distro-anchor-icon {
+    font-size: 0.95rem;
+    line-height: 1;
 }
 .terminal-header {
     background: #0f172a;
@@ -1117,6 +1163,20 @@ footer a:hover {
     }
     .terminal-body {
         padding: 16px 14px;
+    }
+    .distro-anchors-bar {
+        justify-content: flex-start;
+        overflow-x: auto;
+        flex-wrap: nowrap;
+        -webkit-overflow-scrolling: touch;
+        scrollbar-width: none;
+        padding: 8px 12px;
+    }
+    .distro-anchors-bar::-webkit-scrollbar {
+        display: none;
+    }
+    .distro-anchor-pill {
+        flex-shrink: 0;
     }
     .docs-cta-card { flex-direction: column; align-items: stretch; text-align: left; }
     .docs-cta-btn { width: 100%; justify-content: center; }

@@ -24,6 +24,9 @@ import { siteConfig } from '../data/siteConfig';
     <a href="#cli-reference" class="toc-link">⚡ CLI Options Reference</a>
     <a href="#maintenance" class="toc-link">🔍 Status &amp; Uninstall</a>
     <a href="#manual-repos" class="toc-link">🐧 Manual Repositories</a>
+    <a href="#fedora-dnf" class="toc-link">🎩 Fedora DNF</a>
+    <a href="#ubuntu-apt" class="toc-link">🟠 Ubuntu APT / PPA</a>
+    <a href="#opensuse-zypper" class="toc-link">🦎 openSUSE Zypper</a>
     <a href="#nautilus" class="toc-link">📂 GNOME Files (Nautilus)</a>
     <a href="#arch" class="toc-link">🏹 Arch Linux Setup</a>
     <a href="#troubleshooting" class="toc-link">🛠️ Troubleshooting &amp; Fixes</a>
@@ -157,8 +160,8 @@ import { siteConfig } from '../data/siteConfig';
       <h2 class="section-heading"><span>🐧</span> Manual Repository Setup (Without curl scripts)</h2>
       <p class="section-desc">Enterprise environments and security-conscious administrators can configure repositories directly using native system commands.</p>
 
-      <div class="doc-card">
-        <h3 class="card-subtitle">Fedora, RHEL, CentOS Stream, Rocky Linux, AlmaLinux (DNF / YUM)</h3>
+      <div class="doc-card" id="fedora-dnf">
+        <h3 class="card-subtitle">🎩 Fedora, RHEL &amp; CentOS (DNF Repository) — Antigravity Fedora DNF</h3>
         <p class="section-desc">1. Add the RPM repository file to <code>/etc/yum.repos.d/</code>:</p>
         <div class="code-block">
           <code>sudo curl -fsSL https://x3m-industries.github.io/antigravity-packages/rpm/antigravity.repo -o /etc/yum.repos.d/antigravity.repo</code>
@@ -185,8 +188,8 @@ import { siteConfig } from '../data/siteConfig';
         </div>
       </div>
 
-      <div class="doc-card">
-        <h3 class="card-subtitle">Ubuntu, Debian, Linux Mint, Pop!_OS (APT)</h3>
+      <div class="doc-card" id="ubuntu-apt">
+        <h3 class="card-subtitle">🟠 Ubuntu, Debian, Pop!_OS &amp; Mint (APT Repository) — Antigravity Ubuntu PPA / APT</h3>
         <p class="section-desc">1. Add the binary GPG keyring and modern DEB822 repository definition:</p>
         <div class="code-block">
           <code>sudo mkdir -p /etc/apt/keyrings &amp;&amp; sudo curl -fsSL https://apt.x3m.industries/deb/antigravity.gpg -o /etc/apt/keyrings/antigravity.gpg &amp;&amp; sudo curl -fsSL https://apt.x3m.industries/deb/antigravity.sources -o /etc/apt/sources.list.d/antigravity.sources</code>
@@ -213,8 +216,8 @@ import { siteConfig } from '../data/siteConfig';
         </div>
       </div>
 
-      <div class="doc-card">
-        <h3 class="card-subtitle">openSUSE Leap &amp; Tumbleweed (Zypper)</h3>
+      <div class="doc-card" id="opensuse-zypper">
+        <h3 class="card-subtitle">🦎 openSUSE Tumbleweed &amp; Leap (Zypper Repository) — Antigravity openSUSE</h3>
         <p class="section-desc">1. Add repository and import the ASCII-armored GPG key:</p>
         <div class="code-block">
           <code>sudo zypper addrepo -f https://x3m-industries.github.io/antigravity-packages/rpm/ antigravity &amp;&amp; sudo rpm --import https://x3m-industries.github.io/antigravity-packages/rpm/RPM-GPG-KEY-antigravity</code>
@@ -275,7 +278,7 @@ import { siteConfig } from '../data/siteConfig';
 
     <!-- Section 5: Arch Linux & Conversion -->
     <section class="doc-section" id="arch">
-      <h2 class="section-heading"><span>🏹</span> Arch Linux, Manjaro &amp; EndeavourOS</h2>
+      <h2 class="section-heading"><span>🏹</span> Arch Linux, Manjaro &amp; EndeavourOS — Antigravity Arch Linux</h2>
       <p class="section-desc">Arch Linux users can install Antigravity by converting our signed Debian packages using <code>debtap</code> or extracting RPMs.</p>
 
       <div class="doc-card">

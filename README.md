@@ -26,7 +26,7 @@ curl -fsSL https://x3m-industries.github.io/antigravity-packages/install.sh | ba
 > ⭐ **If this project saves you time on Linux, please star the repository!** It helps fellow Linux developers discover native packages and supports our automated packaging infrastructure.
 
 **Quick Navigation:**
-[⚡ Quick Install](#-quick-installation) · [Why Native Packages vs Tarballs](#-why-native-packages-vs-raw-tarball-extractors) · [Fedora / RHEL (DNF)](#fedora--rhel--centos-stream--rocky--almalinux-dnf) · [Ubuntu / Debian (APT)](#ubuntu--debian--pop_os--linux-mint-apt) · [Arch Linux](#arch-linux--manjaro--endeavouros) · [Nautilus Integration](#-gnome-files--nautilus-right-click-integration) · [CLI Integration](#-antigravity-cli-agy-integration) · [Inspection & Uninstall](#-maintenance-status--uninstallation) · [🛡️ Security & Trust](#-gpg-security--package-verification)
+[⚡ Quick Install](#-quick-installation) · [Why Native Packages vs Tarballs](#-why-native-packages-vs-raw-tarball-extractors) · [🎩 Fedora DNF](#fedora-dnf) · [🟠 Ubuntu APT / PPA](#ubuntu-apt) · [🦎 openSUSE Zypper](#opensuse-zypper) · [🏹 Arch Linux](#arch-linux) · [Nautilus Integration](#-gnome-files--nautilus-right-click-integration) · [CLI Integration](#-antigravity-cli-agy-integration) · [Inspection & Uninstall](#-maintenance-status--uninstallation) · [🛡️ Security & Trust](#-gpg-security--package-verification)
 
 ---
 
@@ -141,22 +141,24 @@ bash <(curl -fsSL https://x3m-industries.github.io/antigravity-packages/install.
 
 ### Manual Installation by Distribution
 
-#### Fedora / RHEL / CentOS Stream / Rocky / AlmaLinux (DNF)
+<a id="fedora-dnf"></a>
+#### 🎩 Fedora, RHEL & CentOS (DNF Repository) — Antigravity Fedora DNF
 
 ```bash
-# 1. Add the repository
+# 1. Add the RPM repository file to /etc/yum.repos.d/
 sudo curl -fsSL https://x3m-industries.github.io/antigravity-packages/rpm/antigravity.repo -o /etc/yum.repos.d/antigravity.repo
 
-# 2. Install Antigravity IDE & Hub
+# 2. Install Antigravity IDE & Hub via DNF
 sudo dnf install antigravity-ide antigravity
 
 # 3. Update anytime
-sudo dnf update antigravity-ide
+sudo dnf update antigravity-ide antigravity
 ```
 
 ---
 
-#### Ubuntu / Debian / Pop!_OS / Linux Mint (APT)
+<a id="ubuntu-apt"></a>
+#### 🟠 Ubuntu, Debian, Pop!_OS & Linux Mint (APT Repository) — Antigravity Ubuntu APT / PPA
 
 ```bash
 # 1. Add the GPG key & APT sources (modern DEB822 format)
@@ -164,7 +166,7 @@ sudo mkdir -p /etc/apt/keyrings
 sudo curl -fsSL https://apt.x3m.industries/deb/antigravity.gpg -o /etc/apt/keyrings/antigravity.gpg
 sudo curl -fsSL https://apt.x3m.industries/deb/antigravity.sources -o /etc/apt/sources.list.d/antigravity.sources
 
-# 2. Update and install
+# 2. Update index and install via APT
 sudo apt update
 sudo apt install antigravity-ide antigravity
 
@@ -174,7 +176,25 @@ sudo apt update && sudo apt install --only-upgrade antigravity-ide antigravity
 
 ---
 
-#### Arch Linux / Manjaro / EndeavourOS
+<a id="opensuse-zypper"></a>
+#### 🦎 openSUSE Tumbleweed & Leap (Zypper Repository) — Antigravity openSUSE
+
+```bash
+# 1. Add the openSUSE Zypper repository & import the GPG signing key
+sudo zypper addrepo -f https://x3m-industries.github.io/antigravity-packages/rpm/ antigravity
+sudo rpm --import https://x3m-industries.github.io/antigravity-packages/rpm/RPM-GPG-KEY-antigravity
+
+# 2. Install Antigravity IDE & Hub via Zypper
+sudo zypper install antigravity-ide antigravity
+
+# 3. Update anytime
+sudo zypper refresh && sudo zypper update antigravity-ide antigravity
+```
+
+---
+
+<a id="arch-linux"></a>
+#### 🏹 Arch Linux, Manjaro & EndeavourOS — Antigravity Arch Linux
 
 Arch users can install packages natively through either conversion or extraction:
 
@@ -197,8 +217,9 @@ Arch users can install packages natively through either conversion or extraction
 
 ### 🔄 Updating Antigravity
 The repositories synchronize daily with Google's release page. To update your installation:
-* **Fedora / RHEL / Rocky:** `sudo dnf update antigravity-ide antigravity`
-* **Ubuntu / Debian / Mint:** `sudo apt update && sudo apt install --only-upgrade antigravity-ide antigravity`
+* **Fedora / RHEL / Rocky (DNF):** `sudo dnf update antigravity-ide antigravity`
+* **Ubuntu / Debian / Mint (APT):** `sudo apt update && sudo apt install --only-upgrade antigravity-ide antigravity`
+* **openSUSE (Zypper):** `sudo zypper refresh && sudo zypper update antigravity-ide antigravity`
 
 ---
 
