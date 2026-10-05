@@ -208,8 +208,12 @@ jobs:
       - name: Verify RPM signatures against the published public key
         run: |
           # Catches a signing secret that does not match RPM-GPG-KEY-antigravity (users would get gpgcheck failures)
-          sudo rpm --import RPM-GPG-KEY-antigravity
-          rpm -K ./dist/packages/*.rpm
+          # A private rpm database avoids depending on the runner's system rpmdb (root-owned).
+          RPMDB="$(mktemp -d)"
+          rpm --dbpath "$RPMDB" --import RPM-GPG-KEY-antigravity
+          rpm --dbpath "$RPMDB" -qa 'gpg-pubkey*'
+          rpm --dbpath "$RPMDB" -Kv ./dist/packages/*.rpm
+          rpm --dbpath "$RPMDB" -K ./dist/packages/*.rpm
 
       - name: Set up QEMU (arm64 smoke tests)
         uses: docker/setup-qemu-action@v3
