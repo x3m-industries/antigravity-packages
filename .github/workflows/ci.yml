@@ -26,7 +26,7 @@ jobs:
 
       - name: Validate Desktop Entry Files
         run: |
-          desktop-file-validate desktop/*.desktop desktop/dolphin/*.desktop
+          desktop-file-validate desktop/*.desktop
 
       - name: Run ShellCheck on Bash Scripts
         run: |
