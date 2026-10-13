@@ -384,6 +384,13 @@ show_status() {
 
     # Legacy / Manual installation conflicts (e.g. from manual /opt extractions)
     local has_legacy=false
+    for d in /opt/Antigravity* /opt/antigravity*; do
+        if [ -d "${d}" ]; then
+            [ "${has_legacy}" = false ] && echo -e "${YELLOW}${BOLD}Legacy / Manual Installation Conflicts Detected:${RESET}"
+            echo -e "  • ${YELLOW}Warning:${RESET} Found manual extraction directory ${d} (causes broken auto-updates & SUID sandbox crashes)"
+            has_legacy=true
+        fi
+    done
     if [ -L /usr/local/bin/antigravity ] || [ -L /usr/local/bin/antigravity-ide ] || [ -f "${TARGET_HOME}/.local/share/applications/antigravity.desktop" ]; then
         for b in antigravity antigravity-ide; do
             if [ -L "/usr/local/bin/${b}" ]; then
@@ -404,9 +411,9 @@ show_status() {
                 has_legacy=true
             fi
         done
-        if [ "${has_legacy}" = true ]; then
-            echo -e "  ${DIM}Run the installer to automatically clean up obsolete manual symlinks & launchers.${RESET}\n"
-        fi
+    fi
+    if [ "${has_legacy}" = true ]; then
+        echo -e "  ${DIM}Run the installer with '--uninstall' or remove manually to eliminate conflicting launchers & directories.${RESET}\n"
     fi
 }
 
@@ -494,6 +501,26 @@ do_uninstall() {
         info "Removing Antigravity CLI ('agy') at ${TARGET_HOME}/.local/bin/agy..."
         rm -f "${TARGET_HOME}/.local/bin/agy"
     fi
+
+    # Clean legacy manual /opt extractions and obsolete /usr/local/bin symlinks
+    for b in antigravity antigravity-ide; do
+        if [ -L "/usr/local/bin/${b}" ]; then
+            ${SUDO} rm -f "/usr/local/bin/${b}" 2>/dev/null || rm -f "/usr/local/bin/${b}" 2>/dev/null || true
+        fi
+    done
+    for d in /opt/Antigravity* /opt/antigravity*; do
+        if [ -d "${d}" ]; then
+            info "Removing legacy manual extraction directory at ${d}..."
+            ${SUDO} rm -rf "${d}" 2>/dev/null || true
+        fi
+    done
+    for d in antigravity.desktop antigravity-ide.desktop; do
+        rm -f "${TARGET_HOME}/.local/share/applications/${d}.bak" 2>/dev/null || true
+        if [ -f "${TARGET_HOME}/.local/share/applications/${d}" ] && grep -q "/opt/" "${TARGET_HOME}/.local/share/applications/${d}" 2>/dev/null; then
+            info "Removing legacy user desktop launcher at ${TARGET_HOME}/.local/share/applications/${d}..."
+            rm -f "${TARGET_HOME}/.local/share/applications/${d}" 2>/dev/null || true
+        fi
+    done
 
     # Refresh desktop & icon caches
     if command -v update-desktop-database > /dev/null 2>&1; then
@@ -611,12 +638,21 @@ if [ "${DRY_RUN}" = true ]; then
 fi
 
 # Sudo check for system package installation
-if [ "${INSTALL_IDE}" = true ] || [ "${INSTALL_HUB}" = true ]; then
-    check_sudo
-    if [ "$(id -u)" -ne 0 ]; then
-        info "Requesting sudo privileges to configure package repositories..."
-    fi
-fi
+case "${DISTRO_ID}" in
+    arch|manjaro|endeavouros)
+        # Arch installs CLI into user-space; desktop GUI packages use debtap / AUR
+        ;;
+    *)
+        if echo "${DISTRO_LIKE}" | grep -qE "arch"; then
+            : # Arch derivative
+        elif [ "${INSTALL_IDE}" = true ] || [ "${INSTALL_HUB}" = true ]; then
+            check_sudo
+            if [ "$(id -u)" -ne 0 ]; then
+                info "Requesting sudo privileges to configure package repositories..."
+            fi
+        fi
+        ;;
+esac
 
 # 5. Package Installation Functions
 fix_chrome_sandbox() {
@@ -658,6 +694,14 @@ clean_legacy_conflicts() {
         info "Removing obsolete APT list to prevent duplicate repository conflicts..."
         ${SUDO} rm -f "${old_list}"
     fi
+
+    # 4. Legacy manual extraction directories in /opt
+    for d in /opt/Antigravity* /opt/antigravity*; do
+        if [ -d "${d}" ]; then
+            warn "Detected legacy manual directory at ${d} (manual tarball extraction)."
+            info "Note: Native packages install cleanly into /usr/share/ without root permission conflicts."
+        fi
+    done
 }
 
 install_rpm() {
@@ -804,6 +848,7 @@ install_cli() {
 }
 
 # 6. Execute System Package Installations (IDE / Hub)
+IS_ARCH=false
 if [ "${INSTALL_IDE}" = true ] || [ "${INSTALL_HUB}" = true ]; then
     clean_legacy_conflicts
     case "${DISTRO_ID}" in
@@ -817,7 +862,13 @@ if [ "${INSTALL_IDE}" = true ] || [ "${INSTALL_HUB}" = true ]; then
             install_zypper
             ;;
         arch|manjaro|endeavouros)
-            error "Arch Linux detected. Please install via manual package extraction or stay tuned for our upcoming AUR package."
+            IS_ARCH=true
+            echo ""
+            info "Arch Linux / Pacman environment detected (${DISTRO_ID})."
+            echo -e "  • ${BOLD}Antigravity CLI ('agy'):${RESET} Installing seamlessly into ${TARGET_HOME}/.local/bin/agy (no root needed)."
+            echo -e "  • ${BOLD}Desktop GUI Packages:${RESET} Install via ${CYAN}debtap${RESET} (Pacman) or PKGBUILD:"
+            echo -e "    ${CYAN}debtap antigravity-ide_latest_amd64.deb && sudo pacman -U antigravity-ide-*.pkg.tar.zst${RESET}"
+            echo -e "    ${CYAN}https://github.com/x3m-industries/antigravity-packages/tree/main/pkgbuild${RESET}\n"
             ;;
         *)
             if echo "${DISTRO_LIKE}" | grep -qE "fedora|rhel|centos"; then
@@ -826,6 +877,12 @@ if [ "${INSTALL_IDE}" = true ] || [ "${INSTALL_HUB}" = true ]; then
                 install_deb
             elif echo "${DISTRO_LIKE}" | grep -qE "suse"; then
                 install_zypper
+            elif echo "${DISTRO_LIKE}" | grep -qE "arch"; then
+                IS_ARCH=true
+                echo ""
+                info "Arch-based distribution detected (${DISTRO_ID})."
+                echo -e "  • Desktop GUI packages can be installed via debtap or PKGBUILD."
+                echo -e "  • Proceeding with Antigravity CLI ('agy') in ~/.local/bin/agy...\n"
             else
                 error "Unsupported distribution: '${DISTRO_ID}'. You can download raw RPM or DEB packages from https://github.com/x3m-industries/antigravity-packages/releases"
             fi
@@ -833,7 +890,9 @@ if [ "${INSTALL_IDE}" = true ] || [ "${INSTALL_HUB}" = true ]; then
     esac
 
     # Install multi-desktop integrations & shortcuts
-    install_desktop_integrations
+    if [ "${IS_ARCH}" != true ]; then
+        install_desktop_integrations
+    fi
 fi
 
 # 7. Execute CLI Installation (User-space)
@@ -844,23 +903,30 @@ fi
 # 8. Post-Install Summary & Guidance
 echo ""
 success "Installation completed successfully!"
-echo -e "\n${BOLD}Quick Start (Commands & Shortcuts):${RESET}"
-[ "${INSTALL_IDE}" = true ] && echo -e "  • Launch Antigravity IDE:     ${CYAN}agy-ide ./my-project${RESET} (or ${CYAN}antigravity-ide${RESET})"
-[ "${INSTALL_HUB}" = true ] && echo -e "  • Launch Antigravity Hub:     ${CYAN}agy-hub${RESET} (or ${CYAN}antigravity${RESET})"
-if [ "${INSTALL_CLI}" = true ]; then
-    echo -e "  • Launch Antigravity CLI:     ${CYAN}agy${RESET}"
-    if [[ ":${PATH}:" != *":${TARGET_HOME}/.local/bin:"* ]]; then
-        echo -e "\n${YELLOW}Note:${RESET} Ensure ${BOLD}${TARGET_HOME}/.local/bin${RESET} is in your shell PATH. If 'agy' is not found, add to your shell profile:"
-        echo -e "  ${CYAN}export PATH=\"\$HOME/.local/bin:\$PATH\"${RESET}"
+if [ "${IS_ARCH}" = true ]; then
+    echo -e "\n${BOLD}Arch Linux Quick Start:${RESET}"
+    [ "${INSTALL_CLI}" = true ] && echo -e "  • Launch Antigravity CLI:     ${CYAN}agy${RESET}"
+    echo -e "  • Desktop GUI with debtap:    ${CYAN}curl -fsSLO https://github.com/x3m-industries/antigravity-packages/releases/latest/download/antigravity-ide_latest_amd64.deb && debtap antigravity-ide_latest_amd64.deb && sudo pacman -U antigravity-ide-*.pkg.tar.zst${RESET}"
+    echo -e "  • AUR PKGBUILD templates:     ${CYAN}https://github.com/x3m-industries/antigravity-packages/tree/main/pkgbuild${RESET}"
+else
+    echo -e "\n${BOLD}Quick Start (Commands & Shortcuts):${RESET}"
+    [ "${INSTALL_IDE}" = true ] && echo -e "  • Launch Antigravity IDE:     ${CYAN}agy-ide ./my-project${RESET} (or ${CYAN}antigravity-ide${RESET})"
+    [ "${INSTALL_HUB}" = true ] && echo -e "  • Launch Antigravity Hub:     ${CYAN}agy-hub${RESET} (or ${CYAN}antigravity${RESET})"
+    if [ "${INSTALL_CLI}" = true ]; then
+        echo -e "  • Launch Antigravity CLI:     ${CYAN}agy${RESET}"
+        if [[ ":${PATH}:" != *":${TARGET_HOME}/.local/bin:"* ]]; then
+            echo -e "\n${YELLOW}Note:${RESET} Ensure ${BOLD}${TARGET_HOME}/.local/bin${RESET} is in your shell PATH. If 'agy' is not found, add to your shell profile:"
+            echo -e "  ${CYAN}export PATH=\"\$HOME/.local/bin:\$PATH\"${RESET}"
+        fi
     fi
-fi
-if [ "${INSTALL_IDE}" = true ]; then
-    echo -e "\n${BOLD}Multi-Desktop File Manager Integrations:${RESET}"
-    echo -e "  • GNOME Files / Nautilus:     Restart Nautilus ('nautilus -q') to see the right-click menu."
-    echo -e "  • KDE Plasma / Dolphin:       Right-click any folder/file -> 'Open in Antigravity IDE'."
-    echo -e "  • Linux Mint / Nemo:          Right-click any folder/file -> 'Open in Antigravity IDE'."
-    echo -e "  • MATE / Caja:                Right-click any folder/file -> 'Open in Antigravity IDE'."
-    echo -e "  • COSMIC Desktop:             MIME & 'Open With' active in cosmic-files and cosmic-launcher."
+    if [ "${INSTALL_IDE}" = true ]; then
+        echo -e "\n${BOLD}Multi-Desktop File Manager Integrations:${RESET}"
+        echo -e "  • GNOME Files / Nautilus:     Restart Nautilus ('nautilus -q') to see the right-click menu."
+        echo -e "  • KDE Plasma / Dolphin:       Right-click any folder/file -> 'Open in Antigravity IDE'."
+        echo -e "  • Linux Mint / Nemo:          Right-click any folder/file -> 'Open in Antigravity IDE'."
+        echo -e "  • MATE / Caja:                Right-click any folder/file -> 'Open in Antigravity IDE'."
+        echo -e "  • COSMIC Desktop:             MIME & 'Open With' active in cosmic-files and cosmic-launcher."
+    fi
 fi
 echo -e "\n${BOLD}Maintenance & Inspection:${RESET}"
 echo -e "  • Check Status:               ${CYAN}curl -fsSL https://x3m-industries.github.io/antigravity-packages/install.sh | bash -s -- --status${RESET}"

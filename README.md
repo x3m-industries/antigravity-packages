@@ -196,22 +196,24 @@ sudo zypper refresh && sudo zypper update antigravity-ide antigravity
 <a id="arch-linux"></a>
 #### 🏹 Arch Linux, Manjaro & EndeavourOS — Antigravity Arch Linux
 
-Arch users can install packages natively through either conversion or extraction:
+Arch users can run Google Antigravity natively through user-space CLI, standalone PKGBUILDs, or converted DEB packages:
 
-* **Option 1: Convert & Install with `debtap` (Recommended)**
+* **Option 1: Universal CLI Installer (No root required)**
+  Install Google's terminal pair programming agent (`agy`) directly into `~/.local/bin/agy`:
   ```bash
-  # Download latest .deb package from Releases
-  curl -fsSLO https://github.com/x3m-industries/antigravity-packages/releases/latest/download/antigravity-ide_latest_amd64.deb
-  debtap -u && debtap antigravity-ide_latest_amd64.deb
-  sudo pacman -U antigravity-ide-*.pkg.tar.zst
+  curl -fsSL https://x3m-industries.github.io/antigravity-packages/install.sh | bash -s -- --cli-only
   ```
-* **Option 2: Extract RPM with `rpmextract`**
+* **Option 2: Native Arch PKGBUILD (`makepkg`)**
+  Clone this repository and run `makepkg -si` to build native Arch packages:
   ```bash
-  sudo pacman -S --needed rpmextract
-  curl -fsSLO https://github.com/x3m-industries/antigravity-packages/releases/latest/download/antigravity-ide-latest.x86_64.rpm
-  cd / && sudo rpmextract ~/antigravity-ide-latest.x86_64.rpm
+  git clone https://github.com/x3m-industries/antigravity-packages.git
+  cd antigravity-packages/pkgbuild/antigravity-ide-bin && makepkg -si
   ```
-* **AUR Status:** Native `antigravity-bin` and `antigravity-ide-bin` PKGBUILDs for the Arch User Repository are currently in testing. Star the repo to stay updated!
+* **Option 3: Convert DEB with `debtap`**
+  ```bash
+  curl -fsSLO https://github.com/x3m-industries/antigravity-packages/releases/latest/download/antigravity-ide_2.5.5-4923483625488384.3_amd64.deb
+  debtap -u && debtap antigravity-ide_*.deb && sudo pacman -U antigravity-ide-*.pkg.tar.zst
+  ```
 
 ---
 
@@ -329,11 +331,35 @@ Check which components, package versions, repository files, GPG keys, and deskto
 curl -fsSL https://x3m-industries.github.io/antigravity-packages/install.sh | bash -s -- --status
 ```
 
-### 🗑️ Clean Uninstallation
-If you ever need to remove Google Antigravity, the uninstaller cleanly removes RPM/DEB packages, repository configs, GPG keys, and desktop extensions while leaving your personal project files and settings intact:
-```bash
-curl -fsSL https://x3m-industries.github.io/antigravity-packages/install.sh | bash -s -- --uninstall
-```
+### 🗑️ Complete Uninstallation
+
+You can cleanly uninstall Google Antigravity either via our reversible 1-command uninstaller or directly through your native package manager:
+
+* **Universal 1-Liner (Purges packages, repos, keys & extensions):**
+  ```bash
+  curl -fsSL https://x3m-industries.github.io/antigravity-packages/install.sh | bash -s -- --uninstall
+  ```
+
+* **Ubuntu / Debian / Mint (APT):**
+  ```bash
+  sudo apt remove antigravity-ide antigravity && rm -f ~/.local/bin/agy
+  ```
+
+* **Fedora / RHEL / AlmaLinux (DNF):**
+  ```bash
+  sudo dnf remove antigravity-ide antigravity && rm -f ~/.local/bin/agy
+  ```
+
+* **openSUSE (Zypper):**
+  ```bash
+  sudo zypper remove antigravity-ide antigravity && rm -f ~/.local/bin/agy
+  ```
+
+* **Cleaning Conflicting Legacy `/opt` Tarball Residue:**
+  If you previously extracted Google tarballs into `/opt`, remove the orphaned files with:
+  ```bash
+  sudo rm -rf /opt/Antigravity* /opt/antigravity* && sudo rm -f /usr/local/bin/antigravity* && rm -f ~/.local/share/applications/antigravity*.desktop
+  ```
 
 ---
 

@@ -127,8 +127,8 @@ import { siteConfig } from '../data/siteConfig';
 
     <!-- Section 2: Maintenance & Uninstallation -->
     <section class="doc-section" id="maintenance">
-      <h2 class="section-heading"><span>🛠️</span> Maintenance: Status &amp; Clean Uninstallation</h2>
-      <p class="section-desc">Our distribution infrastructure is designed to be transparent, auditable, and 100% reversible.</p>
+      <h2 class="section-heading"><span>🛠️</span> Maintenance: Status &amp; Complete Uninstallation</h2>
+      <p class="section-desc">Our distribution infrastructure is designed to be transparent, auditable, and 100% reversible. Whether you installed via our universal script or native system package managers, you can cleanly remove components without leaving orphaned files.</p>
 
       <div class="doc-card">
         <h3 class="card-subtitle">🔍 Inspect Installation Status</h3>
@@ -143,10 +143,62 @@ import { siteConfig } from '../data/siteConfig';
       </div>
 
       <div class="doc-card">
-        <h3 class="card-subtitle">🗑️ Clean Uninstallation</h3>
-        <p class="section-desc">Cleanly remove packages via your native package manager (<code>dnf</code> or <code>apt</code>), purge repository definitions, remove GPG keyrings, and delete the Nautilus extension while safely preserving your personal project workspaces in <code>~/.config</code> and <code>$HOME</code>:</p>
+        <h3 class="card-subtitle">⚡ Universal 1-Command Reversible Uninstallation</h3>
+        <p class="section-desc">Cleanly remove packages via your native package manager (<code>dnf</code>, <code>apt</code>, or <code>zypper</code>), purge repository definitions, delete GPG keyrings, remove desktop menu entries, and eliminate file manager extensions while safely preserving your personal project workspaces in <code>~/.config</code> and <code>$HOME</code>:</p>
         <div class="code-block">
           <code>curl -fsSL https://x3m-industries.github.io/antigravity-packages/install.sh | bash -s -- --uninstall</code>
+          <button class="copy-btn" onclick="copyCode(this)" aria-label="Copy to clipboard" title="Copy to clipboard">
+            <svg class="copy-icon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
+            <svg class="check-icon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#34d399" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
+          </button>
+        </div>
+      </div>
+
+      <div class="doc-card" id="uninstall-ubuntu">
+        <h3 class="card-subtitle">🟠 How to Uninstall from Ubuntu, Debian &amp; Linux Mint (APT)</h3>
+        <p class="section-desc">1. Remove the native DEB packages and user-space CLI agent:</p>
+        <div class="code-block">
+          <code>sudo apt remove antigravity-ide antigravity &amp;&amp; rm -f ~/.local/bin/agy</code>
+          <button class="copy-btn" onclick="copyCode(this)" aria-label="Copy to clipboard" title="Copy to clipboard">
+            <svg class="copy-icon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
+            <svg class="check-icon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#34d399" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
+          </button>
+        </div>
+        <p class="section-desc">2. (Optional) Remove the configured APT repository source and GPG keyring:</p>
+        <div class="code-block">
+          <code>sudo rm -f /etc/apt/sources.list.d/antigravity.sources /etc/apt/sources.list.d/antigravity.list /etc/apt/keyrings/antigravity.gpg &amp;&amp; sudo apt update</code>
+          <button class="copy-btn" onclick="copyCode(this)" aria-label="Copy to clipboard" title="Copy to clipboard">
+            <svg class="copy-icon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
+            <svg class="check-icon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#34d399" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
+          </button>
+        </div>
+      </div>
+
+      <div class="doc-card" id="uninstall-fedora">
+        <h3 class="card-subtitle">🎩 How to Uninstall from Fedora, RHEL &amp; AlmaLinux (DNF)</h3>
+        <p class="section-desc">1. Remove the RPM packages and user-space CLI agent:</p>
+        <div class="code-block">
+          <code>sudo dnf remove antigravity-ide antigravity &amp;&amp; rm -f ~/.local/bin/agy</code>
+          <button class="copy-btn" onclick="copyCode(this)" aria-label="Copy to clipboard" title="Copy to clipboard">
+            <svg class="copy-icon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
+            <svg class="check-icon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#34d399" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
+          </button>
+        </div>
+        <p class="section-desc">2. (Optional) Remove the RPM repository definition:</p>
+        <div class="code-block">
+          <code>sudo rm -f /etc/yum.repos.d/antigravity.repo</code>
+          <button class="copy-btn" onclick="copyCode(this)" aria-label="Copy to clipboard" title="Copy to clipboard">
+            <svg class="copy-icon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
+            <svg class="check-icon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#34d399" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
+          </button>
+        </div>
+      </div>
+
+      <div class="doc-card" id="uninstall-opt">
+        <h3 class="card-subtitle">🧹 Clean Up Conflicting Manual /opt Tarball Extractions</h3>
+        <p class="section-desc">If you previously followed online tutorials extracting Google tarballs into <code>/opt</code>, root-owned files may break Electron in-app updates and shadow packages in your <code>$PATH</code>. Completely purge leftover manual extractions with:</p>
+        <div class="code-block">
+          <code>sudo rm -rf /opt/Antigravity* /opt/antigravity* &amp;&amp; sudo rm -f /usr/local/bin/antigravity* &amp;&amp; rm -f ~/.local/share/applications/antigravity*.desktop</code>
           <button class="copy-btn" onclick="copyCode(this)" aria-label="Copy to clipboard" title="Copy to clipboard">
             <svg class="copy-icon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
             <svg class="check-icon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#34d399" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
@@ -279,12 +331,37 @@ import { siteConfig } from '../data/siteConfig';
     <!-- Section 5: Arch Linux & Conversion -->
     <section class="doc-section" id="arch">
       <h2 class="section-heading"><span>🏹</span> Arch Linux, Manjaro &amp; EndeavourOS — Antigravity Arch Linux</h2>
-      <p class="section-desc">Arch Linux users can install Antigravity by converting our signed Debian packages using <code>debtap</code> or extracting RPMs.</p>
+      <p class="section-desc">Arch Linux developers can run Google Antigravity using our native user-space installer, standalone Arch PKGBUILD templates, or converted Debian packages.</p>
 
       <div class="doc-card">
-        <h3 class="card-subtitle">Converting DEB to Arch Package via debtap</h3>
+        <h3 class="card-subtitle">⚡ Option 1: Universal CLI ('agy') Installer (User-Space, No Root)</h3>
+        <p class="section-desc">Install Google's official Antigravity CLI terminal agent directly into <code>~/.local/bin/agy</code>. Preserves Google's background auto-updating every 15 minutes without requiring root or modifying pacman databases:</p>
         <div class="code-block">
-          <code>curl -fsSLO https://github.com/x3m-industries/antigravity-packages/releases/latest/download/antigravity-ide_latest_amd64.deb &amp;&amp; debtap -u &amp;&amp; debtap antigravity-ide_latest_amd64.deb &amp;&amp; sudo pacman -U antigravity-ide-*.pkg.tar.zst</code>
+          <code>curl -fsSL https://x3m-industries.github.io/antigravity-packages/install.sh | bash -s -- --cli-only</code>
+          <button class="copy-btn" onclick="copyCode(this)" aria-label="Copy to clipboard" title="Copy to clipboard">
+            <svg class="copy-icon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
+            <svg class="check-icon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#34d399" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
+          </button>
+        </div>
+      </div>
+
+      <div class="doc-card">
+        <h3 class="card-subtitle">📦 Option 2: Native Arch PKGBUILD (makepkg)</h3>
+        <p class="section-desc">Build and install native Arch packages with <code>makepkg -si</code> using the definitions maintained in our repository's <code>pkgbuild/</code> directory:</p>
+        <div class="code-block">
+          <code>git clone https://github.com/x3m-industries/antigravity-packages.git &amp;&amp; cd antigravity-packages/pkgbuild/antigravity-ide-bin &amp;&amp; makepkg -si</code>
+          <button class="copy-btn" onclick="copyCode(this)" aria-label="Copy to clipboard" title="Copy to clipboard">
+            <svg class="copy-icon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
+            <svg class="check-icon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#34d399" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
+          </button>
+        </div>
+      </div>
+
+      <div class="doc-card">
+        <h3 class="card-subtitle">🔄 Option 3: Convert DEB to Pacman Package via debtap</h3>
+        <p class="section-desc">Directly convert our signed Debian package into an Arch <code>.pkg.tar.zst</code> pacman archive:</p>
+        <div class="code-block">
+          <code>curl -fsSLO https://github.com/x3m-industries/antigravity-packages/releases/latest/download/antigravity-ide_2.5.5-4923483625488384.3_amd64.deb &amp;&amp; debtap -u &amp;&amp; debtap antigravity-ide_*.deb &amp;&amp; sudo pacman -U antigravity-ide-*.pkg.tar.zst</code>
           <button class="copy-btn" onclick="copyCode(this)" aria-label="Copy to clipboard" title="Copy to clipboard">
             <svg class="copy-icon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
             <svg class="check-icon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#34d399" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>

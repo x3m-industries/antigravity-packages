@@ -67,6 +67,7 @@ import { siteConfig, currentVersions } from '../data/siteConfig';
       <div class="terminal-tabs" role="tablist" aria-label="Installer Modes">
         <button class="tab-btn active" data-tab="universal" onclick="switchTab('universal', this)" role="tab" aria-selected="true">⚡ Universal 1-Liner (Recommended)</button>
         <button class="tab-btn" data-tab="cli" onclick="switchTab('cli', this)" role="tab" aria-selected="false">Antigravity CLI ('agy')</button>
+        <button class="tab-btn" data-tab="arch" onclick="switchTab('arch', this)" role="tab" aria-selected="false">🏹 Arch Linux</button>
       </div>
     </div>
     <button class="terminal-copy" id="terminal-copy-btn" onclick="copyTerminalCmd()" title="Copy command to clipboard" aria-label="Copy installation command">
@@ -129,6 +130,25 @@ import { siteConfig, currentVersions } from '../data/siteConfig';
   </div>
 </section>
 
+<!-- Mobile Continuity Card (for Reddit & Mobile Visitors) -->
+<div class="mobile-cta-banner">
+  <div class="mobile-cta-content">
+    <span class="mobile-cta-icon">📱</span>
+    <div class="mobile-cta-text">
+      <span class="mobile-cta-title">Browsing on mobile?</span>
+      <span class="mobile-cta-desc">Copy the command or star on GitHub to install on your Linux machine later.</span>
+    </div>
+  </div>
+  <div class="mobile-cta-actions">
+    <button class="mobile-cta-btn copy-btn-action" onclick="copyTerminalCmd()">
+      <span>📋 Copy Command</span>
+    </button>
+    <a href={siteConfig.repo.githubUrl} target="_blank" rel="noopener noreferrer" class="mobile-cta-btn star-btn-action">
+      <span>⭐ Star on GitHub</span>
+    </a>
+  </div>
+</div>
+
 <!-- Distro Quick-Anchors Bar (Direct Deep-Links) -->
 <nav class="distro-anchors-bar" aria-label="Distribution-specific installation repositories">
   <span class="distro-anchors-label">Distro Repos:</span>
@@ -167,6 +187,10 @@ import { siteConfig, currentVersions } from '../data/siteConfig';
     suse: {
       cmd: "curl -fsSL https://x3m-industries.github.io/antigravity-packages/install.sh | bash",
       desc: "One command auto-detects Fedora, Ubuntu, Debian, openSUSE, RHEL & Arch with native packages."
+    },
+    arch: {
+      cmd: "curl -fsSL https://x3m-industries.github.io/antigravity-packages/install.sh | bash -s -- --cli-only",
+      desc: "Arch Linux / Manjaro: Installs official Antigravity CLI ('agy') into ~/.local/bin/agy (no root needed)."
     }
   };
 
@@ -304,6 +328,18 @@ Repository: https://x3m-industries.github.io/antigravity-packages/`;
         { type: "dim", text: "Downloading https://storage.googleapis.com/antigravity-public/agy/latest/agy-linux-x64.tar.gz...\nExtracted agy -> /home/user/.local/bin/agy\nAuto-update timer registered (checks upstream every 15 min)", delay: 220 },
         { type: "success", text: "✓ Antigravity CLI installed successfully (no root/sudo required)", delay: 70 },
         { type: "success-card", text: "✓ Ready! Run 'agy' in any directory to start your terminal AI coding session.", delay: 50 }
+      ]
+    },
+    arch: {
+      title: "bash — user@archlinux:~ (Arch Linux / Pacman)",
+      lines: [
+        { type: "input", text: "curl -fsSL https://x3m-industries.github.io/antigravity-packages/install.sh | bash -s -- --cli-only", delay: 200 },
+        { type: "banner", text: SIM_BANNER, delay: 120 },
+        { type: "info", text: "==> Arch Linux / Pacman environment detected.\n  • Antigravity CLI ('agy') installs directly into ~/.local/bin/agy\n  • Desktop GUI packages available via debtap (Pacman) or PKGBUILD\n", delay: 80 },
+        { type: "info", text: "==> Installing Antigravity CLI ('agy') into ~/.local/bin/agy (no sudo needed)...", delay: 120 },
+        { type: "dim", text: "Downloading https://storage.googleapis.com/antigravity-public/agy/latest/agy-linux-x64.tar.gz...\nExtracted agy -> /home/user/.local/bin/agy\nAuto-update timer registered (checks upstream every 15 min)", delay: 220 },
+        { type: "success", text: "✓ Antigravity CLI installed successfully", delay: 70 },
+        { type: "success-card", text: "✓ Arch Setup Ready!\n\nQuick Start:\n  • Run CLI:  agy\n  • Desktop GUI via debtap:  debtap antigravity-ide_latest_amd64.deb && sudo pacman -U antigravity-ide-*.pkg.tar.zst\n  • PKGBUILD:  https://github.com/x3m-industries/antigravity-packages/tree/main/pkgbuild", delay: 50 }
       ]
     }
   };

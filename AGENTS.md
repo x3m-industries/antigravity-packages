@@ -59,6 +59,10 @@ antigravity-packages/
 │       ├── layouts/BaseLayout.astro # Common SEO, OpenGraph, JSON-LD schema, and analytics layout
 │       ├── pages/                 # Static pages (index.astro, docs.astro)
 │       └── styles/global.css      # Tailwind v4 theme styling and terminal CSS
+├── pkgbuild/                      # Standalone Arch Linux PKGBUILD definitions (makepkg)
+│   ├── README.md                  # Arch installation instructions (makepkg, debtap, CLI)
+│   ├── antigravity-bin/           # PKGBUILD for Google Antigravity Agent Hub
+│   └── antigravity-ide-bin/       # PKGBUILD for Google Antigravity IDE
 ├── vercel-apt/                    # Static Vercel project (apt.x3m.industries): redirects .deb pool downloads to GitHub Releases, proxies APT metadata from Pages
 ├── templates/                     # Pre-rendered HTML templates for fallback and test backwards compatibility
 ├── tests/

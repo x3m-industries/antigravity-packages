@@ -224,6 +224,81 @@ h1 {
     backdrop-filter: blur(12px);
 }
 
+/* Mobile Continuity Banner */
+.mobile-cta-banner {
+    display: none;
+    margin: 0 0 20px 0;
+    padding: 14px 16px;
+    background: linear-gradient(135deg, rgba(234, 67, 53, 0.08) 0%, rgba(66, 133, 244, 0.08) 100%);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 12px;
+    backdrop-filter: blur(10px);
+}
+@media (max-width: 768px) {
+    .mobile-cta-banner {
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+    }
+}
+.mobile-cta-content {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+.mobile-cta-icon {
+    font-size: 1.5rem;
+    flex-shrink: 0;
+}
+.mobile-cta-text {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+.mobile-cta-title {
+    font-weight: 700;
+    font-size: 0.9rem;
+    color: var(--text-main);
+}
+.mobile-cta-desc {
+    font-size: 0.8rem;
+    color: var(--text-muted);
+    line-height: 1.4;
+}
+.mobile-cta-actions {
+    display: flex;
+    gap: 10px;
+}
+.mobile-cta-btn {
+    flex: 1;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 8px 12px;
+    border-radius: 8px;
+    font-size: 0.82rem;
+    font-weight: 600;
+    text-decoration: none;
+    cursor: pointer;
+    transition: all 0.15s ease;
+}
+.mobile-cta-btn.copy-btn-action {
+    background: var(--accent);
+    color: #0d1117;
+    border: none;
+}
+.mobile-cta-btn.copy-btn-action:hover {
+    filter: brightness(1.1);
+}
+.mobile-cta-btn.star-btn-action {
+    background: rgba(255, 255, 255, 0.06);
+    color: var(--text-main);
+    border: 1px solid var(--card-border);
+}
+.mobile-cta-btn.star-btn-action:hover {
+    background: rgba(255, 255, 255, 0.1);
+}
+
 /* Distro Quick-Anchors Bar (Direct Deep-Links) */
 .distro-anchors-bar {
     display: flex;

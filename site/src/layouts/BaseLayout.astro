@@ -64,6 +64,49 @@ const structuredData = {
         },
       })),
     },
+    {
+      "@type": "HowTo",
+      "name": "How to Install Google Antigravity on Linux",
+      "description": "Step-by-step guide to installing Google Antigravity 2.0, Antigravity IDE, and Antigravity CLI ('agy') on Fedora, Ubuntu, Debian, Arch Linux, and openSUSE.",
+      "totalTime": "PT2M",
+      "step": [
+        {
+          "@type": "HowToStep",
+          "name": "Run Universal Detection Command",
+          "text": "Open your terminal and run the universal 1-line installer script: curl -fsSL https://x3m-industries.github.io/antigravity-packages/install.sh | bash",
+          "url": `${siteConfig.siteUrl}#quickstart`
+        },
+        {
+          "@type": "HowToStep",
+          "name": "Select Components",
+          "text": "Choose to install Antigravity IDE (AI code editor), Antigravity Hub (Agent 2.0 platform), or the standalone Antigravity CLI ('agy').",
+          "url": `${siteConfig.siteUrl}#quickstart`
+        },
+        {
+          "@type": "HowToStep",
+          "name": "Launch Antigravity",
+          "text": "Launch your applications using application menu shortcuts or quick terminal commands: 'agy-ide', 'agy-hub', or 'agy'.",
+          "url": `${siteConfig.siteUrl}docs.html#cli-reference`
+        }
+      ]
+    },
+    {
+      "@type": "BreadcrumbList",
+      "itemListElement": [
+        {
+          "@type": "ListItem",
+          "position": 1,
+          "name": "Home",
+          "item": siteConfig.siteUrl
+        },
+        ...(currentPage === 'docs' ? [{
+          "@type": "ListItem",
+          "position": 2,
+          "name": "Documentation & CLI Reference",
+          "item": `${siteConfig.siteUrl}docs.html`
+        }] : [])
+      ]
+    }
   ],
 };
 ---
@@ -84,7 +127,7 @@ const structuredData = {
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
   <title>{title}</title>
   <meta name="description" content={description} />
-  <meta name="keywords" content="Google Antigravity, Antigravity Linux, Antigravity IDE, Antigravity RPM, Antigravity DEB, Antigravity Fedora DNF, Antigravity Ubuntu PPA, Antigravity Ubuntu APT, Antigravity openSUSE, Antigravity openSUSE Zypper, Antigravity Arch Linux, Fedora Antigravity, Ubuntu Antigravity, Debian Antigravity, Arch Linux Antigravity, RHEL Antigravity, google antigravity rpm, antigravity fedora, fedora antigravity, antigravity apt, how to update antigravity ide in ubuntu, download antigravity linux, google antigravity download linux, install google antigravity, AI code editor, DeepMind Antigravity, DNF repository, APT repository, Zypper repository, x86_64, aarch64, arm64, AUR antigravity, antigravity 2.0 linux" />
+  <meta name="keywords" content="Google Antigravity, Antigravity Linux, Antigravity IDE, Antigravity RPM, Antigravity DEB, Antigravity Fedora DNF, Antigravity Ubuntu PPA, Antigravity Ubuntu APT, Antigravity openSUSE, Antigravity openSUSE Zypper, Antigravity Arch Linux, Fedora Antigravity, Ubuntu Antigravity, Debian Antigravity, Arch Linux Antigravity, RHEL Antigravity, google antigravity rpm, antigravity fedora, fedora antigravity, antigravity apt, how to update antigravity ide in ubuntu, download antigravity linux, google antigravity download linux, install google antigravity, how to uninstall antigravity from ubuntu, uninstall antigravity ubuntu, uninstall antigravity in linux, remove antigravity completely ubuntu, antigravity cli arch, arch antigravity cli, pacman antigravity, yay antigravity, AI code editor, DeepMind Antigravity, DNF repository, APT repository, Zypper repository, x86_64, aarch64, arm64, AUR antigravity, antigravity 2.0 linux" />
   <meta name="author" content={siteConfig.author.name} />
   <meta name="google-site-verification" content="google676aa476e852c7b0" />
   <link rel="author" href={siteConfig.author.linkedin} />

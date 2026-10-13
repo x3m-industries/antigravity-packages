@@ -1,0 +1,36 @@
+# Maintainer: Steven Ceuppens <packaging@x3m.industries>
+pkgname=antigravity-ide-bin
+pkgver=2.5.5
+pkgrel=1
+pkgdesc="Google Antigravity IDE - Official AI-First Desktop Code Editor (Native Binary)"
+arch=('x86_64' 'aarch64')
+url="https://antigravity.google"
+license=('custom')
+depends=('gtk3' 'libnotify' 'nss' 'libxss' 'alsa-lib' 'mesa' 'libxkbfile' 'xdg-utils')
+optdepends=(
+    'libsecret: Credential storage support'
+    'nautilus-python: GNOME Files right-click context menu'
+)
+provides=('antigravity-ide')
+conflicts=('antigravity-ide')
+options=('!strip')
+
+# Sources point to latest cryptographically verified release binaries
+source_x86_64=("antigravity-ide-${pkgver}-x86_64.deb::https://github.com/x3m-industries/antigravity-packages/releases/latest/download/antigravity-ide_2.5.5-4923483625488384.3_amd64.deb")
+source_aarch64=("antigravity-ide-${pkgver}-aarch64.deb::https://github.com/x3m-industries/antigravity-packages/releases/latest/download/antigravity-ide_2.5.5-4923483625488384.3_arm64.deb")
+sha256sums_x86_64=('SKIP')
+sha256sums_aarch64=('SKIP')
+
+package() {
+    # Extract debian data archive
+    bsdtar -xf data.tar.* -C "${pkgdir}"
+
+    # Enforce Chromium SUID sandbox permissions (04755 root:root)
+    if [ -f "${pkgdir}/usr/share/antigravity-ide/chrome-sandbox" ]; then
+        chmod 4755 "${pkgdir}/usr/share/antigravity-ide/chrome-sandbox"
+    fi
+
+    # Ensure executable permissions on main binary and launcher
+    chmod 0755 "${pkgdir}/usr/share/antigravity-ide/antigravity-ide"
+    chmod 0755 "${pkgdir}/usr/bin/antigravity-ide"
+}

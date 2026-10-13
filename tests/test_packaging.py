@@ -587,6 +587,38 @@ class TestPackagingLogic(unittest.TestCase):
         self.assertTrue(astro_config.exists())
         self.assertIn("format: 'file'", astro_config.read_text(encoding="utf-8"))
 
+    def test_pkgbuild_and_arch_support(self):
+        import subprocess
+        pkgbuild_dir = repo_root / "pkgbuild"
+        self.assertTrue(pkgbuild_dir.exists())
+
+        # Check IDE PKGBUILD
+        ide_pkg = pkgbuild_dir / "antigravity-ide-bin" / "PKGBUILD"
+        self.assertTrue(ide_pkg.exists())
+        ide_txt = ide_pkg.read_text(encoding="utf-8")
+        self.assertIn("pkgname=antigravity-ide-bin", ide_txt)
+        self.assertIn("arch=('x86_64' 'aarch64')", ide_txt)
+        self.assertIn("chrome-sandbox", ide_txt)
+        res_ide = subprocess.run(["bash", "-n", str(ide_pkg)], capture_output=True, text=True)
+        self.assertEqual(res_ide.returncode, 0)
+
+        # Check Hub PKGBUILD
+        hub_pkg = pkgbuild_dir / "antigravity-bin" / "PKGBUILD"
+        self.assertTrue(hub_pkg.exists())
+        hub_txt = hub_pkg.read_text(encoding="utf-8")
+        self.assertIn("pkgname=antigravity-bin", hub_txt)
+        self.assertIn("arch=('x86_64' 'aarch64')", hub_txt)
+        self.assertIn("chrome-sandbox", hub_txt)
+        res_hub = subprocess.run(["bash", "-n", str(hub_pkg)], capture_output=True, text=True)
+        self.assertEqual(res_hub.returncode, 0)
+
+        # Check install.sh handles Arch gracefully and cleans /opt
+        install_sh = repo_root / "install.sh"
+        install_txt = install_sh.read_text(encoding="utf-8")
+        self.assertIn("IS_ARCH", install_txt)
+        self.assertIn("debtap", install_txt)
+        self.assertIn("/opt/Antigravity*", install_txt)
+
 
 if __name__ == "__main__":
     unittest.main()

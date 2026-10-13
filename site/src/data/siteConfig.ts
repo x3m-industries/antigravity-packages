@@ -49,10 +49,10 @@ export const currentVersions = parseReleaseTag(rawTag);
 export const siteConfig = {
   siteUrl: "https://x3m-industries.github.io/antigravity-packages/",
   baseUrl: "/antigravity-packages/",
-  title: "Google Antigravity for Linux — 1-Command Installer & Native Repositories (DNF, APT)",
+  title: "Google Antigravity for Linux — Native DNF & APT Repositories",
   docsTitle: "Documentation & CLI Reference — Google Antigravity for Linux",
   description:
-    "Install Google Antigravity 2.0, Antigravity IDE & CLI on Linux with 1 command. Native DNF & APT repositories with automatic daily updates for Fedora, Ubuntu, Debian, Arch & openSUSE.",
+    "Install Google Antigravity 2.0, IDE & CLI on Linux with 1 command. Native DNF & APT repositories with daily updates for Fedora, Ubuntu, Debian & Arch.",
   author: {
     name: "Steven Ceuppens · X3M Industries",
     url: "https://x3m.industries",
@@ -118,6 +118,17 @@ Because Google versions them separately (e.g. IDE 2.5.5 vs Hub 2.19.1), X3M Indu
       q: "How do I install Google Antigravity on openSUSE with Zypper?",
       a: `On openSUSE Tumbleweed and Leap 15.5+, add the Antigravity repository and import the GPG key with: <code>sudo zypper addrepo -f https://x3m-industries.github.io/antigravity-packages/rpm/ antigravity && sudo rpm --import https://x3m-industries.github.io/antigravity-packages/rpm/RPM-GPG-KEY-antigravity</code>. Then install via <code>sudo zypper install antigravity-ide antigravity</code>.`,
     },
+    {
+      q: "How do I install Antigravity on Arch Linux, Manjaro, or EndeavourOS?",
+      a: `Arch Linux users have three native options:<br>
+• <strong>Universal CLI ('agy'):</strong> Install Google's official terminal agent into user-space without root via <code>curl -fsSL https://x3m-industries.github.io/antigravity-packages/install.sh | bash -s -- --cli-only</code>.<br>
+• <strong>Arch PKGBUILD:</strong> Build natively with makepkg using the templates in our repository's <code>pkgbuild/</code> directory.<br>
+• <strong>debtap:</strong> Convert signed packages directly for pacman: <code>debtap antigravity-ide_latest_amd64.deb &amp;&amp; sudo pacman -U antigravity-ide-*.pkg.tar.zst</code>.`,
+    },
+    {
+      q: "How do I uninstall Google Antigravity from Ubuntu or Debian?",
+      a: `To remove native DEB packages and the CLI agent, run: <code>sudo apt remove antigravity-ide antigravity &amp;&amp; rm -f ~/.local/bin/agy</code>. To also purge repository definitions and GPG keys, run our reversible uninstaller: <code>curl -fsSL https://x3m-industries.github.io/antigravity-packages/install.sh | bash -s -- --uninstall</code>.`,
+    },
   ],
   docsFaqs: [
     {
@@ -160,6 +171,25 @@ Because Google versions them separately (e.g. IDE 2.5.5 vs Hub 2.19.1), X3M Indu
       a: `Run <code>curl -fsSL https://x3m-industries.github.io/antigravity-packages/install.sh | bash -s -- --status</code> to inspect installed components, or pass <code>--uninstall</code> to cleanly remove packages, repos, and extensions without touching your personal projects.`,
     },
     {
+      q: "How do I uninstall Google Antigravity from Ubuntu or Debian?",
+      a: `To remove native DEB packages and user-space CLI components:<br>
+<code>sudo apt remove antigravity-ide antigravity &amp;&amp; rm -f ~/.local/bin/agy</code><br>
+To purge configured repository lists and signing keyrings as well, pass <code>--uninstall</code> to the installer:<br>
+<code>curl -fsSL https://x3m-industries.github.io/antigravity-packages/install.sh | bash -s -- --uninstall</code>`,
+    },
+    {
+      q: "How do I uninstall Google Antigravity from Fedora, RHEL, or openSUSE?",
+      a: `On Fedora/RHEL: <code>sudo dnf remove antigravity-ide antigravity &amp;&amp; rm -f ~/.local/bin/agy</code>.<br>
+On openSUSE: <code>sudo zypper remove antigravity-ide antigravity &amp;&amp; rm -f ~/.local/bin/agy</code>.<br>
+To completely remove repository files and desktop integrations in one command: <code>curl -fsSL https://x3m-industries.github.io/antigravity-packages/install.sh | bash -s -- --uninstall</code>.`,
+    },
+    {
+      q: "How do I remove manual /opt/antigravity tarball extractions?",
+      a: `Manual extractions leave root-owned files in <code>/opt</code> that conflict with system packages. Clean them up with:<br>
+<code>sudo rm -rf /opt/Antigravity* /opt/antigravity* &amp;&amp; sudo rm -f /usr/local/bin/antigravity* &amp;&amp; rm -f ~/.local/share/applications/antigravity*.desktop</code>.<br>
+Our universal installer (<code>install.sh --uninstall</code>) automatically scans for and removes these obsolete files.`,
+    },
+    {
       q: "How do I fix the 'chrome-sandbox SUID' or permission error on Ubuntu 24.04?",
       a: `Ubuntu 24.04 Noble Numbat and hardened Linux kernels restrict unprivileged user namespaces via AppArmor. When extracting raw tarballs, Electron crashes with <code>The SUID sandbox helper binary was found, but is not configured properly</code>. Our native <code>.deb</code> and <code>.rpm</code> packages automatically configure hardened <code>04755 root:root</code> permissions on <code>chrome-sandbox</code> during package installation, completely preventing this issue.`,
     },
@@ -181,7 +211,10 @@ Because Google versions them separately (e.g. IDE 2.5.5 vs Hub 2.19.1), X3M Indu
     },
     {
       q: "How do I install Antigravity on Arch Linux, Manjaro, or EndeavourOS?",
-      a: `Arch Linux users can install Antigravity by converting our signed Debian packages via debtap: <code>curl -fsSLO https://github.com/x3m-industries/antigravity-packages/releases/latest/download/antigravity-ide_latest_amd64.deb && debtap -u && debtap antigravity-ide_latest_amd64.deb && sudo pacman -U antigravity-ide-*.pkg.tar.zst</code>, or by extracting the RPM package directly with rpmextract.`,
+      a: `Arch Linux users have three native options:<br>
+• <strong>Universal CLI ('agy'):</strong> Install Google's official terminal agent without root via <code>curl -fsSL https://x3m-industries.github.io/antigravity-packages/install.sh | bash -s -- --cli-only</code>.<br>
+• <strong>Arch PKGBUILD:</strong> Build natively with makepkg using the templates in our repository's <code>pkgbuild/</code> directory.<br>
+• <strong>debtap:</strong> Convert signed packages directly for pacman: <code>debtap antigravity-ide_latest_amd64.deb &amp;&amp; sudo pacman -U antigravity-ide-*.pkg.tar.zst</code>.`,
     },
   ],
 };
