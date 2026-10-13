@@ -15,9 +15,11 @@ provides=('antigravity-ide')
 conflicts=('antigravity-ide')
 options=('!strip')
 
-# Sources point to latest cryptographically verified release binaries
-source_x86_64=("antigravity-ide-${pkgver}-x86_64.deb::https://github.com/x3m-industries/antigravity-packages/releases/latest/download/antigravity-ide_2.5.5-4923483625488384.3_amd64.deb")
-source_aarch64=("antigravity-ide-${pkgver}-aarch64.deb::https://github.com/x3m-industries/antigravity-packages/releases/latest/download/antigravity-ide_2.5.5-4923483625488384.3_arm64.deb")
+# Sources point to cryptographically verified release binaries
+_reltag="v2.5.5-4923483625488384.3_hub-2.23.0-5238607586394112"
+_debver="2.5.5-4923483625488384.3"
+source_x86_64=("antigravity-ide-${pkgver}-${pkgrel}-x86_64.deb::https://github.com/x3m-industries/antigravity-packages/releases/download/${_reltag}/antigravity-ide_${_debver}_amd64.deb")
+source_aarch64=("antigravity-ide-${pkgver}-${pkgrel}-aarch64.deb::https://github.com/x3m-industries/antigravity-packages/releases/download/${_reltag}/antigravity-ide_${_debver}_arm64.deb")
 sha256sums_x86_64=('SKIP')
 sha256sums_aarch64=('SKIP')
 
@@ -30,7 +32,11 @@ package() {
         chmod 4755 "${pkgdir}/usr/share/antigravity-ide/chrome-sandbox"
     fi
 
-    # Ensure executable permissions on main binary and launcher
-    chmod 0755 "${pkgdir}/usr/share/antigravity-ide/antigravity-ide"
-    chmod 0755 "${pkgdir}/usr/bin/antigravity-ide"
+    # Ensure executable permissions on real binaries (do not chmod /usr/bin symlinks)
+    if [ -f "${pkgdir}/usr/share/antigravity-ide/antigravity-ide" ]; then
+        chmod 0755 "${pkgdir}/usr/share/antigravity-ide/antigravity-ide"
+    fi
+    if [ -f "${pkgdir}/usr/share/antigravity-ide/bin/antigravity-ide" ]; then
+        chmod 0755 "${pkgdir}/usr/share/antigravity-ide/bin/antigravity-ide"
+    fi
 }

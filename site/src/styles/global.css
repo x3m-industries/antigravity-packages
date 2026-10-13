@@ -755,87 +755,6 @@ h1 {
     line-height: 1.6;
 }
 
-/* App Cards */
-.apps-grid {
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    gap: 20px;
-    margin-bottom: 48px;
-}
-.app-card {
-    background: var(--card-bg);
-    border: 1px solid var(--card-border);
-    border-radius: 16px;
-    padding: 28px;
-    backdrop-filter: blur(12px);
-    transition: all 0.25s ease;
-}
-.app-card:hover {
-    border-color: var(--card-hover);
-    transform: translateY(-2px);
-    box-shadow: 0 12px 30px -10px rgba(0, 0, 0, 0.5);
-}
-.app-header {
-    display: flex;
-    align-items: center;
-    gap: 16px;
-    margin-bottom: 16px;
-}
-.app-icon {
-    width: 48px;
-    height: 48px;
-    border-radius: 12px;
-}
-.app-title-group h3 {
-    font-size: 1.25rem;
-    font-weight: 700;
-    color: #fff;
-}
-.app-version-badge {
-    font-size: 0.76rem;
-    font-weight: 600;
-    color: #a5b4fc;
-    background: rgba(99, 102, 241, 0.15);
-    padding: 2px 8px;
-    border-radius: 6px;
-    border: 1px solid rgba(99, 102, 241, 0.3);
-    display: inline-block;
-    margin-top: 4px;
-}
-.app-desc {
-    color: var(--text-muted);
-    font-size: 0.92rem;
-    line-height: 1.55;
-    margin-bottom: 18px;
-}
-.app-specs {
-    list-style: none;
-    padding: 0;
-    margin: 0;
-}
-.app-specs li {
-    font-size: 0.85rem;
-    color: #cbd5e1;
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    margin-bottom: 8px;
-}
-.spec-icon {
-    color: #38bdf8;
-    font-weight: 700;
-}
-
-/* CLI Spotlight Banner */
-.cli-banner {
-    background: linear-gradient(135deg, rgba(30, 41, 59, 0.8) 0%, rgba(15, 23, 42, 0.95) 100%);
-    border: 1px solid rgba(56, 189, 248, 0.25);
-    border-radius: 16px;
-    padding: 28px;
-    margin-bottom: 56px;
-    box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.4);
-}
-
 /* Comparison Table */
 .comparison-section {
     margin-bottom: 56px;
@@ -1216,7 +1135,7 @@ footer a:hover {
 }
 
 @media (max-width: 768px) {
-    .bento-grid, .apps-grid { grid-template-columns: 1fr; }
+    .bento-grid { grid-template-columns: 1fr; }
     .nav-links { display: none; }
     .doc-title { font-size: 1.8rem; }
     .container { padding: 24px 16px 60px; }

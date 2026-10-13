@@ -61,9 +61,13 @@ for pkg in "${PKG_DIR}"/*.deb; do
         if dpkg-deb -e "${pkg}" "${tmp_ctrl}" 2>/dev/null; then
             if [ -f "${tmp_ctrl}/postinst" ] && grep -q "chmod 4755" "${tmp_ctrl}/postinst"; then
                 echo "  ✓ deb postinst configures SUID permissions (chmod 4755)"
+            else
+                rm -rf "${tmp_ctrl}"
+                echo "ERROR: deb postinst in ${pkg} does not configure SUID permissions (chmod 4755)" >&2
+                exit 1
             fi
-            rm -rf "${tmp_ctrl}"
         fi
+        rm -rf "${tmp_ctrl}"
     fi
 done
 
@@ -96,6 +100,9 @@ verify_app() {
     echo "  ✓ $short is executable"
     test -e "/usr/share/applications/$desktop" || fail "/usr/share/applications/$desktop not installed"
     echo "  ✓ /usr/share/applications/$desktop installed"
+    test -s "/usr/share/icons/hicolor/512x512/apps/$name.png" || fail "/usr/share/icons/hicolor/512x512/apps/$name.png missing or empty"
+    test -s "/usr/share/pixmaps/$name.png" || fail "/usr/share/pixmaps/$name.png missing or empty"
+    echo "  ✓ application icons installed ($name.png)"
 
     echo "Verifying chrome-sandbox SUID permissions ($name)..."
     cs="$dir/chrome-sandbox"

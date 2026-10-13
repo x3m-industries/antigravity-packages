@@ -60,11 +60,20 @@ const structuredData = {
         "name": faq.q,
         "acceptedAnswer": {
           "@type": "Answer",
-          "text": faq.a.replace(/<[^>]*>/g, ""),
+          "text": faq.a
+            .replace(/<br\s*\/?>/gi, " ")
+            .replace(/<[^>]*>/g, "")
+            .replace(/&amp;/g, "&")
+            .replace(/&lt;/g, "<")
+            .replace(/&gt;/g, ">")
+            .replace(/&quot;/g, '"')
+            .replace(/&#39;/g, "'")
+            .replace(/\s+/g, " ")
+            .trim(),
         },
       })),
     },
-    {
+    ...(currentPage === 'home' ? [{
       "@type": "HowTo",
       "name": "How to Install Google Antigravity on Linux",
       "description": "Step-by-step guide to installing Google Antigravity 2.0, Antigravity IDE, and Antigravity CLI ('agy') on Fedora, Ubuntu, Debian, Arch Linux, and openSUSE.",
@@ -89,7 +98,7 @@ const structuredData = {
           "url": `${siteConfig.siteUrl}docs.html#cli-reference`
         }
       ]
-    },
+    }] : []),
     {
       "@type": "BreadcrumbList",
       "itemListElement": [
@@ -120,7 +129,9 @@ const structuredData = {
     window.dataLayer = window.dataLayer || [];
     function gtag(){dataLayer.push(arguments);}
     gtag('js', new Date());
-    gtag('config', 'G-XXTD2B1XB0');
+    if (window.location.hostname !== 'localhost' && window.location.hostname !== '127.0.0.1') {
+      gtag('config', 'G-XXTD2B1XB0');
+    }
   </script>
 
   <meta charset="UTF-8" />

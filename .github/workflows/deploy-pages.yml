@@ -18,6 +18,8 @@ on:
       - 'google*.html'
       - 'llms.txt'
       - 'llms-full.txt'
+      - 'RPM-GPG-KEY-antigravity'
+      - 'antigravity.gpg'
       - '.github/workflows/deploy-pages.yml'
   workflow_dispatch:
 

@@ -182,8 +182,12 @@ The script `scripts/generate_repos.sh <RELEASE_TAG> <DIST_DIR>` builds the deplo
 
 ```
 ./dist/
-├── index.html                   # Landing page copied from templates/index.html
+├── index.html                   # Landing page built from site/ (synced to templates/index.html)
+├── docs.html                    # Documentation page built from site/ (synced to templates/docs.html)
+├── _astro/                      # Compiled Astro CSS bundles
 ├── install.sh                   # Universal curl installer script
+├── llms.txt                     # Canonical LLM summary
+├── llms-full.txt                # Deep technical LLM context guide
 ├── RPM-GPG-KEY-antigravity       # ASCII armored GPG key
 ├── antigravity.gpg              # Binary GPG keyring
 ├── favicon.png                  # Site favicon

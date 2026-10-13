@@ -287,7 +287,7 @@ antigravity
 * **Browser OAuth Callback Handling:** Separate `antigravity-ide-url-handler.desktop` with `NoDisplay=true` ensures browser OAuth redirects (`antigravity-ide://`) return seamlessly to the editor without cluttering app launchers.
 * **Workspace MIME Handling:** Pre-registered associations for `.code-workspace` and `.antigravity-workspace` files.
 * **Hardened SUID Sandboxing:** Correctly set `04755 root:root` permissions on `chrome-sandbox` binaries so Electron runs securely without insecure `--no-sandbox` flags.
-* **High-Resolution Icons:** Extracted official 1024x1024 application icons placed in FreeDesktop icon themes and `/usr/share/pixmaps`.
+* **High-Resolution Icons:** Extracted official 512x512 application icons placed in FreeDesktop icon themes and `/usr/share/pixmaps`.
 * **System Application Menu & Fast Search:** Full FreeDesktop desktop entries with rich `Keywords=` (code, vscode, editor, ai) for GNOME Shell, KDE KRunner, COSMIC Launcher, and Rofi.
 * **Shell Autocompletion:** Native Bash (`/usr/share/bash-completion`) and Zsh (`/usr/share/zsh`) tab completions for `antigravity-ide` and `agy-ide`.
 
@@ -398,7 +398,7 @@ We understand that installing developer tools and configuring software repositor
 ## ⚙️ Development & Automation
 
 ### How it works
-1. **Daily Upstream Check:** A GitHub Actions cron job runs daily at `05:00 UTC` to check [antigravity.google/download](https://antigravity.google/download) for new releases.
+1. **Daily Upstream Check:** A GitHub Actions cron job runs daily at `02:30 UTC` to check [antigravity.google/download](https://antigravity.google/download) for new releases.
 2. **Automated Packaging:** When a new version is detected, the workflow downloads the official tarballs for both `x86_64` and `aarch64`.
 3. **Signing & Deployment:** Packages are signed with GPG, uploaded to GitHub Releases (handling >100 MB assets), and repository metadata (`repodata/` and `Packages.gz`) is refreshed on GitHub Pages.
 

@@ -169,7 +169,12 @@ if [ -d "${REPO_ROOT}/site" ]; then
         mkdir -p "${REPO_ROOT}/templates"
         cp "${REPO_ROOT}/site/dist/index.html" "${REPO_ROOT}/templates/index.html" 2>/dev/null || true
         cp "${REPO_ROOT}/site/dist/docs.html" "${REPO_ROOT}/templates/docs.html" 2>/dev/null || true
+    elif compgen -G "${REPO_ROOT}/templates/*.html" > /dev/null; then
+        echo "Warning: site/dist not generated; falling back to pre-rendered templates/*.html" >&2
+        cp "${REPO_ROOT}/templates/"*.html "${DIST_DIR}/"
     fi
+elif compgen -G "${REPO_ROOT}/templates/*.html" > /dev/null; then
+    cp "${REPO_ROOT}/templates/"*.html "${DIST_DIR}/"
 fi
 
 # Fallback or post-processing: ensure version injection if tag provided

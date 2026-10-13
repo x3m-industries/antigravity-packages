@@ -55,13 +55,13 @@ def get_latest_upstream():
     }
 
 def get_latest_release():
-    try:
-        res = subprocess.run(["gh", "release", "view", "--json", "tagName,assets"], capture_output=True, text=True)
-        if res.returncode == 0:
-            return json.loads(res.stdout)
-    except Exception as e:
-        print(f"Warning checking GitHub releases: {e}", file=sys.stderr)
-    return None
+    res = subprocess.run(["gh", "release", "view", "--json", "tagName,assets"], capture_output=True, text=True)
+    if res.returncode == 0:
+        return json.loads(res.stdout)
+    stderr_lower = (res.stderr or "").lower()
+    if "release not found" in stderr_lower or "no releases found" in stderr_lower:
+        return None
+    raise UpstreamError(f"Failed to query latest GitHub release via gh CLI: {(res.stderr or '').strip()}")
 
 
 def validate_upstream(upstream):
@@ -97,10 +97,14 @@ def app_complete(pkg, version_full, assets):
     )
 
 
+def _natural_version_key(ver_str):
+    return [int(part) if part.isdigit() else part for part in re.split(r"(\d+)", ver_str)]
+
+
 def existing_version(pkg, version_full, assets):
     """Version string (including any packaging revision) of the assets already published."""
     pat = re.compile(rf"^{re.escape(pkg)}-({re.escape(version_full)}[^/]*)\.x86_64\.rpm$")
-    found = sorted(m.group(1) for m in (pat.match(a) for a in assets) if m)
+    found = sorted((m.group(1) for m in (pat.match(a) for a in assets) if m), key=_natural_version_key)
     return found[-1] if found else version_full
 
 
@@ -121,10 +125,14 @@ def compute_build_plan(upstream, prev_tag, existing_assets, env):
     ide_needs_build = not ide_present or force_ide
     hub_needs_build = not hub_present or force_hub
 
+    # Default to the already-published version string for this upstream version (preserving
+    # any existing .N packaging revision even if a forced rebuild is triggered without PKG_REVISION).
+    ide_out = existing_version("antigravity-ide", ide_ver, existing_assets)
+    hub_out = existing_version("antigravity", hub_ver, existing_assets)
+
     # A packaging revision re-rolls the apps that were explicitly forced; when
     # none were forced explicitly it applies to both.
     pkg_revision = env.get("PKG_REVISION", "").strip()
-    ide_out, hub_out = ide_ver, hub_ver
     if pkg_revision:
         rev_ide = force_ide or not force_hub
         rev_hub = force_hub or not force_ide
@@ -134,12 +142,6 @@ def compute_build_plan(upstream, prev_tag, existing_assets, env):
         if rev_hub:
             hub_needs_build = True
             hub_out = f"{hub_ver}.{pkg_revision}"
-
-    # Apps that are reused keep the exact version string they were published with
-    if not ide_needs_build:
-        ide_out = existing_version("antigravity-ide", ide_ver, existing_assets)
-    if not hub_needs_build:
-        hub_out = existing_version("antigravity", hub_ver, existing_assets)
 
     return {
         "has_update": ide_needs_build or hub_needs_build,

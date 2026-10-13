@@ -8,9 +8,9 @@ export interface ReleaseVersions {
 export function parseReleaseTag(tag?: string): ReleaseVersions {
   const defaultVersions: ReleaseVersions = {
     ideSemver: "2.5.5",
-    ideBuild: "4923483625488384",
-    hubSemver: "2.19.1",
-    hubBuild: "6046815158665216",
+    ideBuild: "4923483625488384.3",
+    hubSemver: "2.23.0",
+    hubBuild: "5238607586394112",
   };
 
   if (!tag || tag === "latest" || tag === "vlatest") {
@@ -50,7 +50,7 @@ export const siteConfig = {
   siteUrl: "https://x3m-industries.github.io/antigravity-packages/",
   baseUrl: "/antigravity-packages/",
   title: "Google Antigravity for Linux — Native DNF & APT Repositories",
-  docsTitle: "Documentation & CLI Reference — Google Antigravity for Linux",
+  docsTitle: "Documentation & CLI Reference — Google Antigravity for Linux (Arch, APT, DNF & Uninstall)",
   description:
     "Install Google Antigravity 2.0, IDE & CLI on Linux with 1 command. Native DNF & APT repositories with daily updates for Fedora, Ubuntu, Debian & Arch.",
   author: {
@@ -92,11 +92,11 @@ export const siteConfig = {
       a: `Google provides two separate official applications for Linux:<br>
 • <strong><code>antigravity-ide</code></strong>: The official Google AI code editor with visual diff viewer, terminal integration, application menu launcher, and <code>antigravity-ide://</code> browser OAuth handlers.<br>
 • <strong><code>antigravity</code></strong>: Google's official Agent Hub (Antigravity 2.0) interface for configuring and orchestrating autonomous coding agents. Google's standalone terminal agent (<strong><code>agy</code></strong>) is installed separately via user-space CLI.<br>
-Because Google versions them separately (e.g. IDE 2.5.5 vs Hub 2.19.1), X3M Industries packages them as two independent native packages so you can install both or either one.`,
+Because Google versions them separately (e.g. IDE ${currentVersions.ideSemver} vs Hub ${currentVersions.hubSemver}), X3M Industries packages them as two independent native packages so you can install both or either one.`,
     },
     {
       q: "How do updates work?",
-      a: `Our automated pipeline tracks Google's official release CDN daily at 05:00 UTC. When Google publishes an update, packages are built, cryptographically signed, and deployed to our repositories. You receive them automatically during your normal system upgrades (<code>sudo dnf update</code> or <code>sudo apt upgrade</code>).`,
+      a: `Our automated pipeline tracks Google's official release CDN daily at 02:30 UTC. When Google publishes an update, packages are built, cryptographically signed, and deployed to our repositories. You receive them automatically during your normal system upgrades (<code>sudo dnf update</code> or <code>sudo apt upgrade</code>).`,
     },
     {
       q: "Why should I use native RPM or DEB packages instead of extracting tarballs to /opt?",
@@ -123,7 +123,7 @@ Because Google versions them separately (e.g. IDE 2.5.5 vs Hub 2.19.1), X3M Indu
       a: `Arch Linux users have three native options:<br>
 • <strong>Universal CLI ('agy'):</strong> Install Google's official terminal agent into user-space without root via <code>curl -fsSL https://x3m-industries.github.io/antigravity-packages/install.sh | bash -s -- --cli-only</code>.<br>
 • <strong>Arch PKGBUILD:</strong> Build natively with makepkg using the templates in our repository's <code>pkgbuild/</code> directory.<br>
-• <strong>debtap:</strong> Convert signed packages directly for pacman: <code>debtap antigravity-ide_latest_amd64.deb &amp;&amp; sudo pacman -U antigravity-ide-*.pkg.tar.zst</code>.`,
+• <strong>debtap:</strong> Convert signed packages directly for pacman: <code>debtap antigravity-ide_${currentVersions.ideSemver}-${currentVersions.ideBuild}_amd64.deb &amp;&amp; sudo pacman -U antigravity-ide-*.pkg.tar.zst</code>.`,
     },
     {
       q: "How do I uninstall Google Antigravity from Ubuntu or Debian?",
@@ -139,7 +139,7 @@ Because Google versions them separately (e.g. IDE 2.5.5 vs Hub 2.19.1), X3M Indu
     },
     {
       q: "How do daily automated updates work?",
-      a: `A GitHub Actions automated cron workflow checks Google's official download CDN daily at 05:00 UTC. Whenever Google pushes a new release, packages for both <code>x86_64</code> and <code>aarch64</code> are built, sanitized, signed, tested in Fedora/Ubuntu containers, and deployed. You receive them via standard system updates (<code>dnf update</code> or <code>apt upgrade</code>).`,
+      a: `A GitHub Actions automated cron workflow checks Google's official download CDN daily at 02:30 UTC. Whenever Google pushes a new release, packages for both <code>x86_64</code> and <code>aarch64</code> are built, sanitized, signed, tested in Fedora/Ubuntu containers, and deployed. You receive them via standard system updates (<code>dnf update</code> or <code>apt upgrade</code>).`,
     },
     {
       q: "Why should I use native RPM or DEB packages instead of extracting tarballs to /opt?",
@@ -214,7 +214,7 @@ Our universal installer (<code>install.sh --uninstall</code>) automatically scan
       a: `Arch Linux users have three native options:<br>
 • <strong>Universal CLI ('agy'):</strong> Install Google's official terminal agent without root via <code>curl -fsSL https://x3m-industries.github.io/antigravity-packages/install.sh | bash -s -- --cli-only</code>.<br>
 • <strong>Arch PKGBUILD:</strong> Build natively with makepkg using the templates in our repository's <code>pkgbuild/</code> directory.<br>
-• <strong>debtap:</strong> Convert signed packages directly for pacman: <code>debtap antigravity-ide_latest_amd64.deb &amp;&amp; sudo pacman -U antigravity-ide-*.pkg.tar.zst</code>.`,
+• <strong>debtap:</strong> Convert signed packages directly for pacman: <code>debtap antigravity-ide_${currentVersions.ideSemver}-${currentVersions.ideBuild}_amd64.deb &amp;&amp; sudo pacman -U antigravity-ide-*.pkg.tar.zst</code>.`,
     },
   ],
 };

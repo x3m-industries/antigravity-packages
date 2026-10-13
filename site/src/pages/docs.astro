@@ -1,10 +1,10 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
-import { siteConfig } from '../data/siteConfig';
+import { siteConfig, currentVersions } from '../data/siteConfig';
 ---
 
 <BaseLayout
-  title="Documentation & CLI Reference — Google Antigravity for Linux"
+  title={siteConfig.docsTitle}
   description="Complete documentation, command-line reference, manual repository setup, GPG verification, and troubleshooting for Google Antigravity on Linux."
   currentPage="docs"
 >
@@ -361,7 +361,7 @@ import { siteConfig } from '../data/siteConfig';
         <h3 class="card-subtitle">🔄 Option 3: Convert DEB to Pacman Package via debtap</h3>
         <p class="section-desc">Directly convert our signed Debian package into an Arch <code>.pkg.tar.zst</code> pacman archive:</p>
         <div class="code-block">
-          <code>curl -fsSLO https://github.com/x3m-industries/antigravity-packages/releases/latest/download/antigravity-ide_2.5.5-4923483625488384.3_amd64.deb &amp;&amp; debtap -u &amp;&amp; debtap antigravity-ide_*.deb &amp;&amp; sudo pacman -U antigravity-ide-*.pkg.tar.zst</code>
+          <code>{`curl -fsSLO https://github.com/x3m-industries/antigravity-packages/releases/latest/download/antigravity-ide_${currentVersions.ideSemver}-${currentVersions.ideBuild}_amd64.deb && debtap -u && debtap antigravity-ide_*.deb && sudo pacman -U antigravity-ide-*.pkg.tar.zst`}</code>
           <button class="copy-btn" onclick="copyCode(this)" aria-label="Copy to clipboard" title="Copy to clipboard">
             <svg class="copy-icon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
             <svg class="check-icon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#34d399" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
@@ -467,6 +467,15 @@ import { siteConfig } from '../data/siteConfig';
           btn.setAttribute('title', 'Copy to clipboard');
           btn.setAttribute('aria-label', 'Copy to clipboard');
         }, 2000);
+
+        if (typeof gtag === 'function') {
+          const section = btn.closest('.doc-section');
+          gtag('event', 'copy_docs_command', {
+            event_category: 'conversion',
+            event_label: section ? section.id : 'docs',
+            command: code
+          });
+        }
       }).catch(err => console.error('Copy failed: ', err));
     }
   </script>

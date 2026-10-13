@@ -292,7 +292,7 @@ def build_deb(package_name, version, release, arch, app_source_dir, output_dir, 
 
     install_dest = stage_dir / "usr" / "share" / package_name
     install_dest.mkdir(parents=True, exist_ok=True)
-    shutil.copytree(app_source_dir, install_dest, dirs_exist_ok=True)
+    shutil.copytree(app_source_dir, install_dest, symlinks=True, dirs_exist_ok=True)
 
     # Permissions
     sanitize_tree_permissions(install_dest)
@@ -521,8 +521,15 @@ def main():
 
         if args.package == "antigravity-ide":
             ide_icon = app_dir / "resources" / "app" / "resources" / "linux" / "code.png"
-            if ide_icon.exists():
+            if ide_icon.exists() and ide_icon.stat().st_size > 0:
                 shutil.copy(ide_icon, icon_file)
+            else:
+                fallback_icon = repo_root / "assets" / "logo.png"
+                if not fallback_icon.exists():
+                    fallback_icon = repo_root / "assets" / "icon.png"
+                if fallback_icon.exists():
+                    print(f"Using fallback icon: {fallback_icon}")
+                    shutil.copy(fallback_icon, icon_file)
         else:
             asar_path = app_dir / "resources" / "app.asar"
             extracted = False

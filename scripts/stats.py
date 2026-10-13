@@ -13,7 +13,6 @@ import argparse
 REPO = "x3m-industries/antigravity-packages"
 
 def fetch_releases():
-    url = f"https://api.github.com/repos/{REPO}/releases"
     headers = {
         "User-Agent": "Antigravity-Stats/1.0",
         "Accept": "application/vnd.github.v3+json",
@@ -22,15 +21,26 @@ def fetch_releases():
     if token:
         headers["Authorization"] = f"Bearer {token}"
 
-    req = urllib.request.Request(url, headers=headers)
-    try:
-        with urllib.request.urlopen(req) as resp:
-            return json.loads(resp.read().decode("utf-8"))
-    except urllib.error.HTTPError as e:
-        print(f"Error fetching releases from GitHub API: {e.code} {e.reason}", file=sys.stderr)
-        if e.code == 403:
-            print("Tip: If rate limited, export GH_TOKEN=<your_github_token>.", file=sys.stderr)
-        sys.exit(1)
+    all_releases = []
+    page = 1
+    while True:
+        url = f"https://api.github.com/repos/{REPO}/releases?per_page=100&page={page}"
+        req = urllib.request.Request(url, headers=headers)
+        try:
+            with urllib.request.urlopen(req) as resp:
+                batch = json.loads(resp.read().decode("utf-8"))
+        except urllib.error.HTTPError as e:
+            print(f"Error fetching releases from GitHub API: {e.code} {e.reason}", file=sys.stderr)
+            if e.code == 403:
+                print("Tip: If rate limited, export GH_TOKEN=<your_github_token>.", file=sys.stderr)
+            sys.exit(1)
+        if not isinstance(batch, list) or not batch:
+            break
+        all_releases.extend(batch)
+        if len(batch) < 100:
+            break
+        page += 1
+    return all_releases
 
 def analyze_downloads(releases):
     total_downloads = 0
@@ -81,9 +91,10 @@ def analyze_downloads(releases):
     }
 
 def print_dashboard(data):
-    print("=" * 68)
-    print("       🚀  GOOGLE ANTIGRAVITY LINUX PACKAGES — DOWNLOAD STATS       ")
-    print("=" * 68)
+    width = 120
+    print("=" * width)
+    print("       🚀  GOOGLE ANTIGRAVITY LINUX PACKAGES — DOWNLOAD STATS       ".center(width))
+    print("=" * width)
     print(f"\n📦 TOTAL DOWNLOADS: {data['total_downloads']:,}\n")
 
     print("📊 Breakdown by Package:")
@@ -101,12 +112,12 @@ def print_dashboard(data):
         pct = (count / data["total_downloads"] * 100) if data["total_downloads"] > 0 else 0
         print(f"   • {fmt.upper():<18} : {count:>6,} ({pct:>5.1f}%)")
 
-    print("\n" + "-" * 68)
-    print(f"{'RELEASE':<14} {'PACKAGE ASSET':<38} {'SIZE':>7} {'DOWNLOADS':>9}")
-    print("-" * 68)
+    print("\n" + "-" * width)
+    print(f"{'RELEASE':<54} {'PACKAGE ASSET':<46} {'SIZE':>8} {'DOWNLOADS':>9}")
+    print("-" * width)
     for a in data["assets"]:
-        print(f"{a['tag']:<14} {a['name']:<38} {a['size_mb']:>5.1f}MB {a['downloads']:>9,}")
-    print("-" * 68 + "\n")
+        print(f"{a['tag']:<54} {a['name']:<46} {a['size_mb']:>6.1f}MB {a['downloads']:>9,}")
+    print("-" * width + "\n")
 
 def main():
     parser = argparse.ArgumentParser(description="Package download stats for Antigravity Linux packages")

@@ -30,9 +30,25 @@ def parse_release_tag(tag: str):
     return None
 
 
+def _replace_title_on_data_version_full(html_content: str, app_key: str, full_version: str) -> str:
+    """Replaces title="..." on any HTML opening tag that has data-version-full="<app_key>", regardless of attribute order."""
+    pattern = re.compile(rf'<[^>]+data-version-full=["\']{re.escape(app_key)}["\'][^>]*>')
+
+    def _repl(match):
+        tag_str = match.group(0)
+        return re.sub(
+            r'title=(["\'])[^"\']*\1',
+            f'title="Latest packaged release: {full_version}"',
+            tag_str,
+        )
+
+    return pattern.sub(_repl, html_content)
+
+
 def inject_versions_into_html(html_content: str, tag: str) -> str:
     """
-    Replaces data-version spans and data-version-full titles in HTML with release tag values.
+    Replaces data-version spans, data-version-full titles, .deb artifact filenames,
+    and JSON-LD softwareVersion fields in HTML with release tag values.
     """
     parsed = parse_release_tag(tag)
     if not parsed:
@@ -52,20 +68,39 @@ def inject_versions_into_html(html_content: str, tag: str) -> str:
         rf'\g<1>v{hub_ver}\g<2>',
         html_content
     )
-    # Update IDE full build titles
+    # Update IDE full build titles (order-independent) and .deb filenames
     if ide_b:
+        html_content = _replace_title_on_data_version_full(html_content, "ide", f"{ide_ver}-{ide_b}")
         html_content = re.sub(
-            r'(<[^>]+data-version-full=["\']ide["\'][^>]*title=["\'])[^"\']*(["\'])',
-            rf'\g<1>Latest packaged release: {ide_ver}-{ide_b}\g<2>',
+            r'antigravity-ide_(?:[0-9]+\.[0-9]+\.[0-9]+-[0-9a-zA-Z\.\-]+|latest)_(amd64|arm64)\.deb',
+            rf'antigravity-ide_{ide_ver}-{ide_b}_\1.deb',
             html_content
         )
-    # Update Hub full build titles
+    # Update Hub full build titles (order-independent) and .deb filenames
     if hub_b:
+        html_content = _replace_title_on_data_version_full(html_content, "hub", f"{hub_ver}-{hub_b}")
         html_content = re.sub(
-            r'(<[^>]+data-version-full=["\']hub["\'][^>]*title=["\'])[^"\']*(["\'])',
-            rf'\g<1>Latest packaged release: {hub_ver}-{hub_b}\g<2>',
+            r'(?<![a-zA-Z0-9_-])antigravity_(?:[0-9]+\.[0-9]+\.[0-9]+-[0-9a-zA-Z\.\-]+|latest)_(amd64|arm64)\.deb',
+            rf'antigravity_{hub_ver}-{hub_b}_\1.deb',
             html_content
         )
+
+    # Update JSON-LD softwareVersion for combined and individual entries
+    html_content = re.sub(
+        r'("softwareVersion"\s*:\s*")[^"]*\(IDE\)\s*/\s*[^"]*\(Hub\)(")',
+        rf'\g<1>{ide_ver} (IDE) / {hub_ver} (Hub)\g<2>',
+        html_content
+    )
+    html_content = re.sub(
+        r'("name"\s*:\s*"Google Antigravity IDE \(antigravity-ide\)"[^}]*?"softwareVersion"\s*:\s*")[^"]*(")',
+        rf'\g<1>{ide_ver}\g<2>',
+        html_content
+    )
+    html_content = re.sub(
+        r'("name"\s*:\s*"Google Antigravity Agent Hub \(antigravity\)"[^}]*?"softwareVersion"\s*:\s*")[^"]*(")',
+        rf'\g<1>{hub_ver}\g<2>',
+        html_content
+    )
 
     return html_content
 

@@ -65,9 +65,9 @@ import { siteConfig, currentVersions } from '../data/siteConfig';
         <span class="dot dot-green"></span>
       </div>
       <div class="terminal-tabs" role="tablist" aria-label="Installer Modes">
-        <button class="tab-btn active" data-tab="universal" onclick="switchTab('universal', this)" role="tab" aria-selected="true">⚡ Universal 1-Liner (Recommended)</button>
-        <button class="tab-btn" data-tab="cli" onclick="switchTab('cli', this)" role="tab" aria-selected="false">Antigravity CLI ('agy')</button>
-        <button class="tab-btn" data-tab="arch" onclick="switchTab('arch', this)" role="tab" aria-selected="false">🏹 Arch Linux</button>
+        <button id="tab-universal" class="tab-btn active" data-tab="universal" onclick="switchTab('universal', this)" role="tab" aria-selected="true" aria-controls="terminal-panel">⚡ Universal 1-Liner (Recommended)</button>
+        <button id="tab-cli" class="tab-btn" data-tab="cli" onclick="switchTab('cli', this)" role="tab" aria-selected="false" aria-controls="terminal-panel">Antigravity CLI ('agy')</button>
+        <button id="tab-arch" class="tab-btn" data-tab="arch" onclick="switchTab('arch', this)" role="tab" aria-selected="false" aria-controls="terminal-panel">🏹 Arch Linux</button>
       </div>
     </div>
     <button class="terminal-copy" id="terminal-copy-btn" onclick="copyTerminalCmd()" title="Copy command to clipboard" aria-label="Copy installation command">
@@ -81,7 +81,7 @@ import { siteConfig, currentVersions } from '../data/siteConfig';
     </button>
   </div>
 
-  <div class="terminal-body">
+  <div class="terminal-body" id="terminal-panel" role="tabpanel" aria-labelledby="tab-universal">
     <div class="terminal-prompt">
       <span class="prompt-symbol">$</span>
       <code id="terminal-cmd" class="terminal-code">{siteConfig.commands.universal.cmd}</code>
@@ -176,18 +176,6 @@ import { siteConfig, currentVersions } from '../data/siteConfig';
       cmd: "curl -fsSL https://x3m-industries.github.io/antigravity-packages/install.sh | bash -s -- --cli-only",
       desc: "Install only Google Antigravity CLI ('agy') into ~/.local/bin/agy (no sudo needed)."
     },
-    rpm: {
-      cmd: "curl -fsSL https://x3m-industries.github.io/antigravity-packages/install.sh | bash",
-      desc: "One command auto-detects Fedora, Ubuntu, Debian, openSUSE, RHEL & Arch with native packages."
-    },
-    deb: {
-      cmd: "curl -fsSL https://x3m-industries.github.io/antigravity-packages/install.sh | bash",
-      desc: "One command auto-detects Fedora, Ubuntu, Debian, openSUSE, RHEL & Arch with native packages."
-    },
-    suse: {
-      cmd: "curl -fsSL https://x3m-industries.github.io/antigravity-packages/install.sh | bash",
-      desc: "One command auto-detects Fedora, Ubuntu, Debian, openSUSE, RHEL & Arch with native packages."
-    },
     arch: {
       cmd: "curl -fsSL https://x3m-industries.github.io/antigravity-packages/install.sh | bash -s -- --cli-only",
       desc: "Arch Linux / Manjaro: Installs official Antigravity CLI ('agy') into ~/.local/bin/agy (no root needed)."
@@ -229,6 +217,7 @@ import { siteConfig, currentVersions } from '../data/siteConfig';
     const cmdData = COMMANDS[tabKey] || COMMANDS.universal;
     const cmdEl = document.getElementById('terminal-cmd');
     const descEl = document.getElementById('tab-desc');
+    const panelEl = document.getElementById('terminal-panel');
 
     if (cmdEl) cmdEl.textContent = cmdData.cmd;
     if (descEl) descEl.textContent = cmdData.desc;
@@ -237,6 +226,9 @@ import { siteConfig, currentVersions } from '../data/siteConfig';
       const isTarget = btn.getAttribute('data-tab') === tabKey;
       btn.classList.toggle('active', isTarget);
       btn.setAttribute('aria-selected', isTarget ? 'true' : 'false');
+      if (isTarget && panelEl && btn.id) {
+        panelEl.setAttribute('aria-labelledby', btn.id);
+      }
     });
 
     if (simState.isOpen) {
@@ -256,6 +248,8 @@ import { siteConfig, currentVersions } from '../data/siteConfig';
     const hash = (window.location.hash || '').toLowerCase().replace('#', '');
     if (['cli', 'agy'].includes(hash)) {
       switchTab('cli', null, false);
+    } else if (['arch', 'archlinux', 'pacman'].includes(hash)) {
+      switchTab('arch', null, false);
     } else {
       switchTab('universal', null, false);
     }
@@ -308,8 +302,8 @@ Repository: https://x3m-industries.github.io/antigravity-packages/`;
         { type: "info", text: "==> Configuring DNF/YUM repository...", delay: 100 },
         { type: "success", text: "✓ Added /etc/yum.repos.d/antigravity.repo", delay: 80 },
         { type: "info", text: "==> Installing antigravity-ide antigravity...", delay: 120 },
-        { type: "progress", text: "Downloading Packages:\n(1/2): antigravity-2.19.1.x86_64.rpm           38.2 MB/s | 114.2 MB  00:03\n(2/2): antigravity-ide-2.5.5.x86_64.rpm       42.1 MB/s | 128.7 MB  00:03\nTotal                                         40.1 MB/s | 242.9 MB  00:06", delay: 350 },
-        { type: "dim", text: "Running transaction check...\nRunning transaction...\n  Installing : antigravity-2.19.1.x86_64                                1/2\n  Installing : antigravity-ide-2.5.5.x86_64                            2/2\nInstalled:\n  antigravity.x86_64 2.19.1-6046815158665216\n  antigravity-ide.x86_64 2.5.5-4923483625488384\nComplete!", delay: 200 },
+        { type: "progress", text: "Downloading Packages:\n(1/2): antigravity-2.23.0.x86_64.rpm           38.2 MB/s | 114.2 MB  00:03\n(2/2): antigravity-ide-2.5.5.x86_64.rpm       42.1 MB/s | 128.7 MB  00:03\nTotal                                         40.1 MB/s | 242.9 MB  00:06", delay: 350 },
+        { type: "dim", text: "Running transaction check...\nRunning transaction...\n  Installing : antigravity-2.23.0.x86_64                                1/2\n  Installing : antigravity-ide-2.5.5.x86_64                            2/2\nInstalled:\n  antigravity.x86_64 2.23.0-5238607586394112\n  antigravity-ide.x86_64 2.5.5-4923483625488384.3\nComplete!", delay: 200 },
         { type: "success", text: "✓ Created short CLI shortcut 'agy-ide' -> /usr/bin/antigravity-ide", delay: 50 },
         { type: "success", text: "✓ Created short CLI shortcut 'agy-hub' -> /usr/bin/antigravity", delay: 50 },
         { type: "info", text: "==> Configuring GNOME Files / Nautilus right-click context menu...", delay: 80 },
@@ -335,11 +329,11 @@ Repository: https://x3m-industries.github.io/antigravity-packages/`;
       lines: [
         { type: "input", text: "curl -fsSL https://x3m-industries.github.io/antigravity-packages/install.sh | bash -s -- --cli-only", delay: 200 },
         { type: "banner", text: SIM_BANNER, delay: 120 },
-        { type: "info", text: "==> Arch Linux / Pacman environment detected.\n  • Antigravity CLI ('agy') installs directly into ~/.local/bin/agy\n  • Desktop GUI packages available via debtap (Pacman) or PKGBUILD\n", delay: 80 },
+        { type: "info", text: "==> Arch Linux / Pacman environment detected.\n  • Antigravity CLI ('agy') installs directly into ~/.local/bin/agy\n  • Desktop GUI packages available via makepkg -si (PKGBUILD) or debtap\n", delay: 80 },
         { type: "info", text: "==> Installing Antigravity CLI ('agy') into ~/.local/bin/agy (no sudo needed)...", delay: 120 },
         { type: "dim", text: "Downloading https://storage.googleapis.com/antigravity-public/agy/latest/agy-linux-x64.tar.gz...\nExtracted agy -> /home/user/.local/bin/agy\nAuto-update timer registered (checks upstream every 15 min)", delay: 220 },
         { type: "success", text: "✓ Antigravity CLI installed successfully", delay: 70 },
-        { type: "success-card", text: "✓ Arch Setup Ready!\n\nQuick Start:\n  • Run CLI:  agy\n  • Desktop GUI via debtap:  debtap antigravity-ide_latest_amd64.deb && sudo pacman -U antigravity-ide-*.pkg.tar.zst\n  • PKGBUILD:  https://github.com/x3m-industries/antigravity-packages/tree/main/pkgbuild", delay: 50 }
+        { type: "success-card", text: "✓ Arch Setup Ready!\n\nQuick Start:\n  • Run CLI:  agy\n  • Desktop GUI via debtap:  debtap antigravity-ide_2.5.5-4923483625488384.3_amd64.deb && sudo pacman -U antigravity-ide-*.pkg.tar.zst\n  • PKGBUILD:  https://github.com/x3m-industries/antigravity-packages/tree/main/pkgbuild", delay: 50 }
       ]
     }
   };
@@ -371,6 +365,13 @@ Repository: https://x3m-industries.github.io/antigravity-packages/`;
       const activeTabBtn = document.querySelector('.tab-btn.active');
       const tabId = activeTabBtn ? activeTabBtn.getAttribute('data-tab') : 'universal';
       setSimScenario(tabId);
+
+      if (typeof gtag === 'function') {
+        gtag('event', 'open_terminal_simulation', {
+          event_category: 'engagement',
+          event_label: tabId
+        });
+      }
     } else {
       drawer.style.display = 'none';
       toggleBtn.classList.remove('active');
@@ -390,17 +391,26 @@ Repository: https://x3m-industries.github.io/antigravity-packages/`;
   }
 
   function toggleSimPlayPause() {
+    const scenario = SIM_SCENARIOS[simState.currentTab] || SIM_SCENARIOS.universal;
+    if (simState.stepIndex >= scenario.lines.length) {
+      replaySimulation();
+      return;
+    }
+
     simState.isPaused = !simState.isPaused;
     const btn = document.getElementById('sim-ctrl-play');
     const statusText = document.getElementById('sim-status-text');
+    const statusDot = document.getElementById('sim-status-indicator');
 
     if (simState.isPaused) {
       if (btn) btn.textContent = '▶ Resume';
       if (statusText) statusText.textContent = 'Paused';
+      if (statusDot) statusDot.style.animation = 'none';
       if (simState.timer) clearTimeout(simState.timer);
     } else {
       if (btn) btn.textContent = '❚❚ Pause';
       if (statusText) statusText.textContent = 'Simulating execution...';
+      if (statusDot) statusDot.style.animation = '';
       runNextSimStep();
     }
   }
@@ -419,6 +429,9 @@ Repository: https://x3m-industries.github.io/antigravity-packages/`;
 
     const statusText = document.getElementById('sim-status-text');
     if (statusText) statusText.textContent = 'Simulating execution...';
+
+    const statusDot = document.getElementById('sim-status-indicator');
+    if (statusDot) statusDot.style.animation = '';
 
     if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
       finishSimulationInstant();
@@ -498,8 +511,10 @@ Repository: https://x3m-industries.github.io/antigravity-packages/`;
   function updateSimStatusComplete() {
     const statusText = document.getElementById('sim-status-text');
     const playBtn = document.getElementById('sim-ctrl-play');
+    const statusDot = document.getElementById('sim-status-indicator');
     if (statusText) statusText.textContent = 'Execution finished (Ready)';
-    if (playBtn) playBtn.textContent = '▶ Completed';
+    if (playBtn) playBtn.textContent = '↻ Replay';
+    if (statusDot) statusDot.style.animation = 'none';
   }
 
   function runNextSimStep() {

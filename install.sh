@@ -96,10 +96,12 @@ ensure_curl() {
                 apt-get update -qq && apt-get install -y --no-install-recommends curl ca-certificates
             elif command -v dnf > /dev/null 2>&1; then
                 dnf install -y curl ca-certificates
+            elif command -v yum > /dev/null 2>&1; then
+                yum install -y curl ca-certificates
             elif command -v zypper > /dev/null 2>&1; then
                 zypper --non-interactive install -y curl ca-certificates
             elif command -v pacman > /dev/null 2>&1; then
-                pacman -Sy --noconfirm curl ca-certificates
+                pacman -S --needed --noconfirm curl ca-certificates
             else
                 error "'curl' is required but could not be installed automatically. Please install curl."
             fi
@@ -109,8 +111,12 @@ ensure_curl() {
                 sudo apt-get update -qq && sudo apt-get install -y --no-install-recommends curl ca-certificates
             elif command -v dnf > /dev/null 2>&1; then
                 sudo dnf install -y curl ca-certificates
+            elif command -v yum > /dev/null 2>&1; then
+                sudo yum install -y curl ca-certificates
             elif command -v zypper > /dev/null 2>&1; then
                 sudo zypper --non-interactive install -y curl ca-certificates
+            elif command -v pacman > /dev/null 2>&1; then
+                sudo pacman -S --needed --noconfirm curl ca-certificates
             else
                 error "'curl' is required but not installed. Please install curl and re-run."
             fi
@@ -119,7 +125,6 @@ ensure_curl() {
         fi
     fi
 }
-ensure_curl
 
 # 3. Target User & Home Directory Resolution
 if [ -n "${SUDO_USER:-}" ] && [ "${SUDO_USER}" != "root" ]; then
@@ -142,11 +147,23 @@ INSTALL_IDE=true
 INSTALL_HUB=true
 INSTALL_CLI=true
 INSTALL_NAUTILUS=true
+EXPLICIT_COMPONENT_FLAG=false
+EXPLICIT_NO_NAUTILUS=false
 INTERACTIVE=true
 DRY_RUN=false
 DO_STATUS=false
 DO_UNINSTALL=false
 DO_PRINT_DOWNLOADS=false
+
+reset_components_once() {
+    if [ "${EXPLICIT_COMPONENT_FLAG}" = false ]; then
+        INSTALL_IDE=false
+        INSTALL_HUB=false
+        INSTALL_CLI=false
+        INSTALL_NAUTILUS=false
+        EXPLICIT_COMPONENT_FLAG=true
+    fi
+}
 
 # Parse Command-Line Arguments
 while [ "$#" -gt 0 ]; do
@@ -157,7 +174,6 @@ while [ "$#" -gt 0 ]; do
             ;;
         --uninstall)
             DO_UNINSTALL=true
-            INTERACTIVE=false
             ;;
         --print-downloads)
             DO_PRINT_DOWNLOADS=true
@@ -172,13 +188,15 @@ while [ "$#" -gt 0 ]; do
             ;;
         --all)
             INTERACTIVE=false
+            EXPLICIT_COMPONENT_FLAG=true
             INSTALL_IDE=true
             INSTALL_HUB=true
             INSTALL_CLI=true
-            INSTALL_NAUTILUS=true
+            [ "${EXPLICIT_NO_NAUTILUS}" = false ] && INSTALL_NAUTILUS=true
             ;;
         --cli-only)
             INTERACTIVE=false
+            EXPLICIT_COMPONENT_FLAG=true
             INSTALL_IDE=false
             INSTALL_HUB=false
             INSTALL_CLI=true
@@ -186,12 +204,14 @@ while [ "$#" -gt 0 ]; do
             ;;
         --ide-only)
             INTERACTIVE=false
+            EXPLICIT_COMPONENT_FLAG=true
             INSTALL_IDE=true
             INSTALL_HUB=false
             INSTALL_CLI=false
             ;;
         --hub-only)
             INTERACTIVE=false
+            EXPLICIT_COMPONENT_FLAG=true
             INSTALL_IDE=false
             INSTALL_HUB=true
             INSTALL_CLI=false
@@ -211,21 +231,27 @@ while [ "$#" -gt 0 ]; do
             INSTALL_HUB=false
             ;;
         --no-nautilus|--no-desktop-integrations)
+            EXPLICIT_NO_NAUTILUS=true
             INSTALL_NAUTILUS=false
             ;;
         --nautilus|--desktop-integrations)
+            EXPLICIT_NO_NAUTILUS=false
             INSTALL_NAUTILUS=true
             ;;
         --cli)
             INTERACTIVE=false
+            reset_components_once
             INSTALL_CLI=true
             ;;
         --ide)
             INTERACTIVE=false
+            reset_components_once
             INSTALL_IDE=true
+            [ "${EXPLICIT_NO_NAUTILUS}" = false ] && INSTALL_NAUTILUS=true
             ;;
         --hub)
             INTERACTIVE=false
+            reset_components_once
             INSTALL_HUB=true
             ;;
         -h|--help)
@@ -249,9 +275,13 @@ fi
 INSTALLED_IDE_VER=""
 if command -v antigravity-ide > /dev/null 2>&1 || [ -x /usr/bin/antigravity-ide ]; then
     if command -v rpm > /dev/null 2>&1 && rpm -q antigravity-ide > /dev/null 2>&1; then
-        INSTALLED_IDE_VER=$(rpm -q --qf "%{VERSION}" antigravity-ide 2>/dev/null || true)
+        INSTALLED_IDE_VER="v$(rpm -q --qf "%{VERSION}" antigravity-ide 2>/dev/null || true)"
     elif command -v dpkg-query > /dev/null 2>&1 && dpkg-query -W -f='${Version}' antigravity-ide > /dev/null 2>&1; then
-        INSTALLED_IDE_VER=$(dpkg-query -W -f='${Version}' antigravity-ide 2>/dev/null || true)
+        INSTALLED_IDE_VER="v$(dpkg-query -W -f='${Version}' antigravity-ide 2>/dev/null || true)"
+    elif command -v pacman > /dev/null 2>&1 && pacman -Q antigravity-ide-bin > /dev/null 2>&1; then
+        INSTALLED_IDE_VER="v$(pacman -Q antigravity-ide-bin 2>/dev/null | awk '{print $2}' || true)"
+    elif command -v pacman > /dev/null 2>&1 && pacman -Q antigravity-ide > /dev/null 2>&1; then
+        INSTALLED_IDE_VER="v$(pacman -Q antigravity-ide 2>/dev/null | awk '{print $2}' || true)"
     else
         INSTALLED_IDE_VER="installed"
     fi
@@ -260,9 +290,13 @@ fi
 INSTALLED_HUB_VER=""
 if command -v antigravity > /dev/null 2>&1 || [ -x /usr/bin/antigravity ]; then
     if command -v rpm > /dev/null 2>&1 && rpm -q antigravity > /dev/null 2>&1; then
-        INSTALLED_HUB_VER=$(rpm -q --qf "%{VERSION}" antigravity 2>/dev/null || true)
+        INSTALLED_HUB_VER="v$(rpm -q --qf "%{VERSION}" antigravity 2>/dev/null || true)"
     elif command -v dpkg-query > /dev/null 2>&1 && dpkg-query -W -f='${Version}' antigravity > /dev/null 2>&1; then
-        INSTALLED_HUB_VER=$(dpkg-query -W -f='${Version}' antigravity 2>/dev/null || true)
+        INSTALLED_HUB_VER="v$(dpkg-query -W -f='${Version}' antigravity 2>/dev/null || true)"
+    elif command -v pacman > /dev/null 2>&1 && pacman -Q antigravity-bin > /dev/null 2>&1; then
+        INSTALLED_HUB_VER="v$(pacman -Q antigravity-bin 2>/dev/null | awk '{print $2}' || true)"
+    elif command -v pacman > /dev/null 2>&1 && pacman -Q antigravity > /dev/null 2>&1; then
+        INSTALLED_HUB_VER="v$(pacman -Q antigravity 2>/dev/null | awk '{print $2}' || true)"
     else
         INSTALLED_HUB_VER="installed"
     fi
@@ -313,13 +347,13 @@ show_status() {
 
     echo -e "${BOLD}Installed Applications:${RESET}"
     if [ -n "${INSTALLED_IDE_VER}" ]; then
-        echo -e "  • ${GREEN}Antigravity IDE:${RESET}       Installed (${BOLD}v${INSTALLED_IDE_VER}${RESET}) -> $(command -v antigravity-ide 2>/dev/null || echo '/usr/bin/antigravity-ide')"
+        echo -e "  • ${GREEN}Antigravity IDE:${RESET}       Installed (${BOLD}${INSTALLED_IDE_VER}${RESET}) -> $(command -v antigravity-ide 2>/dev/null || echo '/usr/bin/antigravity-ide')"
     else
         echo -e "  • ${DIM}Antigravity IDE:${RESET}       Not installed"
     fi
 
     if [ -n "${INSTALLED_HUB_VER}" ]; then
-        echo -e "  • ${GREEN}Antigravity Hub:${RESET}       Installed (${BOLD}v${INSTALLED_HUB_VER}${RESET}) -> $(command -v antigravity 2>/dev/null || echo '/usr/bin/antigravity')"
+        echo -e "  • ${GREEN}Antigravity Hub:${RESET}       Installed (${BOLD}${INSTALLED_HUB_VER}${RESET}) -> $(command -v antigravity 2>/dev/null || echo '/usr/bin/antigravity')"
     else
         echo -e "  • ${DIM}Antigravity Hub:${RESET}       Not installed"
     fi
@@ -426,23 +460,24 @@ print_downloads() {
     echo -e "  ${BOLD}Architecture Detected:${RESET} ${ARCH}\n"
 
     echo -e "  ${BOLD}1. Official Google Antigravity Hub (Agent Platform):${RESET}"
-    echo -e "     • x86_64:  ${CYAN}https://storage.googleapis.com/antigravity-public/antigravity-hub/latest/linux-x64/Antigravity.tar.gz${RESET}"
-    echo -e "     • aarch64: ${CYAN}https://storage.googleapis.com/antigravity-public/antigravity-hub/latest/linux-arm/Antigravity.tar.gz${RESET}"
+    echo -e "     • x86_64:   ${CYAN}https://storage.googleapis.com/antigravity-public/antigravity-hub/2.23.0-5238607586394112/linux-x64/Antigravity.tar.gz${RESET}"
+    echo -e "     • aarch64:  ${CYAN}https://storage.googleapis.com/antigravity-public/antigravity-hub/2.23.0-5238607586394112/linux-arm/Antigravity.tar.gz${RESET}"
     echo ""
 
     echo -e "  ${BOLD}2. Official Google Antigravity IDE (AI Code Editor):${RESET}"
-    echo -e "     • Web:     ${CYAN}https://antigravity.google/download${RESET}"
+    echo -e "     • Web:      ${CYAN}https://antigravity.google/download${RESET}"
     echo ""
 
     echo -e "  ${BOLD}3. Official Google Antigravity CLI ('agy'):${RESET}"
-    echo -e "     • Script:  ${CYAN}https://antigravity.google/cli/install.sh${RESET}"
+    echo -e "     • Script:   ${CYAN}https://antigravity.google/cli/install.sh${RESET}"
     echo ""
 
     echo -e "  ${BOLD}4. X3M Industries Native Linux Packages & Repositories:${RESET}"
     echo -e "     • Releases: ${CYAN}https://github.com/x3m-industries/antigravity-packages/releases/latest${RESET}"
     echo -e "     • DNF Repo: ${CYAN}https://x3m-industries.github.io/antigravity-packages/rpm/${RESET}"
     echo -e "     • APT Repo: ${CYAN}https://apt.x3m.industries/deb/${RESET}"
-    echo -e "     • LLM Context: ${CYAN}https://x3m-industries.github.io/antigravity-packages/llms.txt${RESET}"
+    echo -e "     • PKGBUILD: ${CYAN}https://github.com/x3m-industries/antigravity-packages/tree/main/pkgbuild${RESET}"
+    echo -e "     • LLM Docs: ${CYAN}https://x3m-industries.github.io/antigravity-packages/llms.txt${RESET}"
     echo ""
 }
 
@@ -454,15 +489,22 @@ do_uninstall() {
     check_sudo
 
     if [ "${INTERACTIVE}" = true ]; then
-        echo -e "${YELLOW}${BOLD}Are you sure you want to uninstall Google Antigravity Linux components?${RESET}"
-        echo -e "This will remove native RPM/DEB packages, repository configs, GPG keys, and desktop integrations."
-        echo -e "User settings and code projects in home directories will remain completely untouched.\n"
-        printf "Proceed with uninstallation? [y/N]: "
-        read -r confirm || true
-        case "${confirm}" in
-            y|Y|yes|YES) ;;
-            *) echo "Uninstallation aborted."; exit 0 ;;
-        esac
+        if (exec 3</dev/tty) 2>/dev/null || [ -t 0 ]; then
+            echo -e "${YELLOW}${BOLD}Are you sure you want to uninstall Google Antigravity Linux components?${RESET}"
+            echo -e "This will remove native RPM/DEB packages, repository configs, GPG keys, and desktop integrations."
+            echo -e "User settings and code projects in home directories will remain completely untouched.\n"
+            confirm=""
+            if (exec 3</dev/tty) 2>/dev/null; then
+                printf "Proceed with uninstallation? [y/N]: "
+                read -r confirm < /dev/tty || true
+            else
+                read -r -p "Proceed with uninstallation? [y/N]: " confirm || true
+            fi
+            case "${confirm}" in
+                y|Y|yes|YES) ;;
+                *) echo "Uninstallation aborted."; exit 0 ;;
+            esac
+        fi
     fi
 
     info "Removing Google Antigravity packages..."
@@ -474,6 +516,8 @@ do_uninstall() {
         ${SUDO} apt-get remove -y antigravity antigravity-ide 2>/dev/null || true
     elif command -v zypper > /dev/null 2>&1; then
         ${SUDO} zypper --non-interactive remove -y antigravity antigravity-ide 2>/dev/null || true
+    elif command -v pacman > /dev/null 2>&1; then
+        ${SUDO} pacman -Rns --noconfirm antigravity antigravity-ide antigravity-bin antigravity-ide-bin 2>/dev/null || true
     fi
 
     info "Removing repository configurations and GPG keyrings..."
@@ -562,10 +606,10 @@ if [ "${INTERACTIVE}" = true ]; then
         echo -e "${BOLD}Select components to install / update:${RESET}\n"
 
         status_ide="${DIM}[Not installed]${RESET}"
-        [ -n "${INSTALLED_IDE_VER}" ] && status_ide="${GREEN}[Installed: v${INSTALLED_IDE_VER}]${RESET}"
+        [ -n "${INSTALLED_IDE_VER}" ] && status_ide="${GREEN}[Installed: ${INSTALLED_IDE_VER}]${RESET}"
 
         status_hub="${DIM}[Not installed]${RESET}"
-        [ -n "${INSTALLED_HUB_VER}" ] && status_hub="${GREEN}[Installed: v${INSTALLED_HUB_VER}]${RESET}"
+        [ -n "${INSTALLED_HUB_VER}" ] && status_hub="${GREEN}[Installed: ${INSTALLED_HUB_VER}]${RESET}"
 
         status_cli="${DIM}[Not installed]${RESET}"
         [ -n "${INSTALLED_CLI_VER}" ] && status_cli="${GREEN}[Installed: ${INSTALLED_CLI_VER}]${RESET}"
@@ -637,6 +681,8 @@ if [ "${DRY_RUN}" = true ]; then
     exit 0
 fi
 
+ensure_curl
+
 # Sudo check for system package installation
 case "${DISTRO_ID}" in
     arch|manjaro|endeavouros)
@@ -687,11 +733,13 @@ clean_legacy_conflicts() {
         fi
     done
 
-    # 3. Google's deprecated/broken APT repository configuration
+    # 3. Legacy or one-line APT repository configuration (superseded by DEB822 antigravity.sources)
     local old_list="/etc/apt/sources.list.d/antigravity.list"
-    if [ -f "${old_list}" ] && ! grep -q "x3m-industries" "${old_list}" 2>/dev/null; then
-        warn "Detected legacy Google APT configuration at ${old_list}."
-        info "Removing obsolete APT list to prevent duplicate repository conflicts..."
+    if [ -f "${old_list}" ]; then
+        if ! grep -qE "x3m-industries|apt\.x3m\.industries" "${old_list}" 2>/dev/null; then
+            warn "Detected legacy Google APT configuration at ${old_list}."
+        fi
+        info "Removing legacy one-line APT list (${old_list}) in favor of DEB822 antigravity.sources..."
         ${SUDO} rm -f "${old_list}"
     fi
 
@@ -730,6 +778,7 @@ install_deb() {
     ${SUDO} mkdir -p /etc/apt/keyrings
     ${SUDO} curl -fsSL https://apt.x3m.industries/deb/antigravity.gpg -o /etc/apt/keyrings/antigravity.gpg
     ${SUDO} curl -fsSL https://apt.x3m.industries/deb/antigravity.sources -o /etc/apt/sources.list.d/antigravity.sources
+    ${SUDO} rm -f /etc/apt/sources.list.d/antigravity.list
     success "Added /etc/apt/keyrings/antigravity.gpg"
     success "Added /etc/apt/sources.list.d/antigravity.sources"
 
@@ -837,7 +886,7 @@ install_cli() {
         if command -v su > /dev/null 2>&1; then
             su - "${TARGET_USER}" -c "curl -fsSL https://antigravity.google/cli/install.sh | bash"
         elif command -v runuser > /dev/null 2>&1; then
-            runuser -u "${TARGET_USER}" -- bash -c "curl -fsSL https://antigravity.google/cli/install.sh | bash"
+            runuser -u "${TARGET_USER}" -- env HOME="${TARGET_HOME}" USER="${TARGET_USER}" LOGNAME="${TARGET_USER}" bash -c "curl -fsSL https://antigravity.google/cli/install.sh | bash"
         else
             error "Neither 'su' nor 'runuser' is available to switch to user '${TARGET_USER}'."
         fi
@@ -866,8 +915,8 @@ if [ "${INSTALL_IDE}" = true ] || [ "${INSTALL_HUB}" = true ]; then
             echo ""
             info "Arch Linux / Pacman environment detected (${DISTRO_ID})."
             echo -e "  • ${BOLD}Antigravity CLI ('agy'):${RESET} Installing seamlessly into ${TARGET_HOME}/.local/bin/agy (no root needed)."
-            echo -e "  • ${BOLD}Desktop GUI Packages:${RESET} Install via ${CYAN}debtap${RESET} (Pacman) or PKGBUILD:"
-            echo -e "    ${CYAN}debtap antigravity-ide_latest_amd64.deb && sudo pacman -U antigravity-ide-*.pkg.tar.zst${RESET}"
+            echo -e "  • ${BOLD}Desktop GUI Packages:${RESET} Install via ${CYAN}makepkg -si${RESET} (PKGBUILD) or ${CYAN}debtap${RESET}:"
+            echo -e "    ${CYAN}debtap antigravity-ide_2.5.5-4923483625488384.3_amd64.deb && sudo pacman -U antigravity-ide-*.pkg.tar.zst${RESET}"
             echo -e "    ${CYAN}https://github.com/x3m-industries/antigravity-packages/tree/main/pkgbuild${RESET}\n"
             ;;
         *)
@@ -881,7 +930,7 @@ if [ "${INSTALL_IDE}" = true ] || [ "${INSTALL_HUB}" = true ]; then
                 IS_ARCH=true
                 echo ""
                 info "Arch-based distribution detected (${DISTRO_ID})."
-                echo -e "  • Desktop GUI packages can be installed via debtap or PKGBUILD."
+                echo -e "  • Desktop GUI packages can be installed via PKGBUILD (makepkg -si) or debtap."
                 echo -e "  • Proceeding with Antigravity CLI ('agy') in ~/.local/bin/agy...\n"
             else
                 error "Unsupported distribution: '${DISTRO_ID}'. You can download raw RPM or DEB packages from https://github.com/x3m-industries/antigravity-packages/releases"
@@ -906,7 +955,7 @@ success "Installation completed successfully!"
 if [ "${IS_ARCH}" = true ]; then
     echo -e "\n${BOLD}Arch Linux Quick Start:${RESET}"
     [ "${INSTALL_CLI}" = true ] && echo -e "  • Launch Antigravity CLI:     ${CYAN}agy${RESET}"
-    echo -e "  • Desktop GUI with debtap:    ${CYAN}curl -fsSLO https://github.com/x3m-industries/antigravity-packages/releases/latest/download/antigravity-ide_latest_amd64.deb && debtap antigravity-ide_latest_amd64.deb && sudo pacman -U antigravity-ide-*.pkg.tar.zst${RESET}"
+    echo -e "  • Desktop GUI with debtap:    ${CYAN}curl -fsSLO https://github.com/x3m-industries/antigravity-packages/releases/latest/download/antigravity-ide_2.5.5-4923483625488384.3_amd64.deb && debtap antigravity-ide_2.5.5-4923483625488384.3_amd64.deb && sudo pacman -U antigravity-ide-*.pkg.tar.zst${RESET}"
     echo -e "  • AUR PKGBUILD templates:     ${CYAN}https://github.com/x3m-industries/antigravity-packages/tree/main/pkgbuild${RESET}"
 else
     echo -e "\n${BOLD}Quick Start (Commands & Shortcuts):${RESET}"

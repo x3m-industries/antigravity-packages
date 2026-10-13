@@ -129,11 +129,15 @@ sudo zypper install antigravity-ide antigravity
 ```
 
 ### Arch Linux, Manjaro, EndeavourOS
-Extract RPM packages or convert DEBs:
+Build with native Arch `PKGBUILD` or convert DEBs with `debtap`:
 ```bash
-# Convert with debtap
-curl -fsSLO https://github.com/x3m-industries/antigravity-packages/releases/latest/download/antigravity-ide_latest_amd64.deb
-debtap -u && debtap antigravity-ide_latest_amd64.deb
+# Option 1: Build and install via PKGBUILD (makepkg)
+git clone https://github.com/x3m-industries/antigravity-packages.git
+cd antigravity-packages/pkgbuild/antigravity-ide-bin && makepkg -si
+
+# Option 2: Convert with debtap
+curl -fsSLO https://github.com/x3m-industries/antigravity-packages/releases/latest/download/antigravity-ide_2.5.5-4923483625488384.3_amd64.deb
+debtap -u && debtap antigravity-ide_2.5.5-4923483625488384.3_amd64.deb
 sudo pacman -U antigravity-ide-*.pkg.tar.zst
 ```
 

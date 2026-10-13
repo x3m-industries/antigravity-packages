@@ -117,7 +117,6 @@ class TestPackagingLogic(unittest.TestCase):
             self.assertEqual(res.returncode, 0, f"desktop-file-validate failed: {res.stderr}")
 
     def test_file_manager_integrations(self):
-        import py_compile
         desktop_dir = repo_root / "desktop"
 
         # Nautilus & Caja Python Extension
@@ -129,7 +128,8 @@ class TestPackagingLogic(unittest.TestCase):
         self.assertIn("Caja", content)
         self.assertIn("Open in Antigravity IDE", content)
         self.assertIn("antigravity-ide", content)
-        py_compile.compile(str(nautilus_script), doraise=True)
+        compile(content, str(nautilus_script), "exec")
+        self.assertFalse((desktop_dir / "nautilus" / "__pycache__").exists())
 
         # KDE Dolphin KIO Service Menu
         dolphin_file = desktop_dir / "dolphin" / "open-in-antigravity-ide.desktop"
@@ -460,6 +460,12 @@ class TestPackagingLogic(unittest.TestCase):
         self.assertEqual(plan["ide_version"], f"{self.IDE_VER}.2")
         self.assertEqual(plan["tag_name"], f"v{self.IDE_VER}.2_hub-2.20.0-111")
 
+        # Natural revision sorting (.10 > .2) and forced rebuild without PKG_REVISION preserves existing revision
+        multi_assets = self._assets(ide=f"{self.IDE_VER}.2") + self._assets(ide=f"{self.IDE_VER}.10")
+        plan_multi = compute_build_plan(self._upstream(), "v-prev", multi_assets, {"FORCE_IDE": "true"})
+        self.assertTrue(plan_multi["ide_needs_build"])
+        self.assertEqual(plan_multi["ide_version"], f"{self.IDE_VER}.10")
+
     def test_build_plan_force_flags_and_revision(self):
         plan = compute_build_plan(self._upstream(), "v-prev", self._assets(), {"FORCE_IDE": "true"})
         self.assertTrue(plan["ide_needs_build"])
@@ -554,6 +560,7 @@ class TestPackagingLogic(unittest.TestCase):
         self.assertIn("%defattr(-,root,root,-)", build_script)
         self.assertIn("Installed-Size", build_script)
         self.assertIn('filter="tar"', build_script)
+        self.assertIn("symlinks=True", build_script)
 
     def test_smoke_test_is_strict(self):
         smoke = (repo_root / "scripts" / "smoke_test.sh").read_text(encoding="utf-8")
@@ -561,11 +568,33 @@ class TestPackagingLogic(unittest.TestCase):
         self.assertIn("not found", smoke)  # ldd unresolved-library check
         self.assertNotIn("rpm -q antigravity || true", smoke)
         self.assertNotIn("dpkg -s antigravity 2>/dev/null || true", smoke)
+        self.assertIn("/usr/share/icons/hicolor/512x512/apps/$name.png", smoke)
 
     def test_installer_does_not_duplicate_packaged_files(self):
         installer = (repo_root / "install.sh").read_text(encoding="utf-8")
         for marker in ("NAUTILUS_EOF", "KDE_EOF", "NEMO_EOF"):
             self.assertNotIn(marker, installer)
+
+    def test_installer_component_flags(self):
+        import subprocess
+        install_sh = repo_root / "install.sh"
+        ansi_re = re.compile(r"\x1b\[[0-9;]*m")
+
+        # --cli should select ONLY CLI, not IDE or Hub
+        res_cli = subprocess.run([str(install_sh), "--cli", "--dry-run"], capture_output=True, text=True)
+        self.assertEqual(res_cli.returncode, 0)
+        out_cli = ansi_re.sub("", res_cli.stdout)
+        self.assertIn("Antigravity CLI ('agy') (Terminal agent", out_cli)
+        self.assertNotIn("Antigravity IDE (Native package", out_cli)
+        self.assertNotIn("Antigravity Hub (Antigravity 2.0", out_cli)
+
+        # --ide --hub should select IDE and Hub, not CLI
+        res_gui = subprocess.run([str(install_sh), "--ide", "--hub", "--dry-run"], capture_output=True, text=True)
+        self.assertEqual(res_gui.returncode, 0)
+        out_gui = ansi_re.sub("", res_gui.stdout)
+        self.assertIn("Antigravity IDE (Native package", out_gui)
+        self.assertIn("Antigravity Hub (Antigravity 2.0", out_gui)
+        self.assertNotIn("Antigravity CLI ('agy') (Terminal agent", out_gui)
 
     def test_astro_site_components(self):
         site_dir = repo_root / "site"
@@ -577,6 +606,7 @@ class TestPackagingLogic(unittest.TestCase):
         self.assertIn("7A48CA4D7E7B6601", config_content)
         self.assertIn("E83A 23BC", config_content)
         self.assertIn("parseReleaseTag", config_content)
+        self.assertNotIn("antigravity-ide_latest_amd64.deb", config_content)
 
         index_astro = site_dir / "src" / "pages" / "index.astro"
         docs_astro = site_dir / "src" / "pages" / "docs.astro"
@@ -586,6 +616,14 @@ class TestPackagingLogic(unittest.TestCase):
         astro_config = site_dir / "astro.config.mjs"
         self.assertTrue(astro_config.exists())
         self.assertIn("format: 'file'", astro_config.read_text(encoding="utf-8"))
+
+        # Verify JSON-LD has no raw &amp; entities and no broken _latest_amd64.deb links
+        for tmpl_name in ("index.html", "docs.html"):
+            html = (repo_root / "templates" / tmpl_name).read_text(encoding="utf-8")
+            self.assertNotIn("antigravity-ide_latest_amd64.deb", html, tmpl_name)
+            ld_match = re.search(r'<script type="application/ld\+json">(.*?)</script>', html, re.S)
+            self.assertIsNotNone(ld_match, tmpl_name)
+            self.assertNotIn("&amp;", ld_match.group(1), tmpl_name)
 
     def test_pkgbuild_and_arch_support(self):
         import subprocess
@@ -599,6 +637,8 @@ class TestPackagingLogic(unittest.TestCase):
         self.assertIn("pkgname=antigravity-ide-bin", ide_txt)
         self.assertIn("arch=('x86_64' 'aarch64')", ide_txt)
         self.assertIn("chrome-sandbox", ide_txt)
+        self.assertIn("_reltag=", ide_txt)
+        self.assertNotIn('chmod 0755 "${pkgdir}/usr/bin/', ide_txt)
         res_ide = subprocess.run(["bash", "-n", str(ide_pkg)], capture_output=True, text=True)
         self.assertEqual(res_ide.returncode, 0)
 
@@ -609,6 +649,8 @@ class TestPackagingLogic(unittest.TestCase):
         self.assertIn("pkgname=antigravity-bin", hub_txt)
         self.assertIn("arch=('x86_64' 'aarch64')", hub_txt)
         self.assertIn("chrome-sandbox", hub_txt)
+        self.assertIn("_reltag=", hub_txt)
+        self.assertNotIn('chmod 0755 "${pkgdir}/usr/bin/', hub_txt)
         res_hub = subprocess.run(["bash", "-n", str(hub_pkg)], capture_output=True, text=True)
         self.assertEqual(res_hub.returncode, 0)
 
@@ -618,6 +660,7 @@ class TestPackagingLogic(unittest.TestCase):
         self.assertIn("IS_ARCH", install_txt)
         self.assertIn("debtap", install_txt)
         self.assertIn("/opt/Antigravity*", install_txt)
+        self.assertNotIn("antigravity-ide_latest_amd64.deb", install_txt)
 
 
 if __name__ == "__main__":
