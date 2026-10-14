@@ -460,8 +460,8 @@ print_downloads() {
     echo -e "  ${BOLD}Architecture Detected:${RESET} ${ARCH}\n"
 
     echo -e "  ${BOLD}1. Official Google Antigravity Hub (Agent Platform):${RESET}"
-    echo -e "     • x86_64:   ${CYAN}https://storage.googleapis.com/antigravity-public/antigravity-hub/2.23.0-5238607586394112/linux-x64/Antigravity.tar.gz${RESET}"
-    echo -e "     • aarch64:  ${CYAN}https://storage.googleapis.com/antigravity-public/antigravity-hub/2.23.0-5238607586394112/linux-arm/Antigravity.tar.gz${RESET}"
+    echo -e "     • x86_64:   ${CYAN}https://storage.googleapis.com/antigravity-public/antigravity-hub/2.23.1-6348059836284928/linux-x64/Antigravity.tar.gz${RESET}"
+    echo -e "     • aarch64:  ${CYAN}https://storage.googleapis.com/antigravity-public/antigravity-hub/2.23.1-6348059836284928/linux-arm/Antigravity.tar.gz${RESET}"
     echo ""
 
     echo -e "  ${BOLD}2. Official Google Antigravity IDE (AI Code Editor):${RESET}"

@@ -5,7 +5,7 @@ import { siteConfig, currentVersions } from '../data/siteConfig';
 
 <BaseLayout
   title={siteConfig.docsTitle}
-  description="Complete documentation, command-line reference, manual repository setup, GPG verification, and troubleshooting for Google Antigravity on Linux."
+  description={siteConfig.docsDescription}
   currentPage="docs"
 >
   <!-- Documentation Header -->
@@ -470,10 +470,15 @@ import { siteConfig, currentVersions } from '../data/siteConfig';
 
         if (typeof gtag === 'function') {
           const section = btn.closest('.doc-section');
+          const secId = section && section.id ? section.id : 'docs';
           gtag('event', 'copy_docs_command', {
             event_category: 'conversion',
-            event_label: section ? section.id : 'docs',
+            event_label: secId,
             command: code
+          });
+          gtag('event', 'copy_docs_' + secId.replace(/[^a-z0-9_]/gi, '_'), {
+            event_category: 'conversion',
+            event_label: secId
           });
         }
       }).catch(err => console.error('Copy failed: ', err));

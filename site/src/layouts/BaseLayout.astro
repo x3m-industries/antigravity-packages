@@ -43,6 +43,34 @@ const structuredData = {
       },
     },
     {
+      "@type": "SoftwareApplication",
+      "name": "Google Antigravity IDE (antigravity-ide)",
+      "applicationCategory": "DeveloperApplication",
+      "operatingSystem": "Linux (x86_64, aarch64)",
+      "softwareVersion": currentVersions.ideSemver,
+      "downloadUrl": siteConfig.repo.releasesUrl,
+      "url": siteConfig.siteUrl,
+      "offers": {
+        "@type": "Offer",
+        "price": "0",
+        "priceCurrency": "USD",
+      },
+    },
+    {
+      "@type": "SoftwareApplication",
+      "name": "Google Antigravity Agent Hub (antigravity)",
+      "applicationCategory": "DeveloperApplication",
+      "operatingSystem": "Linux (x86_64, aarch64)",
+      "softwareVersion": currentVersions.hubSemver,
+      "downloadUrl": siteConfig.repo.releasesUrl,
+      "url": siteConfig.siteUrl,
+      "offers": {
+        "@type": "Offer",
+        "price": "0",
+        "priceCurrency": "USD",
+      },
+    },
+    {
       "@type": "WebSite",
       "name": "Google Antigravity Linux Repositories",
       "url": siteConfig.siteUrl,
@@ -98,7 +126,32 @@ const structuredData = {
           "url": `${siteConfig.siteUrl}docs.html#cli-reference`
         }
       ]
-    }] : []),
+    }] : [{
+      "@type": "HowTo",
+      "name": "How to Install or Uninstall Google Antigravity on Arch Linux, Ubuntu, and Fedora",
+      "description": "Reference commands for installing Antigravity CLI ('agy') and desktop packages on Arch Linux (PKGBUILD / pacman), Ubuntu/Debian (APT), Fedora (DNF), and cleanly uninstalling.",
+      "totalTime": "PT2M",
+      "step": [
+        {
+          "@type": "HowToStep",
+          "name": "Install on Arch Linux (CLI or PKGBUILD)",
+          "text": "Install the user-space CLI via: curl -fsSL https://x3m-industries.github.io/antigravity-packages/install.sh | bash -s -- --cli-only, or build desktop packages with makepkg -si from pkgbuild/.",
+          "url": `${siteConfig.siteUrl}docs.html#arch`
+        },
+        {
+          "@type": "HowToStep",
+          "name": "Install on Ubuntu/Debian (APT) or Fedora (DNF)",
+          "text": "Configure the signed APT DEB822 or DNF repository and install via sudo apt install antigravity-ide antigravity or sudo dnf install antigravity-ide antigravity.",
+          "url": `${siteConfig.siteUrl}docs.html#manual-repos`
+        },
+        {
+          "@type": "HowToStep",
+          "name": "Cleanly Uninstall Antigravity",
+          "text": "Remove packages, repositories, and CLI shortcuts cleanly with: curl -fsSL https://x3m-industries.github.io/antigravity-packages/install.sh | bash -s -- --uninstall.",
+          "url": `${siteConfig.siteUrl}docs.html#maintenance`
+        }
+      ]
+    }]),
     {
       "@type": "BreadcrumbList",
       "itemListElement": [
@@ -191,5 +244,48 @@ const structuredData = {
     <slot />
     <Footer currentPage={currentPage} />
   </div>
+  <script is:inline>
+    document.addEventListener('DOMContentLoaded', () => {
+      document.querySelectorAll('details.faq-item').forEach((detailsEl) => {
+        detailsEl.addEventListener('toggle', () => {
+          if (detailsEl.open && typeof gtag === 'function') {
+            const summary = detailsEl.querySelector('summary');
+            const question = summary ? summary.textContent.trim() : 'faq';
+            gtag('event', 'toggle_faq', {
+              event_category: 'engagement',
+              event_label: question
+            });
+          }
+        });
+      });
+
+      document.addEventListener('click', (e) => {
+        const link = e.target && e.target.closest ? e.target.closest('a[href]') : null;
+        if (!link || typeof gtag !== 'function') return;
+        const href = link.getAttribute('href') || '';
+        if (href.includes('github.com/x3m-industries/antigravity-packages/releases')) {
+          gtag('event', 'click_github_releases', {
+            event_category: 'conversion',
+            event_label: href
+          });
+        } else if (href.includes('github.com/x3m-industries/antigravity-packages/tree/main/pkgbuild')) {
+          gtag('event', 'click_arch_pkgbuild', {
+            event_category: 'conversion',
+            event_label: href
+          });
+        } else if (href.includes('github.com/x3m-industries/antigravity-packages')) {
+          gtag('event', 'click_github_repo', {
+            event_category: 'engagement',
+            event_label: href
+          });
+        } else if (/^https?:\/\//.test(href) && !href.includes('x3m-industries.github.io')) {
+          gtag('event', 'click_outbound', {
+            event_category: 'engagement',
+            event_label: href
+          });
+        }
+      });
+    });
+  </script>
 </body>
 </html>

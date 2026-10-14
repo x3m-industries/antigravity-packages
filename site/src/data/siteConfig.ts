@@ -9,8 +9,8 @@ export function parseReleaseTag(tag?: string): ReleaseVersions {
   const defaultVersions: ReleaseVersions = {
     ideSemver: "2.5.5",
     ideBuild: "4923483625488384.3",
-    hubSemver: "2.23.0",
-    hubBuild: "5238607586394112",
+    hubSemver: "2.23.1",
+    hubBuild: "6348059836284928",
   };
 
   if (!tag || tag === "latest" || tag === "vlatest") {
@@ -50,7 +50,9 @@ export const siteConfig = {
   siteUrl: "https://x3m-industries.github.io/antigravity-packages/",
   baseUrl: "/antigravity-packages/",
   title: "Google Antigravity for Linux — Native DNF & APT Repositories",
-  docsTitle: "Documentation & CLI Reference — Google Antigravity for Linux (Arch, APT, DNF & Uninstall)",
+  docsTitle: "Antigravity Linux Docs: Arch, APT, DNF, CLI & Uninstall",
+  docsDescription:
+    "Install or uninstall Google Antigravity on Arch Linux (pacman, PKGBUILD, agy CLI), Ubuntu/Debian (APT), Fedora (DNF) & openSUSE. Full CLI reference & GPG keys.",
   description:
     "Install Google Antigravity 2.0, IDE & CLI on Linux with 1 command. Native DNF & APT repositories with daily updates for Fedora, Ubuntu, Debian & Arch.",
   author: {

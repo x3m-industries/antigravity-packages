@@ -312,7 +312,8 @@ class TestPackagingLogic(unittest.TestCase):
         docs_file = repo_root / "templates" / "docs.html"
         self.assertTrue(docs_file.exists())
         docs_html = docs_file.read_text(encoding="utf-8")
-        self.assertIn("<title>Documentation &amp; CLI Reference — Google Antigravity for Linux", docs_html)
+        self.assertIn("<title>Antigravity Linux Docs: Arch, APT, DNF, CLI &amp; Uninstall</title>", docs_html)
+        self.assertIn("pacman, PKGBUILD, agy CLI", docs_html)
         self.assertIn("Developer &amp; Enterprise Documentation", docs_html)
         self.assertIn("--status", docs_html)
         self.assertIn("--uninstall", docs_html)
@@ -323,6 +324,7 @@ class TestPackagingLogic(unittest.TestCase):
         self.assertIn("E83A 23BC", docs_html)
         self.assertIn("G-XXTD2B1XB0", docs_html)
         self.assertIn("debtap", docs_html)
+        self.assertIn("toggle_faq", docs_html)
 
     def test_version_tag_injection(self):
         import sys
