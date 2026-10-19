@@ -1,6 +1,6 @@
 # Maintainer: Steven Ceuppens <packaging@x3m.industries>
 pkgname=antigravity-bin
-pkgver=2.23.1
+pkgver=2.24.0
 pkgrel=1
 pkgdesc="Google Antigravity Agent Hub (Antigravity 2.0) - Official Agent Platform (Native Binary)"
 arch=('x86_64' 'aarch64')
@@ -15,12 +15,12 @@ conflicts=('antigravity')
 options=('!strip')
 
 # Sources point to cryptographically verified release binaries
-_reltag="v2.5.5-4923483625488384.3_hub-2.23.1-6348059836284928"
-_debver="2.23.1-6348059836284928"
+_reltag="v2.5.5-4923483625488384.3_hub-2.24.0-5780333019398144"
+_debver="2.24.0-5780333019398144"
 source_x86_64=("antigravity-${pkgver}-${pkgrel}-x86_64.deb::https://github.com/x3m-industries/antigravity-packages/releases/download/${_reltag}/antigravity_${_debver}_amd64.deb")
 source_aarch64=("antigravity-${pkgver}-${pkgrel}-aarch64.deb::https://github.com/x3m-industries/antigravity-packages/releases/download/${_reltag}/antigravity_${_debver}_arm64.deb")
-sha256sums_x86_64=('86a863b105c3516fe190e8424e6ea2117fad0344082c70e6399a2927f8fd9ebf')
-sha256sums_aarch64=('00a902c1b83605d4afaba0b8f74346f607cb6ba3f3791679782e44eac30de3b2')
+sha256sums_x86_64=('e87314378a843cd26d10cd3629b2b15e0d67ee366391603a737f4523fc8d3b49')
+sha256sums_aarch64=('1d373a3a3daa6117e0f00483fe456ec685f454925da370d9022cf6a747ba80cf')
 
 package() {
     # Extract debian data archive

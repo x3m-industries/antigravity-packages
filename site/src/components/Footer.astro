@@ -17,7 +17,7 @@ const isHome = currentPage === 'home';
     {isHome ? (
       <a href="docs.html">Documentation &amp; Reference</a>
     ) : (
-      <a href="index.html">Main Website</a>
+      <a href={siteConfig.baseUrl}>Main Website</a>
     )} · 
     <a href={siteConfig.repo.githubUrl} target="_blank" rel="noopener noreferrer">GitHub Repository</a> · 
     <a href="llms.txt">LLM Index</a> · 

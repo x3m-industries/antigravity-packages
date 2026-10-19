@@ -11,7 +11,7 @@ const isDocs = currentPage === 'docs';
 
 <nav class="site-nav" aria-label="Main Navigation">
   <div class="nav-inner">
-    <a href="index.html" class="nav-brand" aria-label="Antigravity Linux Home">
+    <a href={siteConfig.baseUrl} class="nav-brand" aria-label="Antigravity Linux Home">
       <img src="assets/logo.png" alt="Antigravity Logo" width="28" height="28" />
       <span>Antigravity Linux</span>
       {isDocs && <span class="nav-brand-badge">Docs</span>}
@@ -19,7 +19,7 @@ const isDocs = currentPage === 'docs';
     <div class="nav-links">
       {isDocs ? (
         <>
-          <a href="index.html" class="nav-link">← Quickstart</a>
+          <a href={siteConfig.baseUrl} class="nav-link">← Quickstart</a>
           <a href="#cli-reference" class="nav-link">CLI Options</a>
           <a href="#manual-repos" class="nav-link">Manual Repos</a>
           <a href="#nautilus" class="nav-link">GNOME Files</a>

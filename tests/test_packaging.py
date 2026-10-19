@@ -278,7 +278,8 @@ class TestPackagingLogic(unittest.TestCase):
         template_file = repo_root / "templates" / "index.html"
         self.assertTrue(template_file.exists())
         html = template_file.read_text(encoding="utf-8")
-        self.assertIn("<title>Google Antigravity for Linux", html)
+        self.assertIn("<title>Google Antigravity for Linux — Native Packages, DNF &amp; APT Repositories</title>", html)
+        self.assertNotIn('href="index.html"', html)
         self.assertIn("switchTab", html)
         self.assertIn("detectOSAndInitTabs", html)
         self.assertIn("X3M Antigravity Packagers", html)
@@ -312,9 +313,10 @@ class TestPackagingLogic(unittest.TestCase):
         docs_file = repo_root / "templates" / "docs.html"
         self.assertTrue(docs_file.exists())
         docs_html = docs_file.read_text(encoding="utf-8")
-        self.assertIn("<title>Antigravity Linux Docs: Arch, APT, DNF, CLI &amp; Uninstall</title>", docs_html)
+        self.assertIn("<title>Antigravity Linux Packages &amp; Docs: Arch, APT, DNF, CLI &amp; Uninstall</title>", docs_html)
+        self.assertNotIn('href="index.html"', docs_html)
         self.assertIn("pacman, PKGBUILD, agy CLI", docs_html)
-        self.assertIn("Developer &amp; Enterprise Documentation", docs_html)
+        self.assertIn("Google Antigravity Linux Packages — Developer &amp; Enterprise Documentation", docs_html)
         self.assertIn("--status", docs_html)
         self.assertIn("--uninstall", docs_html)
         self.assertIn("--print-downloads", docs_html)
