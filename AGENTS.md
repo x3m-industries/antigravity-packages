@@ -9,9 +9,9 @@ This document provides a comprehensive technical overview and operational guide 
 The **`antigravity-packages`** repository provides automated community packaging and distribution infrastructure for Google Antigravity on Linux. Google publishes standalone Linux tarballs without official package manager repositories; this project bridges that gap by providing native **RPM** (DNF/YUM) and **DEB** (APT) repositories with daily upstream synchronization.
 
 ### Applications Managed
-1. **`antigravity-ide`** — Google's official AI-first desktop code editor (based on Code OSS). Packaged natively as RPM and DEB, installed into `/usr/share/antigravity-ide`, symlinked to `/usr/bin/antigravity-ide`, with `antigravity-ide://` OAuth URL handling and FreeDesktop desktop menu entries.
-2. **`antigravity`** — Google's official agent platform and hub (Antigravity 2.0). Packaged natively as RPM and DEB, installed into `/usr/share/antigravity`, symlinked to `/usr/bin/antigravity`, with `antigravity://` OAuth URL handling and FreeDesktop desktop menu entries.
-3. **`agy` (Antigravity CLI)** — Google's official terminal agent. Seamlessly orchestrated via `install.sh` into `$HOME/.local/bin/agy` (user-space). Preserves Google's native background self-updating (every 15 min), requires zero root privileges for CLI-only installs, avoids filename collisions with `/usr/bin/antigravity` (Hub), and completely prevents `$PATH` shadowing conflicts with Google's canonical installer.
+1. **`antigravity-ide`** — Google's official AI-first desktop code editor (based on Code OSS). Packaged natively as RPM and DEB, installed into `/usr/share/antigravity-ide`, symlinked to `/usr/bin/antigravity-ide` (and `/usr/bin/agy-ide`), with `antigravity-ide://` OAuth URL handling and FreeDesktop desktop menu entries.
+2. **`antigravity`** — Google's official Antigravity App (Antigravity 2.0 agent platform). Packaged natively as RPM and DEB, installed into `/usr/share/antigravity`, symlinked to `/usr/bin/antigravity` and `/usr/bin/agy-app` (with `/usr/bin/agy-hub` retained for backwards compatibility), with `antigravity://` OAuth URL handling and FreeDesktop desktop menu entries.
+3. **`agy` (Antigravity CLI)** — Google's official terminal agent. Seamlessly orchestrated via `install.sh` into `$HOME/.local/bin/agy` (user-space). Preserves Google's native background self-updating (every 15 min), requires zero root privileges for CLI-only installs, avoids filename collisions with `/usr/bin/antigravity` (App), and completely prevents `$PATH` shadowing conflicts with Google's canonical installer.
 
 ### Supported Architectures
 - **`x86_64`** (`amd64` in Debian nomenclature)
@@ -29,13 +29,13 @@ antigravity-packages/
 │       ├── deploy-pages.yml       # Triggers on changes to landing page templates, assets, or scripts to update GitHub Pages without rebuilding binaries
 │       └── ci.yml                 # PR & push quality gate: validates desktop files, shell scripts (ShellCheck), and executes unit tests
 ├── assets/                        # Public images, logos, and high-resolution application icons
-│   ├── antigravity.png            # Hub icon
+│   ├── antigravity.png            # App icon
 │   ├── favicon.png                # Web browser tab icon for the landing page
-│   ├── hub-logo.png / .webp       # Antigravity Hub visual branding assets
+│   ├── hub-logo.png / .webp       # Antigravity App visual branding assets
 │   ├── icon.png                   # Fallback square icon
 │   └── logo.png / .webp           # Antigravity IDE visual branding assets
 ├── desktop/                       # FreeDesktop application desktop entry templates & context menus
-│   ├── antigravity.desktop        # Desktop entry for Antigravity Hub (Categories, Keywords, URL scheme: antigravity://)
+│   ├── antigravity.desktop        # Desktop entry for Antigravity App (Categories, Keywords, URL scheme: antigravity://)
 │   ├── antigravity-ide.desktop    # Desktop entry for Antigravity IDE (Categories, Keywords, MIME types, %F)
 │   ├── antigravity-ide-url-handler.desktop # Hidden protocol handler for antigravity-ide:// URLs (NoDisplay=true)
 │   ├── dolphin/                   # KDE Dolphin context menu (KIO Service Menu)
@@ -61,7 +61,7 @@ antigravity-packages/
 │       └── styles/global.css      # Tailwind v4 theme styling and terminal CSS
 ├── pkgbuild/                      # Standalone Arch Linux PKGBUILD definitions (makepkg)
 │   ├── README.md                  # Arch installation instructions (makepkg, debtap, CLI)
-│   ├── antigravity-bin/           # PKGBUILD for Google Antigravity Agent Hub
+│   ├── antigravity-bin/           # PKGBUILD for Google Antigravity App (Agent Platform)
 │   └── antigravity-ide-bin/       # PKGBUILD for Google Antigravity IDE
 ├── vercel-apt/                    # Static Vercel project (apt.x3m.industries): redirects .deb pool downloads to GitHub Releases, proxies APT metadata from Pages
 ├── templates/                     # Pre-rendered HTML templates for fallback and test backwards compatibility
@@ -104,17 +104,19 @@ flowchart TD
 ### 3.1 Upstream Release Detection (`scripts/check_upstream.py`)
 - **Scrapes**: `https://antigravity.google/download` with a browser User-Agent.
 - **Regex Patterns**:
-  - **Antigravity Hub**: `https://storage.googleapis.com/antigravity-public/antigravity-hub/([0-9a-zA-Z\.\-]+)/linux-(x64|arm)/Antigravity\.tar\.gz`
+  - **Antigravity App**: `https://storage.googleapis.com/antigravity-public/antigravity-hub/([0-9a-zA-Z\.\-]+)/linux-(x64|arm)/Antigravity\.tar\.gz`
   - **Antigravity IDE**: `https://edgedl.me.gvt1.com/edgedl/release2/[^\"\' ]+/([0-9a-zA-Z\.\-]+)/linux-(x64|arm)/Antigravity(?:%20|\+)IDE\.tar\.gz`
-- **Version Format**: Upstream versions follow `<semver>-<build_number>` (e.g. `2.5.5-4923483625488384` for IDE or `2.18.1-4945794252537856` for Hub).
+- **Version Format**: Upstream versions follow `<semver>-<build_number>` (e.g. `2.5.5-4923483625488384` for IDE or `2.18.1-4945794252537856` for App).
 - **Delta Optimization**:
   - The script checks assets attached to the latest GitHub Release (`gh release view --json tagName,assets`).
   - Sets output variables `ide_needs_build` and `hub_needs_build`.
   - If only one application was updated upstream, the CI workflow downloads the pre-built packages for the unchanged application from the previous release tag (`gh release download "$prev_tag"`), saving build time and avoiding redundant packaging.
+- **GitHub Pages Drift Self-Healing**:
+  - `check_upstream.py` also inspects the live GitHub Pages APT `Packages` index (`get_live_pages_versions()`). If the live Pages index lags behind the latest GitHub Release (for example, after a transient GitHub API error during a previous run), `pages_needs_sync=true` and `has_update=true` are set so the pipeline automatically reuses existing release binaries and syncs GitHub Pages.
 - **Target Release Tag**: Format `v{ide_version}_hub-{hub_version}`, ensuring unique release tags whenever either app updates.
   - An app only counts as "present" when the release ships **all** four of its files (rpm x86_64/aarch64, deb amd64/arm64). When an app is reused, the exact published version string (including any `.N` revision) is kept, so the tag reflects what is really shipped.
 - **Fail-Fast on Partial Scrapes**: If the download page lacks any version or x64/arm64 URL, `check_upstream.py` exits non-zero. The RPM/APT repositories only reference the newest release, so a release with missing packages would make them vanish for users.
-- **Manual Overrides**: Supports `FORCE_BUILD=true`, `FORCE_IDE=true`, and `FORCE_HUB=true` via workflow dispatch inputs or environment variables. `PKG_REVISION=<n>` appends a `.n` packaging revision to the forced app(s), or to both apps when none is forced.
+- **Manual Overrides**: Supports `FORCE_BUILD=true`, `FORCE_IDE=true`, and `FORCE_HUB=true` (or `FORCE_APP=true`) via workflow dispatch inputs or environment variables. `PKG_REVISION=<n>` appends a `.n` packaging revision to the forced app(s), or to both apps when none is forced.
 
 ### 3.2 Packaging Pipeline (`scripts/build_packages.py`)
 
@@ -141,7 +143,7 @@ python3 scripts/build_packages.py \
      - Regular data files: `0644`
 3. **Icon Resolution**:
    - **Antigravity IDE**: Extracts icon from `resources/app/resources/linux/code.png`.
-   - **Antigravity Hub**: Electron application with assets inside `resources/app.asar`. `extract_asar_file()` parses the ASAR binary header table to extract `icon.png` without requiring Node.js or `asar` npm packages.
+   - **Antigravity App**: Electron application with assets inside `resources/app.asar`. `extract_asar_file()` parses the ASAR binary header table to extract `icon.png` without requiring Node.js or `asar` npm packages.
    - **Fallback**: Uses `assets/icon.png` if dynamic extraction fails.
 4. **RPM Generation (`build_rpm`)**:
    - Creates RPM build tree: `BUILD`, `RPMS`, `SOURCES`, `SPECS`, `SRPMS`.

@@ -7,18 +7,18 @@ export interface ReleaseVersions {
 
 export function parseReleaseTag(tag?: string): ReleaseVersions {
   const defaultVersions: ReleaseVersions = {
-    ideSemver: "2.5.5",
-    ideBuild: "4923483625488384.3",
-    hubSemver: "2.24.0",
-    hubBuild: "5780333019398144",
+    ideSemver: "2.6.0",
+    ideBuild: "5526304964083712",
+    hubSemver: "2.30.0",
+    hubBuild: "6386428939206656",
   };
 
   if (!tag || tag === "latest" || tag === "vlatest") {
     return defaultVersions;
   }
 
-  // Combined tag: v<ide_ver>-<ide_build>_hub-<hub_ver>-<hub_build>
-  const m = tag.match(/^v([0-9\.]+)(?:-([0-9a-zA-Z\.\-]+))?_hub-([0-9\.]+)(?:-([0-9a-zA-Z\.\-]+))?/);
+  // Combined tag: v<ide_ver>-<ide_build>_hub-<hub_ver>-<hub_build> (or _app-)
+  const m = tag.match(/^v([0-9\.]+)(?:-([0-9a-zA-Z\.\-]+))?_(?:hub|app)-([0-9\.]+)(?:-([0-9a-zA-Z\.\-]+))?/);
   if (m && m[1] && m[3]) {
     return {
       ideSemver: m[1],
@@ -93,8 +93,8 @@ export const siteConfig = {
       q: "What is the difference between antigravity-ide and antigravity?",
       a: `Google provides two separate official applications for Linux:<br>
 • <strong><code>antigravity-ide</code></strong>: The official Google AI code editor with visual diff viewer, terminal integration, application menu launcher, and <code>antigravity-ide://</code> browser OAuth handlers.<br>
-• <strong><code>antigravity</code></strong>: Google's official Agent Hub (Antigravity 2.0) interface for configuring and orchestrating autonomous coding agents. Google's standalone terminal agent (<strong><code>agy</code></strong>) is installed separately via user-space CLI.<br>
-Because Google versions them separately (e.g. IDE ${currentVersions.ideSemver} vs Hub ${currentVersions.hubSemver}), X3M Industries packages them as two independent native packages so you can install both or either one.`,
+• <strong><code>antigravity</code></strong>: Google's official Antigravity App (Antigravity 2.0) interface for configuring and orchestrating autonomous coding agents. Google's standalone terminal agent (<strong><code>agy</code></strong>) is installed separately via user-space CLI.<br>
+Because Google versions them separately (e.g. IDE ${currentVersions.ideSemver} vs App ${currentVersions.hubSemver}), X3M Industries packages them as two independent native packages so you can install both or either one.`,
     },
     {
       q: "How do updates work?",
@@ -137,7 +137,7 @@ Because Google versions them separately (e.g. IDE ${currentVersions.ideSemver} v
       q: "What is the difference between antigravity-ide and antigravity?",
       a: `Google provides two distinct desktop applications for Linux:<br>
 • <strong><code>antigravity-ide</code></strong>: The official Google AI code editor based on Code OSS with application menu launchers, diff viewer, and <code>antigravity-ide://</code> browser OAuth handlers.<br>
-• <strong><code>antigravity</code></strong>: Google's official Agent Hub (Antigravity 2.0) interface for configuring and orchestrating autonomous coding agents. Google's standalone terminal agent (<code>agy</code>) is installed separately into user-space (<code>~/.local/bin/agy</code>).`,
+• <strong><code>antigravity</code></strong>: Google's official Antigravity App (Antigravity 2.0) interface for configuring and orchestrating autonomous coding agents. Google's standalone terminal agent (<code>agy</code>) is installed separately into user-space (<code>~/.local/bin/agy</code>).`,
     },
     {
       q: "How do daily automated updates work?",
@@ -147,7 +147,7 @@ Because Google versions them separately (e.g. IDE ${currentVersions.ideSemver} v
       q: "Why should I use native RPM or DEB packages instead of extracting tarballs to /opt?",
       a: `Manual tutorials often instruct users to unpack Google tarballs into <code>/opt/antigravity</code>. While this seems simple initially, it creates severe real-world problems:<br>
 • <strong>Broken In-App Auto-Updates:</strong> Because <code>/opt</code> is owned by <code>root</code>, Electron's unprivileged auto-updater fails silently with permission errors, trapping you in manual update cycles.<br>
-• <strong>Missing High-Res Icons:</strong> Google bundles the Hub's icon inside <code>app.asar</code>. Manual installers get stuck with generic desktop gear icons. Our packages dynamically parse the ASAR header and register native 512x512 icons.<br>
+• <strong>Missing High-Res Icons:</strong> Google bundles the App's icon inside <code>app.asar</code>. Manual installers get stuck with generic desktop gear icons. Our packages dynamically parse the ASAR header and register native 512x512 icons.<br>
 • <strong>Broken Google OAuth Logins:</strong> Manual desktop files omit URL protocol handlers (<code>antigravity://</code> and <code>antigravity-ide://</code>), causing browser login redirects to fail.<br>
 • <strong>Hardened Chromium Sandboxing:</strong> Ubuntu 24.04+ restricts unprivileged user namespaces via AppArmor. Without hardened <code>4755 root:root</code> permissions on <code>chrome-sandbox</code>, Electron apps crash.<br>
 • <strong>Package Manager Integration:</strong> Native RPM &amp; DEB packages update seamlessly via <code>apt upgrade</code> or <code>dnf update</code>, verify GPG signatures, resolve shared libraries, and uninstall cleanly without orphaned files.`,

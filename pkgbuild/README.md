@@ -5,7 +5,7 @@ This directory contains standalone Arch Linux package definitions (`PKGBUILD`) f
 ## Applications
 
 1. **`antigravity-ide-bin`**: Google Antigravity IDE (Official AI Code Editor)
-2. **`antigravity-bin`**: Google Antigravity Agent Hub (Antigravity 2.0 platform)
+2. **`antigravity-bin`**: Google Antigravity App (Antigravity 2.0 platform)
 
 ## Quick Build & Installation
 
@@ -18,7 +18,7 @@ Clone this repository and run `makepkg -si` inside the desired directory:
 cd pkgbuild/antigravity-ide-bin
 makepkg -si
 
-# Build and install Antigravity Hub
+# Build and install Antigravity App
 cd ../antigravity-bin
 makepkg -si
 ```

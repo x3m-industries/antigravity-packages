@@ -11,13 +11,13 @@ from pathlib import Path
 
 def parse_release_tag(tag: str):
     """
-    Parses a combined or single release tag into IDE and Hub version components.
+    Parses a combined or single release tag into IDE and App (Hub) version components.
     Returns: (ide_semver, ide_build, hub_semver, hub_build) or None
     """
     if not tag or tag in ["latest", "vlatest"]:
         return None
-    # Combined tag: v<ide_ver>-<ide_build>_hub-<hub_ver>-<hub_build>
-    m = re.match(r"^v([0-9\.]+)(?:-([0-9a-zA-Z\.\-]+))?_hub-([0-9\.]+)(?:-([0-9a-zA-Z\.\-]+))?", tag)
+    # Combined tag: v<ide_ver>-<ide_build>_hub-<hub_ver>-<hub_build> (or _app-)
+    m = re.match(r"^v([0-9\.]+)(?:-([0-9a-zA-Z\.\-]+))?_(?:hub|app)-([0-9\.]+)(?:-([0-9a-zA-Z\.\-]+))?", tag)
     if m:
         return m.groups()
 
@@ -87,8 +87,8 @@ def inject_versions_into_html(html_content: str, tag: str) -> str:
 
     # Update JSON-LD softwareVersion for combined and individual entries
     html_content = re.sub(
-        r'("softwareVersion"\s*:\s*")[^"]*\(IDE\)\s*/\s*[^"]*\(Hub\)(")',
-        rf'\g<1>{ide_ver} (IDE) / {hub_ver} (Hub)\g<2>',
+        r'("softwareVersion"\s*:\s*")[^"]*\(IDE\)\s*/\s*[^"]*\((?:Hub|App)\)(")',
+        rf'\g<1>{ide_ver} (IDE) / {hub_ver} (App)\g<2>',
         html_content
     )
     html_content = re.sub(
@@ -97,7 +97,7 @@ def inject_versions_into_html(html_content: str, tag: str) -> str:
         html_content
     )
     html_content = re.sub(
-        r'("name"\s*:\s*"Google Antigravity Agent Hub \(antigravity\)"[^}]*?"softwareVersion"\s*:\s*")[^"]*(")',
+        r'("name"\s*:\s*"Google Antigravity (?:Agent Hub|App) \(antigravity\)"[^}]*?"softwareVersion"\s*:\s*")[^"]*(")',
         rf'\g<1>{hub_ver}\g<2>',
         html_content
     )
@@ -126,7 +126,7 @@ def main():
     content = html_path.read_text(encoding="utf-8")
     updated_content = inject_versions_into_html(content, tag)
     html_path.write_text(updated_content, encoding="utf-8")
-    print(f"Injected release versions into {html_path.name}: IDE v{ide_ver}, Hub v{hub_ver}")
+    print(f"Injected release versions into {html_path.name}: IDE v{ide_ver}, App v{hub_ver}")
 
 
 if __name__ == "__main__":

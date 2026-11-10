@@ -29,9 +29,9 @@ The `antigravity-packages` project automates the packaging, testing, cryptograph
      - COSMIC Desktop: Native "Open With" integration in `cosmic-files` and `cosmic-launcher`.
    - Shell completions: Bash (`/usr/share/bash-completion`) and Zsh (`/usr/share/zsh`) tab autocompletion.
    - High-resolution icons in `/usr/share/icons/hicolor/512x512/apps/antigravity-ide.png` and `/usr/share/pixmaps/`.
-2. **`antigravity` (Short command: `agy-hub`, Hub / Antigravity 2.0)**:
-   - Google's official agent platform and hub.
-   - Installed to `/usr/share/antigravity`, symlinked to `/usr/bin/antigravity` and `/usr/bin/agy-hub`.
+2. **`antigravity` (Short command: `agy-app`, Antigravity App / Antigravity 2.0)**:
+   - Google's official Antigravity App and agent platform.
+   - Installed to `/usr/share/antigravity`, symlinked to `/usr/bin/antigravity` and `/usr/bin/agy-app` (plus `/usr/bin/agy-hub` compatibility alias).
    - Desktop entry: `/usr/share/applications/antigravity.desktop`.
    - URL scheme handler: `antigravity://` for browser OAuth login callbacks.
 3. **`agy` (Antigravity CLI Agent)**:
@@ -74,8 +74,8 @@ curl -fsSL https://x3m-industries.github.io/antigravity-packages/install.sh | ba
 # Install only Antigravity IDE (code editor)
 curl -fsSL https://x3m-industries.github.io/antigravity-packages/install.sh | bash -s -- --ide-only
 
-# Install only Antigravity Hub (agent platform)
-curl -fsSL https://x3m-industries.github.io/antigravity-packages/install.sh | bash -s -- --hub-only
+# Install only Antigravity App (agent platform)
+curl -fsSL https://x3m-industries.github.io/antigravity-packages/install.sh | bash -s -- --app-only
 
 # Check installation status and repository configuration
 curl -fsSL https://x3m-industries.github.io/antigravity-packages/install.sh | bash -s -- --status
@@ -97,7 +97,7 @@ curl -fsSL https://x3m-industries.github.io/antigravity-packages/install.sh | ba
 # 1. Add RPM repository
 sudo curl -fsSL https://x3m-industries.github.io/antigravity-packages/rpm/antigravity.repo -o /etc/yum.repos.d/antigravity.repo
 
-# 2. Install Antigravity IDE and Hub
+# 2. Install Antigravity IDE and App
 sudo dnf install antigravity-ide antigravity
 
 # 3. Update anytime with your normal system upgrades

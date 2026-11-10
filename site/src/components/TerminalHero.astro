@@ -11,7 +11,7 @@ import { siteConfig, currentVersions } from '../data/siteConfig';
     <span class="logo-connector">✦</span>
     <picture>
       <source srcset="assets/hub-logo.webp" type="image/webp" />
-      <img src="assets/hub-logo.png" alt="Antigravity Hub Logo" class="brand-logo" width="76" height="76" fetchpriority="high" loading="eager" />
+      <img src="assets/hub-logo.png" alt="Antigravity App Logo" class="brand-logo" width="76" height="76" fetchpriority="high" loading="eager" />
     </picture>
   </div>
 
@@ -43,7 +43,7 @@ import { siteConfig, currentVersions } from '../data/siteConfig';
       rel="noopener noreferrer"
     >
       <span class="version-dot"></span>
-      <span>Hub</span>
+      <span>App</span>
       <span data-version="hub-semver">v{currentVersions.hubSemver}</span>
     </a>
     <a href={siteConfig.repo.githubUrl} target="_blank" rel="noopener noreferrer" class="inline-flex items-center" title="Star on GitHub">
@@ -337,22 +337,22 @@ Repository: https://x3m-industries.github.io/antigravity-packages/`;
       lines: [
         { type: "input", text: "curl -fsSL https://x3m-industries.github.io/antigravity-packages/install.sh | bash", delay: 200 },
         { type: "banner", text: SIM_BANNER, delay: 120 },
-        { type: "text", text: "\nSelect components to install / update:\n  [1] Antigravity IDE        AI-first standalone code editor (RPM/DEB)     [Not installed]\n  [2] Antigravity Hub        Antigravity 2.0 desktop agent hub (RPM/DEB)   [Not installed]\n  [3] Antigravity CLI (agy)  Terminal agent with auto-updating             [Not installed]\n", delay: 60 },
+        { type: "text", text: "\nSelect components to install / update:\n  [1] Antigravity IDE        AI-first standalone code editor (RPM/DEB)     [Not installed]\n  [2] Antigravity App        Antigravity 2.0 desktop agent app (RPM/DEB)   [Not installed]\n  [3] Antigravity CLI (agy)  Terminal agent with auto-updating             [Not installed]\n", delay: 60 },
         { type: "prompt", text: "Enter selection [Default: 1, 2, 3 (All)] or press ENTER: ", delay: 250 },
         { type: "choice", text: "1, 2, 3\n", delay: 150 },
-        { type: "info", text: "==> Installation plan:\n  • Antigravity IDE (Native package & desktop launcher)\n  • Antigravity Hub (Antigravity 2.0 agent platform)\n  • Antigravity CLI ('agy') (Terminal agent with auto-updater)\n  • GNOME Nautilus Integration ('Open in Antigravity IDE' context menu)\n", delay: 80 },
+        { type: "info", text: "==> Installation plan:\n  • Antigravity IDE (Native package & desktop launcher)\n  • Antigravity App (Antigravity 2.0 agent platform)\n  • Antigravity CLI ('agy') (Terminal agent with auto-updater)\n  • GNOME Nautilus Integration ('Open in Antigravity IDE' context menu)\n", delay: 80 },
         { type: "info", text: "==> Requesting sudo privileges to configure package repositories...", delay: 80 },
         { type: "info", text: "==> Configuring DNF/YUM repository...", delay: 100 },
         { type: "success", text: "✓ Added /etc/yum.repos.d/antigravity.repo", delay: 80 },
         { type: "info", text: "==> Installing antigravity-ide antigravity...", delay: 120 },
-        { type: "progress", text: "Downloading Packages:\n(1/2): antigravity-2.24.0.x86_64.rpm           38.2 MB/s | 114.2 MB  00:03\n(2/2): antigravity-ide-2.5.5.x86_64.rpm       42.1 MB/s | 128.7 MB  00:03\nTotal                                         40.1 MB/s | 242.9 MB  00:06", delay: 350 },
-        { type: "dim", text: "Running transaction check...\nRunning transaction...\n  Installing : antigravity-2.24.0.x86_64                                1/2\n  Installing : antigravity-ide-2.5.5.x86_64                            2/2\nInstalled:\n  antigravity.x86_64 2.24.0-5780333019398144\n  antigravity-ide.x86_64 2.5.5-4923483625488384.3\nComplete!", delay: 200 },
+        { type: "progress", text: "Downloading Packages:\n(1/2): antigravity-2.30.0.x86_64.rpm           38.2 MB/s | 150.3 MB  00:03\n(2/2): antigravity-ide-2.6.0.x86_64.rpm       42.1 MB/s | 143.2 MB  00:03\nTotal                                         40.1 MB/s | 293.5 MB  00:06", delay: 350 },
+        { type: "dim", text: "Running transaction check...\nRunning transaction...\n  Installing : antigravity-2.30.0.x86_64                                1/2\n  Installing : antigravity-ide-2.6.0.x86_64                            2/2\nInstalled:\n  antigravity.x86_64 2.30.0-6386428939206656\n  antigravity-ide.x86_64 2.6.0-5526304964083712\nComplete!", delay: 200 },
         { type: "success", text: "✓ Created short CLI shortcut 'agy-ide' -> /usr/bin/antigravity-ide", delay: 50 },
-        { type: "success", text: "✓ Created short CLI shortcut 'agy-hub' -> /usr/bin/antigravity", delay: 50 },
+        { type: "success", text: "✓ Created short CLI shortcut 'agy-app' -> /usr/bin/antigravity", delay: 50 },
         { type: "info", text: "==> Configuring GNOME Files / Nautilus right-click context menu...", delay: 80 },
         { type: "info", text: "==> Installing Antigravity CLI ('agy') via official Google installer...", delay: 120 },
         { type: "success", text: "✓ Antigravity CLI installed successfully into ~/.local/bin/agy\n", delay: 70 },
-        { type: "success-card", text: "✓ Installation completed successfully!\n\nQuick Start:\n  • Launch IDE:   agy-ide ./my-project (or antigravity-ide)\n  • Launch Hub:   agy-hub (or antigravity)\n  • Launch CLI:   agy", delay: 50 }
+        { type: "success-card", text: "✓ Installation completed successfully!\n\nQuick Start:\n  • Launch IDE:   agy-ide ./my-project (or antigravity-ide)\n  • Launch App:   agy-app (or antigravity)\n  • Launch CLI:   agy", delay: 50 }
       ]
     },
     cli: {
@@ -376,7 +376,7 @@ Repository: https://x3m-industries.github.io/antigravity-packages/`;
         { type: "info", text: "==> Installing Antigravity CLI ('agy') into ~/.local/bin/agy (no sudo needed)...", delay: 120 },
         { type: "dim", text: "Downloading https://storage.googleapis.com/antigravity-public/agy/latest/agy-linux-x64.tar.gz...\nExtracted agy -> /home/user/.local/bin/agy\nAuto-update timer registered (checks upstream every 15 min)", delay: 220 },
         { type: "success", text: "✓ Antigravity CLI installed successfully", delay: 70 },
-        { type: "success-card", text: "✓ Arch Setup Ready!\n\nQuick Start:\n  • Run CLI:  agy\n  • Desktop GUI via debtap:  debtap antigravity-ide_2.5.5-4923483625488384.3_amd64.deb && sudo pacman -U antigravity-ide-*.pkg.tar.zst\n  • PKGBUILD:  https://github.com/x3m-industries/antigravity-packages/tree/main/pkgbuild", delay: 50 }
+        { type: "success-card", text: "✓ Arch Setup Ready!\n\nQuick Start:\n  • Run CLI:  agy\n  • Desktop GUI via debtap:  debtap antigravity-ide_2.6.0-5526304964083712_amd64.deb && sudo pacman -U antigravity-ide-*.pkg.tar.zst\n  • PKGBUILD:  https://github.com/x3m-industries/antigravity-packages/tree/main/pkgbuild", delay: 50 }
       ]
     }
   };

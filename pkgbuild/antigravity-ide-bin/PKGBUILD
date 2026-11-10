@@ -1,6 +1,6 @@
 # Maintainer: Steven Ceuppens <packaging@x3m.industries>
 pkgname=antigravity-ide-bin
-pkgver=2.5.5
+pkgver=2.6.0
 pkgrel=1
 pkgdesc="Google Antigravity IDE - Official AI-First Desktop Code Editor (Native Binary)"
 arch=('x86_64' 'aarch64')
@@ -16,12 +16,12 @@ conflicts=('antigravity-ide')
 options=('!strip')
 
 # Sources point to cryptographically verified release binaries
-_reltag="v2.5.5-4923483625488384.3_hub-2.24.0-5780333019398144"
-_debver="2.5.5-4923483625488384.3"
+_reltag="v2.6.0-5526304964083712_hub-2.30.0-6386428939206656"
+_debver="2.6.0-5526304964083712"
 source_x86_64=("antigravity-ide-${pkgver}-${pkgrel}-x86_64.deb::https://github.com/x3m-industries/antigravity-packages/releases/download/${_reltag}/antigravity-ide_${_debver}_amd64.deb")
 source_aarch64=("antigravity-ide-${pkgver}-${pkgrel}-aarch64.deb::https://github.com/x3m-industries/antigravity-packages/releases/download/${_reltag}/antigravity-ide_${_debver}_arm64.deb")
-sha256sums_x86_64=('9484a7614aa17a8a4852ecdf3ec752f2fffe42e89690e7fb7e7fe792e4548800')
-sha256sums_aarch64=('f2fdb981eaf15de94971b56e3c9902c8717fd072c3b656b4faa1a051b4162aca')
+sha256sums_x86_64=('d7534a15e8672e08fae87c2ba0fd4d5711d91f3be320a1bbbc189b3940b48cbf')
+sha256sums_aarch64=('4866bb72616f73f9a574f336f29267e86ce6f06067cf769b2987c68282494f67')
 
 package() {
     # Extract debian data archive

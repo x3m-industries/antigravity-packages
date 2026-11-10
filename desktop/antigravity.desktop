@@ -1,6 +1,6 @@
 [Desktop Entry]
 Name=Google Antigravity
-Comment=Antigravity Agent Platform & Hub
+Comment=Google Antigravity App — Agent Platform
 GenericName=Development Tool
 Exec=/usr/bin/antigravity %U
 Icon=antigravity
@@ -9,4 +9,4 @@ StartupNotify=true
 StartupWMClass=antigravity
 Categories=Development;
 MimeType=x-scheme-handler/antigravity;
-Keywords=agent;ai;google;hub;platform;assistant;antigravity;agy;
+Keywords=agent;ai;google;app;hub;platform;assistant;antigravity;agy;

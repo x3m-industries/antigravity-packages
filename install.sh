@@ -3,7 +3,7 @@ set -euo pipefail
 
 # ==============================================================================
 # Google Antigravity Suite — Universal Linux Installer & Package Manager
-# Installs Antigravity IDE, Antigravity Hub, Antigravity CLI ('agy'),
+# Installs Antigravity IDE, Antigravity App, Antigravity CLI ('agy'),
 # and native desktop integrations (MIME schemes, GNOME Nautilus extension).
 # Maintained by X3M Industries (https://github.com/x3m-industries/antigravity-packages)
 # ==============================================================================
@@ -52,13 +52,13 @@ show_help() {
     echo ""
     echo -e "${BOLD}Installation Modes:${RESET}"
     echo "  -y, --yes, --non-interactive  Run silently without interactive prompts (installs defaults)"
-    echo "  --all                         Install all components (IDE, Hub, CLI, desktop integrations)"
+    echo "  --all                         Install all components (IDE, App, CLI, desktop integrations)"
     echo "  --cli-only                    Install only the Antigravity CLI ('agy') (no sudo required)"
     echo "  --ide-only                    Install only the Antigravity IDE (code editor)"
-    echo "  --hub-only                    Install only the Antigravity Hub (agent platform)"
+    echo "  --app-only, --hub-only        Install only the Antigravity App (agent platform)"
     echo "  --no-cli                      Skip Antigravity CLI installation"
     echo "  --no-ide                      Skip Antigravity IDE installation"
-    echo "  --no-hub                      Skip Antigravity Hub installation"
+    echo "  --no-app, --no-hub            Skip Antigravity App installation"
     echo "  --no-desktop-integrations     Remove the file manager integrations shipped by the IDE package (Nautilus, Dolphin, Nemo, Caja)"
     echo "  --no-nautilus                 Alias for --no-desktop-integrations"
     echo "  --dry-run                     Show what would be installed and exit without making changes"
@@ -209,7 +209,7 @@ while [ "$#" -gt 0 ]; do
             INSTALL_HUB=false
             INSTALL_CLI=false
             ;;
-        --hub-only)
+        --app-only|--hub-only)
             INTERACTIVE=false
             EXPLICIT_COMPONENT_FLAG=true
             INSTALL_IDE=false
@@ -226,7 +226,7 @@ while [ "$#" -gt 0 ]; do
             INSTALL_IDE=false
             INSTALL_NAUTILUS=false
             ;;
-        --no-hub)
+        --no-app|--no-hub)
             INTERACTIVE=false
             INSTALL_HUB=false
             ;;
@@ -249,7 +249,7 @@ while [ "$#" -gt 0 ]; do
             INSTALL_IDE=true
             [ "${EXPLICIT_NO_NAUTILUS}" = false ] && INSTALL_NAUTILUS=true
             ;;
-        --hub)
+        --app|--hub)
             INTERACTIVE=false
             reset_components_once
             INSTALL_HUB=true
@@ -353,9 +353,9 @@ show_status() {
     fi
 
     if [ -n "${INSTALLED_HUB_VER}" ]; then
-        echo -e "  • ${GREEN}Antigravity Hub:${RESET}       Installed (${BOLD}${INSTALLED_HUB_VER}${RESET}) -> $(command -v antigravity 2>/dev/null || echo '/usr/bin/antigravity')"
+        echo -e "  • ${GREEN}Antigravity App:${RESET}       Installed (${BOLD}${INSTALLED_HUB_VER}${RESET}) -> $(command -v antigravity 2>/dev/null || echo '/usr/bin/antigravity')"
     else
-        echo -e "  • ${DIM}Antigravity Hub:${RESET}       Not installed"
+        echo -e "  • ${DIM}Antigravity App:${RESET}       Not installed"
     fi
 
     if [ -n "${EXISTING_CLI_PATH}" ]; then
@@ -384,7 +384,9 @@ show_status() {
     if [ -x /usr/bin/agy-ide ]; then
         echo -e "  • ${GREEN}agy-ide:${RESET}              /usr/bin/agy-ide -> antigravity-ide ${GREEN}[Active]${RESET}"
     fi
-    if [ -x /usr/bin/agy-hub ]; then
+    if [ -x /usr/bin/agy-app ]; then
+        echo -e "  • ${GREEN}agy-app:${RESET}              /usr/bin/agy-app -> antigravity ${GREEN}[Active]${RESET}"
+    elif [ -x /usr/bin/agy-hub ]; then
         echo -e "  • ${GREEN}agy-hub:${RESET}              /usr/bin/agy-hub -> antigravity ${GREEN}[Active]${RESET}"
     fi
     if [ -x "${TARGET_HOME}/.local/bin/agy" ] || command -v agy > /dev/null 2>&1; then
@@ -395,7 +397,7 @@ show_status() {
     echo -e "${BOLD}Desktop & File Manager Integrations:${RESET}"
     [ -f /usr/share/applications/antigravity-ide.desktop ] && echo -e "  • ${GREEN}IDE Launcher:${RESET}         /usr/share/applications/antigravity-ide.desktop"
     [ -f /usr/share/applications/antigravity-ide-url-handler.desktop ] && echo -e "  • ${GREEN}IDE URL Handler:${RESET}      /usr/share/applications/antigravity-ide-url-handler.desktop"
-    [ -f /usr/share/applications/antigravity.desktop ] && echo -e "  • ${GREEN}Hub Desktop Entry:${RESET}    /usr/share/applications/antigravity.desktop"
+    [ -f /usr/share/applications/antigravity.desktop ] && echo -e "  • ${GREEN}App Desktop Entry:${RESET}    /usr/share/applications/antigravity.desktop"
     if [ -f /usr/share/nautilus-python/extensions/open-in-antigravity-ide.py ]; then
         echo -e "  • ${GREEN}GNOME Files (Nautilus):${RESET} /usr/share/nautilus-python/extensions/open-in-antigravity-ide.py ${GREEN}[Active]${RESET}"
     fi
@@ -459,9 +461,9 @@ print_downloads() {
     echo -e "${BOLD}Google Antigravity Upstream & Distribution Assets:${RESET}\n"
     echo -e "  ${BOLD}Architecture Detected:${RESET} ${ARCH}\n"
 
-    echo -e "  ${BOLD}1. Official Google Antigravity Hub (Agent Platform):${RESET}"
-    echo -e "     • x86_64:   ${CYAN}https://storage.googleapis.com/antigravity-public/antigravity-hub/2.23.1-6348059836284928/linux-x64/Antigravity.tar.gz${RESET}"
-    echo -e "     • aarch64:  ${CYAN}https://storage.googleapis.com/antigravity-public/antigravity-hub/2.23.1-6348059836284928/linux-arm/Antigravity.tar.gz${RESET}"
+    echo -e "  ${BOLD}1. Official Google Antigravity App (Agent Platform):${RESET}"
+    echo -e "     • x86_64:   ${CYAN}https://storage.googleapis.com/antigravity-public/antigravity-hub/2.30.0-6386428939206656/linux-x64/Antigravity.tar.gz${RESET}"
+    echo -e "     • aarch64:  ${CYAN}https://storage.googleapis.com/antigravity-public/antigravity-hub/2.30.0-6386428939206656/linux-arm/Antigravity.tar.gz${RESET}"
     echo ""
 
     echo -e "  ${BOLD}2. Official Google Antigravity IDE (AI Code Editor):${RESET}"
@@ -537,6 +539,7 @@ do_uninstall() {
     ${SUDO} rm -f /usr/share/nemo/actions/open-in-antigravity-ide.nemo_action
     ${SUDO} rm -f /usr/share/applications/antigravity-ide-url-handler.desktop
     ${SUDO} rm -f /usr/bin/agy-ide
+    ${SUDO} rm -f /usr/bin/agy-app
     ${SUDO} rm -f /usr/bin/agy-hub
     ${SUDO} rm -f /usr/share/bash-completion/completions/agy-ide
     ${SUDO} rm -f /usr/share/zsh/site-functions/_agy-ide
@@ -615,7 +618,7 @@ if [ "${INTERACTIVE}" = true ]; then
         [ -n "${INSTALLED_CLI_VER}" ] && status_cli="${GREEN}[Installed: ${INSTALLED_CLI_VER}]${RESET}"
 
         echo -e "  ${BOLD}[1] Antigravity IDE${RESET}        AI-first standalone code editor (RPM/DEB)     ${status_ide}"
-        echo -e "  ${BOLD}[2] Antigravity Hub${RESET}        Antigravity 2.0 desktop agent hub (RPM/DEB)   ${status_hub}"
+        echo -e "  ${BOLD}[2] Antigravity App${RESET}        Antigravity 2.0 desktop agent app (RPM/DEB)   ${status_hub}"
         echo -e "  ${BOLD}[3] Antigravity CLI (agy)${RESET}  Terminal agent with auto-updating             ${status_cli}"
         echo ""
 
@@ -639,7 +642,7 @@ if [ "${INTERACTIVE}" = true ]; then
                     1|ide)
                         INSTALL_IDE=true
                         ;;
-                    2|hub)
+                    2|app|hub)
                         INSTALL_HUB=true
                         ;;
                     3|cli|agy)
@@ -671,7 +674,7 @@ fi
 
 info "Installation plan:"
 [ "${INSTALL_IDE}" = true ] && echo -e "  • ${CYAN}Antigravity IDE${RESET} (Native package & desktop launcher)"
-[ "${INSTALL_HUB}" = true ] && echo -e "  • ${CYAN}Antigravity Hub${RESET} (Antigravity 2.0 agent platform)"
+[ "${INSTALL_HUB}" = true ] && echo -e "  • ${CYAN}Antigravity App${RESET} (Antigravity 2.0 agent platform)"
 [ "${INSTALL_CLI}" = true ] && echo -e "  • ${CYAN}Antigravity CLI ('agy')${RESET} (Terminal agent with auto-updater)"
 [ "${INSTALL_IDE}" = true ] && [ "${INSTALL_NAUTILUS}" = true ] && echo -e "  • ${CYAN}GNOME Nautilus Integration${RESET} ('Open in Antigravity IDE' context menu)"
 echo ""
@@ -825,9 +828,14 @@ install_desktop_integrations() {
         ${SUDO} ln -sf /usr/bin/antigravity-ide /usr/bin/agy-ide
         success "Created short CLI shortcut 'agy-ide' -> /usr/bin/antigravity-ide"
     fi
-    if [ -x /usr/bin/antigravity ] && [ ! -L /usr/bin/agy-hub ]; then
-        ${SUDO} ln -sf /usr/bin/antigravity /usr/bin/agy-hub
-        success "Created short CLI shortcut 'agy-hub' -> /usr/bin/antigravity"
+    if [ -x /usr/bin/antigravity ]; then
+        if [ ! -L /usr/bin/agy-app ]; then
+            ${SUDO} ln -sf /usr/bin/antigravity /usr/bin/agy-app
+            success "Created short CLI shortcut 'agy-app' -> /usr/bin/antigravity"
+        fi
+        if [ ! -L /usr/bin/agy-hub ]; then
+            ${SUDO} ln -sf /usr/bin/antigravity /usr/bin/agy-hub
+        fi
     fi
 
     [ "${INSTALL_IDE}" = true ] || return 0
@@ -960,7 +968,7 @@ if [ "${IS_ARCH}" = true ]; then
 else
     echo -e "\n${BOLD}Quick Start (Commands & Shortcuts):${RESET}"
     [ "${INSTALL_IDE}" = true ] && echo -e "  • Launch Antigravity IDE:     ${CYAN}agy-ide ./my-project${RESET} (or ${CYAN}antigravity-ide${RESET})"
-    [ "${INSTALL_HUB}" = true ] && echo -e "  • Launch Antigravity Hub:     ${CYAN}agy-hub${RESET} (or ${CYAN}antigravity${RESET})"
+    [ "${INSTALL_HUB}" = true ] && echo -e "  • Launch Antigravity App:     ${CYAN}agy-app${RESET} (or ${CYAN}antigravity${RESET})"
     if [ "${INSTALL_CLI}" = true ]; then
         echo -e "  • Launch Antigravity CLI:     ${CYAN}agy${RESET}"
         if [[ ":${PATH}:" != *":${TARGET_HOME}/.local/bin:"* ]]; then

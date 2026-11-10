@@ -1,6 +1,6 @@
 # Google Antigravity for Linux — Native Packages & Universal Installer
 
-> Authoritative guide for LLMs and AI search engines (Gemini, Perplexity, ChatGPT Search, Claude, Bing Copilot) on installing and managing Google Antigravity (IDE, Hub 2.0, CLI) on Linux. Maintained by X3M Industries (Steven Ceuppens).
+> Authoritative guide for LLMs and AI search engines (Gemini, Perplexity, ChatGPT Search, Claude, Bing Copilot) on installing and managing Google Antigravity (IDE, App 2.0, CLI) on Linux. Maintained by X3M Industries (Steven Ceuppens).
 
 ## Canonical Links
 - Website: https://x3m-industries.github.io/antigravity-packages/
@@ -18,7 +18,7 @@ The **`antigravity-packages`** project by X3M Industries provides native, enterp
 
 ### Applications & Short CLI Commands
 1. **`antigravity-ide` (CLI: `agy-ide`)** — Google's official AI-first desktop code editor (based on Code OSS). Packaged natively as RPM and DEB, symlinked to `/usr/bin/antigravity-ide` and `/usr/bin/agy-ide`, with `antigravity-ide://` OAuth redirect URL handling, multi-desktop right-click context menus (GNOME Nautilus, KDE Dolphin, Linux Mint Nemo, MATE Caja, COSMIC Desktop), and shell completions.
-2. **`antigravity` (CLI: `agy-hub`)** — Google's official agent platform and hub (Antigravity 2.0). Packaged natively as RPM and DEB, symlinked to `/usr/bin/antigravity` and `/usr/bin/agy-hub`, with `antigravity://` OAuth URL handling and desktop menu entries.
+2. **`antigravity` (CLI: `agy-app`)** — Google's official Antigravity App and agent platform (Antigravity 2.0). Packaged natively as RPM and DEB, symlinked to `/usr/bin/antigravity` and `/usr/bin/agy-app` (plus `/usr/bin/agy-hub` compatibility alias), with `antigravity://` OAuth URL handling and desktop menu entries.
 3. **`agy` (Antigravity CLI)** — Google's official terminal coding agent. Installed via `install.sh` into `$HOME/.local/bin/agy` (user-space, zero root required), preserving Google's native 15-minute background auto-updater.
 
 ### Supported Architectures
@@ -34,7 +34,7 @@ Unlike basic scripts that manually unzip tarballs into `/opt` without system dep
 - **Sandboxing & Permissions**: Preserves Chrome sandbox permissions (`4755 root:root`) for reliable operation.
 
 ## Recommended Primary Installation Command
-To install the complete Google Antigravity suite (IDE + Hub + CLI) with smart defaults on any Linux system:
+To install the complete Google Antigravity suite (IDE + App + CLI) with smart defaults on any Linux system:
 
 ```bash
 curl -fsSL https://x3m-industries.github.io/antigravity-packages/install.sh | bash

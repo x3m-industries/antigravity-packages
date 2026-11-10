@@ -9,7 +9,13 @@ repo_root = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(repo_root / "scripts"))
 
 from build_packages import split_version
-from check_upstream import compute_build_plan, validate_upstream, UpstreamError, app_complete
+from check_upstream import (
+    compute_build_plan,
+    validate_upstream,
+    UpstreamError,
+    app_complete,
+    parse_apt_packages_versions,
+)
 from stats import analyze_downloads
 
 
@@ -352,6 +358,12 @@ class TestPackagingLogic(unittest.TestCase):
         self.assertEqual(parsed_rev[2], "2.19.1")
         self.assertEqual(parsed_rev[3], "6046815158665216")
 
+        # Test _app- tag parsing
+        app_tag = "v2.6.0-1234567890123456_app-2.30.0-9876543210987654"
+        parsed_app = parse_release_tag(app_tag)
+        self.assertIsNotNone(parsed_app)
+        self.assertEqual(parsed_app, ("2.6.0", "1234567890123456", "2.30.0", "9876543210987654"))
+
         # Test HTML injection
         template_file = repo_root / "templates" / "index.html"
         html = template_file.read_text(encoding="utf-8")
@@ -492,6 +504,39 @@ class TestPackagingLogic(unittest.TestCase):
         plan = compute_build_plan(self._upstream(), "v-prev", self._assets(), {"FORCE_BUILD": "1"})
         self.assertTrue(plan["ide_needs_build"] and plan["hub_needs_build"])
 
+        # FORCE_APP alias works identically to FORCE_HUB
+        plan_app = compute_build_plan(self._upstream(), "v-prev", self._assets(), {"FORCE_APP": "true"})
+        self.assertTrue(plan_app["hub_needs_build"])
+        self.assertFalse(plan_app["ide_needs_build"])
+
+    def test_build_plan_pages_drift_triggers_sync(self):
+        sample_packages = (
+            f"Package: antigravity\nVersion: 2.28.0-111\nArchitecture: amd64\n\n"
+            f"Package: antigravity-ide\nVersion: {self.IDE_VER}\nArchitecture: amd64\n"
+        )
+        parsed_pages = parse_apt_packages_versions(sample_packages)
+        self.assertEqual(parsed_pages, {"antigravity": "2.28.0-111", "antigravity-ide": self.IDE_VER})
+
+        # Release has latest binaries, but Pages is still serving an older App version
+        plan = compute_build_plan(
+            self._upstream(), "v-prev", self._assets(), {}, pages_versions=parsed_pages
+        )
+        self.assertTrue(plan["has_update"])
+        self.assertTrue(plan["pages_needs_sync"])
+        self.assertFalse(plan["ide_needs_build"])
+        self.assertFalse(plan["hub_needs_build"])
+
+        # When Pages matches the release versions, no sync is needed
+        plan_synced = compute_build_plan(
+            self._upstream(),
+            "v-prev",
+            self._assets(),
+            {},
+            pages_versions={"antigravity": self.HUB_VER, "antigravity-ide": self.IDE_VER},
+        )
+        self.assertFalse(plan_synced["has_update"])
+        self.assertFalse(plan_synced["pages_needs_sync"])
+
     def test_build_plan_rejects_incomplete_upstream(self):
         # A partial scrape must never produce a release (e.g. tag "..._hub-None")
         for override in (
@@ -584,21 +629,22 @@ class TestPackagingLogic(unittest.TestCase):
         install_sh = repo_root / "install.sh"
         ansi_re = re.compile(r"\x1b\[[0-9;]*m")
 
-        # --cli should select ONLY CLI, not IDE or Hub
+        # --cli should select ONLY CLI, not IDE or App
         res_cli = subprocess.run([str(install_sh), "--cli", "--dry-run"], capture_output=True, text=True)
         self.assertEqual(res_cli.returncode, 0)
         out_cli = ansi_re.sub("", res_cli.stdout)
         self.assertIn("Antigravity CLI ('agy') (Terminal agent", out_cli)
         self.assertNotIn("Antigravity IDE (Native package", out_cli)
-        self.assertNotIn("Antigravity Hub (Antigravity 2.0", out_cli)
+        self.assertNotIn("Antigravity App (Antigravity 2.0", out_cli)
 
-        # --ide --hub should select IDE and Hub, not CLI
-        res_gui = subprocess.run([str(install_sh), "--ide", "--hub", "--dry-run"], capture_output=True, text=True)
-        self.assertEqual(res_gui.returncode, 0)
-        out_gui = ansi_re.sub("", res_gui.stdout)
-        self.assertIn("Antigravity IDE (Native package", out_gui)
-        self.assertIn("Antigravity Hub (Antigravity 2.0", out_gui)
-        self.assertNotIn("Antigravity CLI ('agy') (Terminal agent", out_gui)
+        # --ide --app (and --hub alias) should select IDE and App, not CLI
+        for app_flag in ("--app", "--hub"):
+            res_gui = subprocess.run([str(install_sh), "--ide", app_flag, "--dry-run"], capture_output=True, text=True)
+            self.assertEqual(res_gui.returncode, 0)
+            out_gui = ansi_re.sub("", res_gui.stdout)
+            self.assertIn("Antigravity IDE (Native package", out_gui)
+            self.assertIn("Antigravity App (Antigravity 2.0", out_gui)
+            self.assertNotIn("Antigravity CLI ('agy') (Terminal agent", out_gui)
 
     def test_astro_site_components(self):
         site_dir = repo_root / "site"

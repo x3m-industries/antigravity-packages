@@ -188,7 +188,7 @@ def generate_og_banner():
     draw.text((term_x + 48, term_y + 60), cmd_str, font=c_bold, fill=COLORS["text_main"])
 
     c_hint = font(FONT_MONO_REGULAR, 14)
-    draw.text((term_x + 48, term_y + 96), "# Selects IDE, Hub & CLI by default · Zero sudo needed for --cli-only", font=c_hint, fill=COLORS["text_muted"])
+    draw.text((term_x + 48, term_y + 96), "# Selects IDE, App & CLI by default · Zero sudo needed for --cli-only", font=c_hint, fill=COLORS["text_muted"])
 
     # Feature Row
     features = [

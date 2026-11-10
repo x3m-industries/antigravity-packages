@@ -64,6 +64,41 @@ def get_latest_release():
     raise UpstreamError(f"Failed to query latest GitHub release via gh CLI: {(res.stderr or '').strip()}")
 
 
+def parse_apt_packages_versions(packages_text):
+    """Parse Package -> Version mapping from a Debian Packages index."""
+    versions = {}
+    current_pkg = None
+    for raw_line in (packages_text or "").splitlines():
+        line = raw_line.strip()
+        if not line:
+            current_pkg = None
+            continue
+        if line.startswith("Package:"):
+            current_pkg = line.split(":", 1)[1].strip()
+        elif line.startswith("Version:") and current_pkg:
+            versions[current_pkg] = line.split(":", 1)[1].strip()
+    return versions
+
+
+def get_live_pages_versions():
+    """Fetch currently published APT package versions from GitHub Pages.
+
+    Returns a dict of {package_name: version} or None if unreachable.
+    """
+    url = "https://x3m-industries.github.io/antigravity-packages/deb/dists/stable/main/binary-amd64/Packages"
+    req = urllib.request.Request(
+        url,
+        headers={"User-Agent": "Mozilla/5.0 (X11; Linux x86_64)", "Cache-Control": "no-cache"},
+    )
+    try:
+        with urllib.request.urlopen(req, timeout=15) as resp:
+            text = resp.read().decode("utf-8", errors="ignore")
+        return parse_apt_packages_versions(text)
+    except Exception as e:
+        print(f"Warning: could not fetch live GitHub Pages APT index ({e}); skipping Pages drift check.", file=sys.stderr)
+        return None
+
+
 def validate_upstream(upstream):
     """Ensure every app has a version and both architecture URLs.
 
@@ -108,7 +143,7 @@ def existing_version(pkg, version_full, assets):
     return found[-1] if found else version_full
 
 
-def compute_build_plan(upstream, prev_tag, existing_assets, env):
+def compute_build_plan(upstream, prev_tag, existing_assets, env, pages_versions=None):
     """Decide what needs building. Pure function: no network, no filesystem."""
     validate_upstream(upstream)
 
@@ -120,7 +155,11 @@ def compute_build_plan(upstream, prev_tag, existing_assets, env):
 
     force_build = env.get("FORCE_BUILD", "").lower() in TRUTHY
     force_ide = env.get("FORCE_IDE", "").lower() in TRUTHY or force_build
-    force_hub = env.get("FORCE_HUB", "").lower() in TRUTHY or force_build
+    force_hub = (
+        env.get("FORCE_HUB", "").lower() in TRUTHY
+        or env.get("FORCE_APP", "").lower() in TRUTHY
+        or force_build
+    )
 
     ide_needs_build = not ide_present or force_ide
     hub_needs_build = not hub_present or force_hub
@@ -143,10 +182,18 @@ def compute_build_plan(upstream, prev_tag, existing_assets, env):
             hub_needs_build = True
             hub_out = f"{hub_ver}.{pkg_revision}"
 
+    pages_needs_sync = False
+    if pages_versions is not None:
+        pages_ide = pages_versions.get("antigravity-ide")
+        pages_hub = pages_versions.get("antigravity")
+        if pages_ide != ide_out or pages_hub != hub_out:
+            pages_needs_sync = True
+
     return {
-        "has_update": ide_needs_build or hub_needs_build,
+        "has_update": ide_needs_build or hub_needs_build or pages_needs_sync,
         "ide_needs_build": ide_needs_build,
         "hub_needs_build": hub_needs_build,
+        "pages_needs_sync": pages_needs_sync,
         "ide_present": ide_present,
         "hub_present": hub_present,
         # Target tag combines both versions so it is always unique when either updates
@@ -182,18 +229,22 @@ def main():
     latest_rel = get_latest_release()
     prev_tag = latest_rel.get("tagName", "") if latest_rel else ""
     existing_assets = [a.get("name", "") for a in latest_rel.get("assets", [])] if latest_rel else []
+    pages_versions = get_live_pages_versions()
 
     print(f"Latest release tag: {prev_tag}")
     print(f"Existing assets count: {len(existing_assets)}")
+    if pages_versions is not None:
+        print(f"Live Pages APT versions: {json.dumps(pages_versions)}")
 
     try:
-        plan = compute_build_plan(upstream, prev_tag, existing_assets, os.environ)
+        plan = compute_build_plan(upstream, prev_tag, existing_assets, os.environ, pages_versions=pages_versions)
     except UpstreamError as e:
         print(f"Error: {e}", file=sys.stderr)
         sys.exit(1)
 
     print(f"ide_needs_build: {plan['ide_needs_build']} (output: {plan['ide_version']}, present: {plan['ide_present']})")
     print(f"hub_needs_build: {plan['hub_needs_build']} (output: {plan['hub_version']}, present: {plan['hub_present']})")
+    print(f"pages_needs_sync: {plan['pages_needs_sync']}")
     print(f"has_update: {plan['has_update']}, target tag: {plan['tag_name']}")
 
     github_output = os.environ.get("GITHUB_OUTPUT")

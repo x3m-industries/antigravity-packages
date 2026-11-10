@@ -16,7 +16,7 @@ on:
         type: boolean
         default: false
       force_hub:
-        description: 'Force rebuild Antigravity Hub only'
+        description: 'Force rebuild Antigravity App only'
         required: false
         type: boolean
         default: false
@@ -216,7 +216,7 @@ jobs:
           rpm --dbpath "$RPMDB" -K ./dist/packages/*.rpm
 
       - name: Set up QEMU (arm64 smoke tests)
-        uses: docker/setup-qemu-action@v3
+        uses: docker/setup-qemu-action@v4
         with:
           platforms: arm64
 
@@ -237,7 +237,7 @@ jobs:
         run: |
           TAG="${{ needs.check.outputs.tag_name }}"
           TITLE="Antigravity Packages - $TAG"
-          NOTES="Automated release of Google Antigravity & Antigravity IDE for Linux. IDE: ${{ needs.check.outputs.ide_version }} | Hub: ${{ needs.check.outputs.hub_version }}"
+          NOTES="Automated release of Google Antigravity App & Antigravity IDE for Linux. IDE: ${{ needs.check.outputs.ide_version }} | App: ${{ needs.check.outputs.hub_version }}"
 
           if gh release view "$TAG" > /dev/null 2>&1; then
             echo "Release $TAG exists; updating assets in place."
@@ -248,10 +248,24 @@ jobs:
                 gh release delete-asset "$TAG" "$asset" --yes
               fi
             done
-            gh release edit "$TAG" --title "$TITLE" --notes "$NOTES"
+            gh release edit "$TAG" --draft=false --title "$TITLE" --notes "$NOTES" || {
+              if [ "$(gh release view "$TAG" --json isDraft --jq .isDraft 2>/dev/null)" = "false" ]; then
+                echo "Release $TAG is already published (recovered from transient API error)."
+              else
+                sleep 5
+                gh release edit "$TAG" --draft=false --title "$TITLE" --notes "$NOTES"
+              fi
+            }
           else
             gh release create "$TAG" ./dist/packages/* --draft --title "$TITLE" --notes "$NOTES"
-            gh release edit "$TAG" --draft=false
+            gh release edit "$TAG" --draft=false || {
+              if [ "$(gh release view "$TAG" --json isDraft --jq .isDraft 2>/dev/null)" = "false" ]; then
+                echo "Release $TAG was published despite transient API error."
+              else
+                sleep 5
+                gh release edit "$TAG" --draft=false
+              fi
+            }
           fi
 
       - name: Prepare RPM files for repository metadata

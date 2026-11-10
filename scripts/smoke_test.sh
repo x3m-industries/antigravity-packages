@@ -155,7 +155,9 @@ verify_launch() {
 }
 
 if [ "${EXPECT_HUB:-0}" = 1 ]; then
-    verify_app antigravity /usr/bin/antigravity /usr/bin/agy-hub antigravity.desktop
+    verify_app antigravity /usr/bin/antigravity /usr/bin/agy-app antigravity.desktop
+    test -x /usr/bin/agy-hub || fail "/usr/bin/agy-hub compatibility symlink is missing or not executable"
+    echo "  ✓ /usr/bin/agy-hub compatibility symlink is executable"
 fi
 if [ "${EXPECT_IDE:-0}" = 1 ]; then
     verify_app antigravity-ide /usr/bin/antigravity-ide /usr/bin/agy-ide antigravity-ide.desktop

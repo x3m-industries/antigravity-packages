@@ -129,7 +129,8 @@ cp "{icon_file}" %{{buildroot}}/usr/share/pixmaps/{package_name}.png
     nemo_src = desktop_dir / "nemo" / "open-in-antigravity-ide.nemo_action"
     url_handler_src = desktop_dir / "antigravity-ide-url-handler.desktop"
 
-    short_bin = "agy-ide" if package_name == "antigravity-ide" else "agy-hub"
+    short_bin = "agy-ide" if package_name == "antigravity-ide" else "agy-app"
+    legacy_short_bin = "" if package_name == "antigravity-ide" else "agy-hub"
 
     if package_name == "antigravity-ide":
         if url_handler_src.exists():
@@ -215,7 +216,7 @@ ln -sf _antigravity-ide "%{{buildroot}}/usr/share/zsh/site-functions/_agy-ide"
 Name:           {package_name}
 Version:        {version}
 Release:        {release}%{{?dist}}
-Summary:        Google Antigravity - {"Agentic IDE" if "ide" in package_name else "Agent Platform"}
+Summary:        Google Antigravity - {"Agentic IDE" if "ide" in package_name else "Antigravity App (Agent Platform)"}
 License:        Proprietary
 URL:            https://antigravity.google
 AutoReqProv:    no
@@ -242,6 +243,7 @@ fi
 mkdir -p "%{{buildroot}}/usr/bin"
 ln -sf "{bin_target}" "%{{buildroot}}/usr/bin/{package_name}"
 ln -sf "/usr/bin/{package_name}" "%{{buildroot}}/usr/bin/{short_bin}"
+{f'ln -sf "/usr/bin/{package_name}" "%{{buildroot}}/usr/bin/{legacy_short_bin}"' if legacy_short_bin else ""}
 
 # Desktop entry
 mkdir -p "%{{buildroot}}/usr/share/applications"
@@ -254,6 +256,7 @@ cp "{desktop_file}" "%{{buildroot}}/usr/share/applications/{package_name}.deskto
 {install_dest}
 /usr/bin/{package_name}
 /usr/bin/{short_bin}
+{f"/usr/bin/{legacy_short_bin}" if legacy_short_bin else ""}
 /usr/share/applications/{package_name}.desktop
 {icon_files}
 {extra_files}
@@ -308,8 +311,11 @@ def build_deb(package_name, version, release, arch, app_source_dir, output_dir, 
     bin_dir.mkdir(parents=True, exist_ok=True)
     target_link = f"/usr/share/{package_name}/bin/{package_name}" if package_name == "antigravity-ide" else f"/usr/share/{package_name}/{package_name}"
     os.symlink(target_link, bin_dir / package_name)
-    short_bin = "agy-ide" if package_name == "antigravity-ide" else "agy-hub"
+    short_bin = "agy-ide" if package_name == "antigravity-ide" else "agy-app"
+    legacy_short_bin = "" if package_name == "antigravity-ide" else "agy-hub"
     os.symlink(f"/usr/bin/{package_name}", bin_dir / short_bin)
+    if legacy_short_bin:
+        os.symlink(f"/usr/bin/{package_name}", bin_dir / legacy_short_bin)
 
     # Desktop file
     apps_dir = stage_dir / "usr" / "share" / "applications"
@@ -420,7 +426,7 @@ Depends: libgtk-3-0t64 | libgtk-3-0, libnotify4, libnss3, libxss1, libasound2t64
 Recommends: {recommends_deb}
 Maintainer: X3M Antigravity Packagers <packaging@x3m.industries>
 Homepage: https://github.com/x3m-industries/antigravity-packages
-Description: Google Antigravity - {"Agentic IDE" if "ide" in package_name else "Agent Platform"}
+Description: Google Antigravity - {"Agentic IDE" if "ide" in package_name else "Antigravity App (Agent Platform)"}
  Google Antigravity packages for Debian and Ubuntu based distributions.
 """
     with open(debian_dir / "control", "w") as f:

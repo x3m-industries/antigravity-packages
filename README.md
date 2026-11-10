@@ -2,7 +2,7 @@
 
 <p align="center">
   <img src="assets/logo.png" width="76" height="76" alt="Google Antigravity IDE" title="Antigravity IDE" style="border-radius: 18px; margin-right: 12px; vertical-align: middle;" />
-  <img src="assets/hub-logo.png" width="76" height="76" alt="Google Antigravity Hub" title="Antigravity HUB" style="border-radius: 18px; vertical-align: middle;" />
+  <img src="assets/hub-logo.png" width="76" height="76" alt="Google Antigravity App" title="Antigravity App" style="border-radius: 18px; vertical-align: middle;" />
 </p>
 
 <p align="center">
@@ -19,7 +19,7 @@
 > Architected & maintained by [**Steven Ceuppens**](https://github.com/stevenceuppens) at [**X3M Industries**](https://x3m.industries).
 
 ```bash
-# ⚡ 1-Command Universal Linux Installer (Interactive with smart defaults: IDE + Hub + CLI)
+# ⚡ 1-Command Universal Linux Installer (Interactive with smart defaults: IDE + App + CLI)
 curl -fsSL https://x3m-industries.github.io/antigravity-packages/install.sh | bash
 ```
 
@@ -37,7 +37,7 @@ Google publishes official Linux binaries for both apps as standalone archives wi
 | Icon | App / Package | Component | Description & Integration Highlights | Official Google Docs |
 | :---: | :--- | :--- | :--- | :--- |
 | <img src="assets/logo.png" width="36" height="36" alt="Antigravity IDE" style="border-radius:8px;"> | **`antigravity-ide`** | **[Google Antigravity IDE](https://antigravity.google/product/antigravity-ide)** | Official AI-first desktop code editor. Native RPM/DEB, desktop launcher, `antigravity-ide://` OAuth handler. | [Google IDE Details](https://antigravity.google/product/antigravity-ide) |
-| <img src="assets/hub-logo.png" width="36" height="36" alt="Antigravity Hub" style="border-radius:8px;"> | **`antigravity`** | **[Google Antigravity Hub](https://antigravity.google/product/antigravity-2)** | Official agent platform & workspace. Native RPM/DEB, desktop launcher, `antigravity://` OAuth handler. | [Google Hub Details](https://antigravity.google/product/antigravity-2) |
+| <img src="assets/hub-logo.png" width="36" height="36" alt="Antigravity App" style="border-radius:8px;"> | **`antigravity`** | **[Google Antigravity App](https://antigravity.google/product/antigravity-2)** | Official agent platform & workspace. Native RPM/DEB, desktop launcher, `antigravity://` OAuth handler. | [Google App Details](https://antigravity.google/product/antigravity-2) |
 | <img src="assets/antigravity.png" width="36" height="36" alt="Antigravity CLI" style="border-radius:8px;"> | **`agy`** | **[Google Antigravity CLI](https://antigravity.google/docs/cli/reference)** | Official terminal coding agent. Seamlessly installed into `~/.local/bin/agy` with native background auto-updates. | [Google CLI Reference](https://antigravity.google/docs/cli/reference) |
 
 ---
@@ -52,7 +52,7 @@ Unlike basic community scripts that download Google tarballs and manually unpack
 | **Automated System Updates** | ❌ Broken (unprivileged updater cannot write to root-owned `/opt`) | ✅ **Seamless updates** (`sudo dnf update` / `sudo apt upgrade`) |
 | **Cryptographic Signing** | ❌ No signature verification | ✅ **GPG signed** packages & repository metadata (`7A48CA4D7E7B6601`) |
 | **Dependency Resolution** | ❌ Prone to missing shared libraries | ✅ **Automatic system dependency resolution** |
-| **Application Icons** | ⚠️ Generic fallback gear icon (Google hides Hub icon in `app.asar`) | ✅ **High-res 512x512 icons** extracted from ASAR and indexed in hicolor/pixmaps |
+| **Application Icons** | ⚠️ Generic fallback gear icon (Google hides App icon in `app.asar`) | ✅ **High-res 512x512 icons** extracted from ASAR and indexed in hicolor/pixmaps |
 | **OAuth Protocol Handling** | ❌ Broken login redirect (missing FreeDesktop scheme handler) | ✅ **Registered `antigravity://` & `antigravity-ide://` OAuth handlers** |
 | **Sandboxing & Permissions** | ⚠️ Electron crashes under Ubuntu 24.04+ restricted namespaces | ✅ **Hardened `chrome-sandbox` permissions** (`04755 root:root`) |
 | **Desktop & Shell Integration** | ⚠️ Minimal launchers | ✅ **Full FreeDesktop menus, OAuth handlers, multi-desktop right-click (GNOME, KDE, Mint, MATE, COSMIC), shell completions** |
@@ -76,7 +76,7 @@ Automatically detects your Linux distribution (Fedora, RHEL, CentOS, Ubuntu, Deb
 curl -fsSL https://x3m-industries.github.io/antigravity-packages/install.sh | bash
 ```
 
-Simply press **ENTER** to install the complete suite (IDE + Hub + CLI), or type custom numbers (e.g. `1, 3` for IDE and CLI).
+Simply press **ENTER** to install the complete suite (IDE + App + CLI), or type custom numbers (e.g. `1, 3` for IDE and CLI).
 
 #### 🤖 Automated & Headless Execution (CI/CD, Docker, Scripts)
 
@@ -93,7 +93,7 @@ When installing in automated environments, containers, or non-interactive deploy
 ##### Common Command Examples
 
 ```bash
-# 1. Install complete suite silently without prompts (IDE + Hub + CLI)
+# 1. Install complete suite silently without prompts (IDE + App + CLI)
 curl -fsSL https://x3m-industries.github.io/antigravity-packages/install.sh | bash -s -- -y
 
 # 2. Inspect installation status and repository health
@@ -121,17 +121,17 @@ bash <(curl -fsSL https://x3m-industries.github.io/antigravity-packages/install.
 
 | Option Flag | Description | Scope / Privileges |
 | :--- | :--- | :--- |
-| `-y`, `--yes`, `--non-interactive` | Run silently without interactive prompts (installs defaults: IDE, Hub, CLI) | Sudo (desktop packages) |
-| `--all` | Explicitly install all three components (IDE, Hub, CLI) | Sudo (desktop packages) |
+| `-y`, `--yes`, `--non-interactive` | Run silently without interactive prompts (installs defaults: IDE, App, CLI) | Sudo (desktop packages) |
+| `--all` | Explicitly install all three components (IDE, App, CLI) | Sudo (desktop packages) |
 | `--status` | Show installed components, versions, and repository health | **User / None** |
 | `--print-downloads` | Print official Google tarballs & package download URLs | **User / None** |
 | `--uninstall` | Cleanly remove helper-configured repositories, packages & integrations | Sudo |
 | `--cli-only` | Install only the Antigravity CLI (`agy`) into `~/.local/bin/agy` | **User only (No sudo)** |
 | `--ide-only` | Install only Antigravity IDE (code editor) via RPM/DEB | Sudo |
-| `--hub-only` | Install only Antigravity Hub (agent platform) via RPM/DEB | Sudo |
+| `--app-only`, `--hub-only` | Install only Antigravity App (agent platform) via RPM/DEB | Sudo |
 | `--no-cli` | Skip Antigravity CLI installation (desktop packages only) | Sudo |
 | `--no-ide` | Skip Antigravity IDE installation | Sudo / User |
-| `--no-hub` | Skip Antigravity Hub installation | Sudo / User |
+| `--no-app`, `--no-hub` | Skip Antigravity App installation | Sudo / User |
 | `--no-nautilus` | Remove the file manager integrations shipped with the IDE package (alias of `--no-desktop-integrations`) | Sudo |
 | `--dry-run` | Preview what would be installed and exit without making changes | None |
 | `-h`, `--help` | Display the built-in help menu and usage examples | None |
@@ -148,7 +148,7 @@ bash <(curl -fsSL https://x3m-industries.github.io/antigravity-packages/install.
 # 1. Add the RPM repository file to /etc/yum.repos.d/
 sudo curl -fsSL https://x3m-industries.github.io/antigravity-packages/rpm/antigravity.repo -o /etc/yum.repos.d/antigravity.repo
 
-# 2. Install Antigravity IDE & Hub via DNF
+# 2. Install Antigravity IDE & App via DNF
 sudo dnf install antigravity-ide antigravity
 
 # 3. Update anytime
@@ -184,7 +184,7 @@ sudo apt update && sudo apt install --only-upgrade antigravity-ide antigravity
 sudo zypper addrepo -f https://x3m-industries.github.io/antigravity-packages/rpm/ antigravity
 sudo rpm --import https://x3m-industries.github.io/antigravity-packages/rpm/RPM-GPG-KEY-antigravity
 
-# 2. Install Antigravity IDE & Hub via Zypper
+# 2. Install Antigravity IDE & App via Zypper
 sudo zypper install antigravity-ide antigravity
 
 # 3. Update anytime
@@ -259,8 +259,8 @@ If you or your organization prefer installing standalone `.rpm` or `.deb` packag
 | :--- | :--- | :--- |
 | **Antigravity IDE** | `.rpm` (x86_64 / aarch64) | [Download Latest IDE .RPM](https://github.com/x3m-industries/antigravity-packages/releases/latest) |
 | **Antigravity IDE** | `.deb` (amd64 / arm64) | [Download Latest IDE .DEB](https://github.com/x3m-industries/antigravity-packages/releases/latest) |
-| **Antigravity Hub** | `.rpm` (x86_64 / aarch64) | [Download Latest Hub .RPM](https://github.com/x3m-industries/antigravity-packages/releases/latest) |
-| **Antigravity Hub** | `.deb` (amd64 / arm64) | [Download Latest Hub .DEB](https://github.com/x3m-industries/antigravity-packages/releases/latest) |
+| **Antigravity App** | `.rpm` (x86_64 / aarch64) | [Download Latest App .RPM](https://github.com/x3m-industries/antigravity-packages/releases/latest) |
+| **Antigravity App** | `.deb` (amd64 / arm64) | [Download Latest App .DEB](https://github.com/x3m-industries/antigravity-packages/releases/latest) |
 
 ---
 
@@ -278,7 +278,7 @@ antigravity-ide main.py
 # Compare files with built-in diff viewer
 antigravity-ide --diff old.py new.py
 
-# Launch Antigravity Hub
+# Launch Antigravity App
 antigravity
 ```
 
@@ -293,7 +293,7 @@ antigravity
 
 ---
 
-## ⚡ Short CLI Commands (`agy`, `agy-ide`, `agy-hub`)
+## ⚡ Short CLI Commands (`agy`, `agy-ide`, `agy-app`)
 
 For fast terminal productivity, our packages and installer provide standardized, ergonomic short commands:
 
@@ -301,7 +301,7 @@ For fast terminal productivity, our packages and installer provide standardized,
 | :--- | :--- | :--- | :--- |
 | **`agy`** | Antigravity CLI Agent | Google's official terminal pair programmer & background agent | User-space (`~/.local/bin/agy`) |
 | **`agy-ide`** | Antigravity IDE | Shortcut for `/usr/bin/antigravity-ide` (e.g., `agy-ide .`) | System (`/usr/bin/agy-ide`) |
-| **`agy-hub`** | Antigravity Hub | Shortcut for `/usr/bin/antigravity` (desktop agent platform) | System (`/usr/bin/agy-hub`) |
+| **`agy-app`** | Antigravity App | Shortcut for `/usr/bin/antigravity` (desktop agent platform; `agy-hub` alias also supported) | System (`/usr/bin/agy-app`) |
 
 ---
 
