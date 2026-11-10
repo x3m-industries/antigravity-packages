@@ -15,6 +15,7 @@ from check_upstream import (
     UpstreamError,
     app_complete,
     parse_apt_packages_versions,
+    parse_updater_release_json,
 )
 from stats import analyze_downloads
 
@@ -65,6 +66,18 @@ class TestPackagingLogic(unittest.TestCase):
 
         self.assertIsNotNone(ide_arm_match)
         self.assertEqual(ide_arm_match.group(1), "2.5.5-4923483625488384")
+
+        # Dynamic Cloud Run auto-updater JSON payload parsing (list and {"versions": [...]})
+        self.assertEqual(
+            parse_updater_release_json([{"version": "2.31.0", "execution_id": "6379060755038208"}]),
+            "2.31.0-6379060755038208",
+        )
+        self.assertEqual(
+            parse_updater_release_json({"versions": [{"version": "2.6.0", "execution_id": "5526304964083712"}]}),
+            "2.6.0-5526304964083712",
+        )
+        self.assertIsNone(parse_updater_release_json([]))
+        self.assertIsNone(parse_updater_release_json([{"version": "invalid", "execution_id": "123"}]))
 
     def test_analyze_downloads(self):
         mock_releases = [

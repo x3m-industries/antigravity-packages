@@ -102,7 +102,7 @@ flowchart TD
 ```
 
 ### 3.1 Upstream Release Detection (`scripts/check_upstream.py`)
-- **Scrapes**: `https://antigravity.google/download` with a browser User-Agent.
+- **Scrapes**: `https://antigravity.google/download` with a browser User-Agent and queries the live Cloud Run auto-updater endpoints embedded in the page's client-side script (`antigravity-hub-auto-updater.../releases` and `antigravity-ide-auto-updater.../releases`), falling back to the static HTML download links if unreachable.
 - **Regex Patterns**:
   - **Antigravity App**: `https://storage.googleapis.com/antigravity-public/antigravity-hub/([0-9a-zA-Z\.\-]+)/linux-(x64|arm)/Antigravity\.tar\.gz`
   - **Antigravity IDE**: `https://edgedl.me.gvt1.com/edgedl/release2/[^\"\' ]+/([0-9a-zA-Z\.\-]+)/linux-(x64|arm)/Antigravity(?:%20|\+)IDE\.tar\.gz`

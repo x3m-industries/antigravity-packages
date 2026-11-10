@@ -17,6 +17,50 @@ class UpstreamError(Exception):
     """Raised when the upstream download page does not contain everything we need."""
 
 
+DEFAULT_HUB_UPDATER_URL = "https://antigravity-hub-auto-updater-974169037036.us-central1.run.app/releases"
+DEFAULT_IDE_UPDATER_URL = "https://antigravity-ide-auto-updater-974169037036.us-central1.run.app/releases"
+
+
+def parse_updater_release_json(payload):
+    """Extract the latest '<version>-<execution_id>' string from Google's auto-updater JSON."""
+    items = payload if isinstance(payload, list) else (
+        payload.get("versions") if isinstance(payload, dict) else None
+    )
+    if not items or not isinstance(items, list):
+        return None
+    top = items[0]
+    if not isinstance(top, dict):
+        return None
+    ver = top.get("version")
+    exec_id = top.get("execution_id")
+    if (
+        isinstance(ver, str)
+        and re.match(r"^\d+\.\d+\.\d+$", ver)
+        and isinstance(exec_id, str)
+        and re.match(r"^\d+$", exec_id)
+    ):
+        return f"{ver}-{exec_id}"
+    return None
+
+
+def fetch_updater_version(url):
+    """Fetch the latest version string from a Google Cloud Run auto-updater endpoint."""
+    req = urllib.request.Request(
+        url,
+        headers={
+            "User-Agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36",
+            "Cache-Control": "no-cache",
+        },
+    )
+    try:
+        with urllib.request.urlopen(req, timeout=10) as resp:
+            data = json.loads(resp.read().decode("utf-8", errors="ignore"))
+        return parse_updater_release_json(data)
+    except Exception as e:
+        print(f"Warning: failed to query auto-updater endpoint {url} ({e}); falling back to static HTML.", file=sys.stderr)
+        return None
+
+
 def get_latest_upstream():
     url = "https://antigravity.google/download"
     req = urllib.request.Request(
@@ -33,24 +77,51 @@ def get_latest_upstream():
         except Exception:
             html = raw.decode("utf-8", errors="ignore")
 
-    # Antigravity Hub
+    # Static HTML fallback matches
     hub_match = re.search(r'https://storage\.googleapis\.com/antigravity-public/antigravity-hub/([0-9a-zA-Z\.\-]+)/linux-x64/Antigravity\.tar\.gz', html)
     hub_arm_match = re.search(r'https://storage\.googleapis\.com/antigravity-public/antigravity-hub/([0-9a-zA-Z\.\-]+)/linux-arm/Antigravity\.tar\.gz', html)
 
-    # Antigravity IDE
-    ide_match = re.search(r'https://edgedl\.me\.gvt1\.com/edgedl/release2/[^\"\' ]+/([0-9a-zA-Z\.\-]+)/linux-x64/Antigravity(?:%20|\+)IDE\.tar\.gz', html)
-    ide_arm_match = re.search(r'https://edgedl\.me\.gvt1\.com/edgedl/release2/[^\"\' ]+/([0-9a-zA-Z\.\-]+)/linux-arm/Antigravity(?:%20|\+)IDE\.tar\.gz', html)
+    ide_match = re.search(r'https://edgedl\.me\.gvt1\.com/edgedl/release2/([^\"\' ]+)/([0-9a-zA-Z\.\-]+)/linux-x64/Antigravity(?:%20|\+)IDE\.tar\.gz', html)
+    ide_arm_match = re.search(r'https://edgedl\.me\.gvt1\.com/edgedl/release2/([^\"\' ]+)/([0-9a-zA-Z\.\-]+)/linux-arm/Antigravity(?:%20|\+)IDE\.tar\.gz', html)
+
+    # Dynamic Cloud Run auto-updater endpoints embedded in https://antigravity.google/download
+    hub_updater_match = re.search(r'https://antigravity-hub-auto-updater-[a-z0-9\.\-]+/releases', html)
+    ide_updater_match = re.search(r'https://antigravity-ide-auto-updater-[a-z0-9\.\-]+/releases', html)
+
+    hub_updater_ver = fetch_updater_version(hub_updater_match.group(0) if hub_updater_match else DEFAULT_HUB_UPDATER_URL)
+    ide_updater_ver = fetch_updater_version(ide_updater_match.group(0) if ide_updater_match else DEFAULT_IDE_UPDATER_URL)
+
+    hub_ver = hub_updater_ver or (hub_match.group(1) if hub_match else None)
+    hub_url_x64 = (
+        f"https://storage.googleapis.com/antigravity-public/antigravity-hub/{hub_ver}/linux-x64/Antigravity.tar.gz"
+        if hub_ver else (hub_match.group(0) if hub_match else None)
+    )
+    hub_url_arm64 = (
+        f"https://storage.googleapis.com/antigravity-public/antigravity-hub/{hub_ver}/linux-arm/Antigravity.tar.gz"
+        if hub_ver else (hub_arm_match.group(0) if hub_arm_match else None)
+    )
+
+    ide_prefix = ide_match.group(1) if ide_match else "j0qc3/antigravity/stable"
+    ide_ver = ide_updater_ver or (ide_match.group(2) if ide_match else None)
+    ide_url_x64 = (
+        f"https://edgedl.me.gvt1.com/edgedl/release2/{ide_prefix}/{ide_ver}/linux-x64/Antigravity%20IDE.tar.gz"
+        if ide_ver else (ide_match.group(0) if ide_match else None)
+    )
+    ide_url_arm64 = (
+        f"https://edgedl.me.gvt1.com/edgedl/release2/{ide_prefix}/{ide_ver}/linux-arm/Antigravity%20IDE.tar.gz"
+        if ide_ver else (ide_arm_match.group(0) if ide_arm_match else None)
+    )
 
     return {
         "antigravity": {
-            "version_full": hub_match.group(1) if hub_match else None,
-            "url_x64": hub_match.group(0) if hub_match else None,
-            "url_arm64": hub_arm_match.group(0) if hub_arm_match else None,
+            "version_full": hub_ver,
+            "url_x64": hub_url_x64,
+            "url_arm64": hub_url_arm64,
         },
         "antigravity-ide": {
-            "version_full": ide_match.group(1) if ide_match else None,
-            "url_x64": ide_match.group(0) if ide_match else None,
-            "url_arm64": ide_arm_match.group(0) if ide_arm_match else None,
+            "version_full": ide_ver,
+            "url_x64": ide_url_x64,
+            "url_arm64": ide_url_arm64,
         }
     }
 

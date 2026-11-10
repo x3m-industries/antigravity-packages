@@ -9,8 +9,8 @@ export function parseReleaseTag(tag?: string): ReleaseVersions {
   const defaultVersions: ReleaseVersions = {
     ideSemver: "2.6.0",
     ideBuild: "5526304964083712",
-    hubSemver: "2.30.0",
-    hubBuild: "6386428939206656",
+    hubSemver: "2.31.0",
+    hubBuild: "6379060755038208",
   };
 
   if (!tag || tag === "latest" || tag === "vlatest") {
