@@ -70,8 +70,10 @@ SUSE_LIVE_SCRIPT='
     zypper --non-interactive refresh antigravity
     zypper --non-interactive info antigravity antigravity-ide
     zypper --non-interactive download antigravity antigravity-ide
+    shopt -s globstar nullglob
     found=0
-    while IFS= read -r pkg; do
+    for pkg in /var/cache/zypp/packages/antigravity/**/*.rpm; do
+        [ -f "$pkg" ] || continue
         found=$((found + 1))
         echo "Verifying downloaded RPM signature: $(basename "$pkg")"
         out=$(rpm -Kv "$pkg")
@@ -80,7 +82,7 @@ SUSE_LIVE_SCRIPT='
             echo "ERROR: rpm 4.x did not verify signature on $pkg" >&2
             exit 1
         }
-    done < <(find /var/cache/zypp/packages/antigravity -type f -name "*.rpm" | sort)
+    done
     [ "$found" -ge 2 ] || { echo "ERROR: expected at least 2 downloaded RPMs, found $found" >&2; exit 1; }
     echo "Live openSUSE zypper check PASSED!"
 '
