@@ -146,7 +146,7 @@ bash <(curl -fsSL https://x3m-industries.github.io/antigravity-packages/install.
 
 ```bash
 # 1. Add the RPM repository file to /etc/yum.repos.d/
-sudo curl -fsSL https://x3m-industries.github.io/antigravity-packages/rpm/antigravity.repo -o /etc/yum.repos.d/antigravity.repo
+sudo curl -fsSL https://rpm.x3m.industries/rpm/antigravity.repo -o /etc/yum.repos.d/antigravity.repo
 
 # 2. Install Antigravity IDE & App via DNF
 sudo dnf install antigravity-ide antigravity
@@ -181,8 +181,8 @@ sudo apt update && sudo apt install --only-upgrade antigravity-ide antigravity
 
 ```bash
 # 1. Add the openSUSE Zypper repository & import the GPG signing key
-sudo zypper addrepo -f https://x3m-industries.github.io/antigravity-packages/rpm/ antigravity
-sudo rpm --import https://x3m-industries.github.io/antigravity-packages/rpm/RPM-GPG-KEY-antigravity
+sudo zypper addrepo -f https://rpm.x3m.industries/rpm/ antigravity
+sudo rpm --import https://rpm.x3m.industries/rpm/RPM-GPG-KEY-antigravity
 
 # 2. Install Antigravity IDE & App via Zypper
 sudo zypper install antigravity-ide antigravity

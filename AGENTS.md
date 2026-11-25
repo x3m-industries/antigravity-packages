@@ -63,7 +63,7 @@ antigravity-packages/
 │   ├── README.md                  # Arch installation instructions (makepkg, debtap, CLI)
 │   ├── antigravity-bin/           # PKGBUILD for Google Antigravity App (Agent Platform)
 │   └── antigravity-ide-bin/       # PKGBUILD for Google Antigravity IDE
-├── vercel-apt/                    # Static Vercel project (apt.x3m.industries): redirects .deb pool downloads to GitHub Releases, proxies APT metadata from Pages
+├── vercel-apt/                    # Static Vercel project (apt.x3m.industries & rpm.x3m.industries): redirects .deb/.rpm downloads to GitHub Releases, proxies repo metadata from Pages
 ├── templates/                     # Pre-rendered HTML templates for fallback and test backwards compatibility
 ├── tests/
 │   └── test_packaging.py          # Python unit test suite (version parsing, upstream regex matching, stats processing, desktop entries, templates)
@@ -156,7 +156,7 @@ python3 scripts/build_packages.py \
      - Installs desktop entry in `/usr/share/applications/<package_name>.desktop`.
      - Installs 512x512 icons in `/usr/share/icons/hicolor/512x512/apps/<package_name>.png` and `/usr/share/pixmaps/<package_name>.png`.
      - Includes `%post` and `%postun` triggers for `update-desktop-database` and `gtk-update-icon-cache`.
-   - Invokes `rpmbuild -bb --target <rpm_arch> <spec_file>`.
+   - Invokes `rpmbuild -bb --define '_rpmformat 4' --target <rpm_arch> <spec_file>`. Pinning RPM v4 ensures `rpmsign` writes legacy `RPMSIGTAG_RSA` (tag 268) signatures verified by both `rpm 4.x` (openSUSE, RHEL 9, Fedora ≤ 42) and `rpm 6.x` (Ubuntu 26.04's `rpm 6` defaults to `%_rpmformat 6`, whose `RPMSIGTAG_OPENPGP` tag 278 is rejected as unsigned by `rpm 4.x`).
 5. **DEB Generation (`build_deb`)**:
    - Creates Debian staging directory structure: `usr/share/<package_name>`, `usr/bin`, `usr/share/applications`, `usr/share/icons`, `usr/share/pixmaps`, `DEBIAN`.
    - Generates `DEBIAN/control` with package metadata, version (`<ver>-<rel>`), architecture (`amd64` or `arm64`), and system dependencies (`libgtk-3-0t64 | libgtk-3-0, libnotify4, libnss3, libxss1, libasound2t64 | libasound2, libgbm1, libxkbfile1, xdg-utils`; `libsecret-1-0` recommended), `Installed-Size`, `Homepage`, and `md5sums`.
@@ -232,7 +232,7 @@ The script `scripts/generate_repos.sh <RELEASE_TAG> <DIST_DIR>` builds the deplo
   ```
   The `-u` parameter directs DNF/RPM to download the `.rpm` binaries directly from GitHub Releases CDN. This is critical because **GitHub Pages has strict storage and bandwidth limits** and GitHub Releases provides high-speed CDN delivery for large (>100MB) binary packages.
 - **Signed Metadata**: `repodata/repomd.xml` is detached-signed (`repomd.xml.asc`, plus `repomd.xml.key`), which `zypper` requires.
-- **Client Configuration**: `dist/rpm/antigravity.repo` points to `baseurl=https://x3m-industries.github.io/antigravity-packages/rpm/` with `gpgcheck=1` and `repo_gpgcheck=1`.
+- **Client Configuration**: `dist/rpm/antigravity.repo` points to `baseurl=https://rpm.x3m.industries/rpm/` with `gpgcheck=1` and `repo_gpgcheck=1`.
 
 ### 4.3 DEB Repository Generation (APT)
 - **Package Scanning**: `dpkg-scanpackages --arch <arch> --multiversion pool/main` generates `Packages` and `Packages.gz` for `amd64` and `arm64`.
@@ -260,6 +260,12 @@ APT resolves `Filename:` relative to the repository URL and does not accept abso
 - `generate_repos.sh` removes `dist/deb/pool` after indexing, unless `KEEP_DEB_POOL=true`. Both workflows currently set `KEEP_DEB_POOL: 'true'` as a transition for legacy clients that still use the github.io APT URL (their download path needs the pool on Pages). Set it to `'false'` in `build-and-publish.yml` and `deploy-pages.yml` to drop the ~640 MB pool from Pages once legacy clients have migrated (`install.sh` rewrites the APT sources on every run).
 - Constraints: Vercel Hobby is free for non-commercial use (100 GB/month, hard caps); `releases/latest` always contains all 8 assets; a client with a stale `Packages` index can get a 404 immediately after a release (same as before).
 - `scripts/check_pages_size.sh` warns at 700 MB and fails the deploy at 950 MB (hard Pages limit: 1 GB) while the pool is still on Pages.
+
+### 4.4.2 RPM Delivery via `rpm.x3m.industries` (Vercel redirect for Zypper)
+DNF honors the `xml:base` attribute written by `createrepo_c -u ...`, so DNF downloads `.rpm` files straight from GitHub Releases. `zypper`/`libzypp` ignores `xml:base` (and does not accept absolute `href`s) and instead requests `<baseurl>/<file>.rpm` relative to the repository URL. Because `.rpm` files are purged from Pages, `rpm.x3m.industries` is attached to the same static Vercel project in `vercel-apt/` (`x3m-industries/antigravity-apt`):
+- `redirects`: `/rpm/:file([^/]+\.rpm)` → `https://github.com/x3m-industries/antigravity-packages/releases/latest/download/:file` (307).
+- `rewrites`: `/rpm/:path*` → `https://x3m-industries.github.io/antigravity-packages/rpm/:path*`. Signed metadata (`repodata/repomd.xml`, `repomd.xml.asc`, keys, `antigravity.repo`) is proxied unchanged from Pages, so signatures remain valid.
+- `createrepo_c -u` is intentionally kept so DNF (including legacy `github.io` DNF clients) continues fetching directly from the exact release tag, while `zypper` uses `https://rpm.x3m.industries/rpm/` (`antigravity.repo`, `install.sh`, and docs all point there). Deploy manually via `cd vercel-apt && vercel deploy --prod --scope x3m-industries` whenever `vercel-apt/` changes.
 
 ### 4.5 GitHub Pages Workflows
 1. **`build-and-publish.yml`**: Runs nightly or on demand; updates metadata after publishing a new binary release.

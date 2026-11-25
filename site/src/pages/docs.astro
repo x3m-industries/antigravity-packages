@@ -216,7 +216,7 @@ import { siteConfig, currentVersions } from '../data/siteConfig';
         <h3 class="card-subtitle">🎩 Fedora, RHEL &amp; CentOS (DNF Repository) — Antigravity Fedora DNF</h3>
         <p class="section-desc">1. Add the RPM repository file to <code>/etc/yum.repos.d/</code>:</p>
         <div class="code-block">
-          <code>sudo curl -fsSL https://x3m-industries.github.io/antigravity-packages/rpm/antigravity.repo -o /etc/yum.repos.d/antigravity.repo</code>
+          <code>sudo curl -fsSL https://rpm.x3m.industries/rpm/antigravity.repo -o /etc/yum.repos.d/antigravity.repo</code>
           <button class="copy-btn" onclick="copyCode(this)" aria-label="Copy to clipboard" title="Copy to clipboard">
             <svg class="copy-icon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
             <svg class="check-icon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#34d399" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
@@ -272,7 +272,7 @@ import { siteConfig, currentVersions } from '../data/siteConfig';
         <h3 class="card-subtitle">🦎 openSUSE Tumbleweed &amp; Leap (Zypper Repository) — Antigravity openSUSE</h3>
         <p class="section-desc">1. Add repository and import the ASCII-armored GPG key:</p>
         <div class="code-block">
-          <code>sudo zypper addrepo -f https://x3m-industries.github.io/antigravity-packages/rpm/ antigravity &amp;&amp; sudo rpm --import https://x3m-industries.github.io/antigravity-packages/rpm/RPM-GPG-KEY-antigravity</code>
+          <code>sudo zypper addrepo -f https://rpm.x3m.industries/rpm/ antigravity &amp;&amp; sudo rpm --import https://rpm.x3m.industries/rpm/RPM-GPG-KEY-antigravity</code>
           <button class="copy-btn" onclick="copyCode(this)" aria-label="Copy to clipboard" title="Copy to clipboard">
             <svg class="copy-icon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
             <svg class="check-icon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#34d399" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>

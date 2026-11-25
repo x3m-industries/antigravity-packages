@@ -476,7 +476,7 @@ print_downloads() {
 
     echo -e "  ${BOLD}4. X3M Industries Native Linux Packages & Repositories:${RESET}"
     echo -e "     • Releases: ${CYAN}https://github.com/x3m-industries/antigravity-packages/releases/latest${RESET}"
-    echo -e "     • DNF Repo: ${CYAN}https://x3m-industries.github.io/antigravity-packages/rpm/${RESET}"
+    echo -e "     • DNF Repo: ${CYAN}https://rpm.x3m.industries/rpm/${RESET}"
     echo -e "     • APT Repo: ${CYAN}https://apt.x3m.industries/deb/${RESET}"
     echo -e "     • PKGBUILD: ${CYAN}https://github.com/x3m-industries/antigravity-packages/tree/main/pkgbuild${RESET}"
     echo -e "     • LLM Docs: ${CYAN}https://x3m-industries.github.io/antigravity-packages/llms.txt${RESET}"
@@ -757,7 +757,7 @@ clean_legacy_conflicts() {
 
 install_rpm() {
     info "Configuring DNF/YUM repository..."
-    ${SUDO} curl -fsSL https://x3m-industries.github.io/antigravity-packages/rpm/antigravity.repo -o /etc/yum.repos.d/antigravity.repo
+    ${SUDO} curl -fsSL https://rpm.x3m.industries/rpm/antigravity.repo -o /etc/yum.repos.d/antigravity.repo
     success "Added /etc/yum.repos.d/antigravity.repo"
 
     local pkgs=()
@@ -803,11 +803,10 @@ install_deb() {
 install_zypper() {
     info "Configuring Zypper repository for openSUSE..."
     if ${SUDO} zypper repos antigravity > /dev/null 2>&1; then
-        ${SUDO} zypper --non-interactive modifyrepo --enable --refresh antigravity
-    else
-        ${SUDO} zypper --non-interactive addrepo -f https://x3m-industries.github.io/antigravity-packages/rpm/ antigravity
+        ${SUDO} zypper --non-interactive removerepo antigravity
     fi
-    ${SUDO} rpm --import https://x3m-industries.github.io/antigravity-packages/rpm/RPM-GPG-KEY-antigravity
+    ${SUDO} zypper --non-interactive addrepo -f https://rpm.x3m.industries/rpm/ antigravity
+    ${SUDO} rpm --import https://rpm.x3m.industries/rpm/RPM-GPG-KEY-antigravity
     success "Configured zypper repository 'antigravity'"
 
     local pkgs=()

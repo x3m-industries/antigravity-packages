@@ -278,7 +278,13 @@ gtk-update-icon-cache -f /usr/share/icons/hicolor &> /dev/null || true
         f.write(spec_content)
 
     try:
-        subprocess.run(["rpmbuild", "-bb", "--target", rpm_arch, str(spec_file)], check=True)
+        # Force RPM v4 package format so rpmsign writes legacy RPMSIGTAG_RSA (tag 268)
+        # signatures recognized by rpm 4.x (openSUSE, RHEL 9, Fedora <= 42) as well as rpm 6.x.
+        # Ubuntu 26.04's rpm 6 defaults to %_rpmformat 6 (RPMSIGTAG_OPENPGP, tag 278).
+        subprocess.run(
+            ["rpmbuild", "-bb", "--define", "_rpmformat 4", "--target", rpm_arch, str(spec_file)],
+            check=True,
+        )
     finally:
         # The build tree holds a full copy of the application (~1 GB)
         shutil.rmtree(work_dir, ignore_errors=True)

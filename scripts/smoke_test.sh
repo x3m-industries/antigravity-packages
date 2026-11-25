@@ -40,6 +40,11 @@ for pkg in "${PKG_DIR}"/*.rpm; do
     echo "Inspecting RPM: $(basename "${pkg}")..."
     if command -v rpm > /dev/null 2>&1; then
         rpm -qpi "${pkg}" > /dev/null
+        rpm_fmt=$(rpm -qp --qf '%{RPMFORMAT}\n' "${pkg}" 2>/dev/null || echo "")
+        if [ -n "${rpm_fmt}" ] && [ "${rpm_fmt}" != "4" ]; then
+            echo "ERROR: ${pkg} has RPMFORMAT=${rpm_fmt}, expected 4 (required for rpm 4.x compatibility)" >&2
+            exit 1
+        fi
         if rpm -qlp "${pkg}" 2>/dev/null | grep -q "chrome-sandbox"; then
             perms=$(rpm -qlvp "${pkg}" 2>/dev/null | grep "chrome-sandbox" | awk '{print $1}')
             if [[ "$perms" == *"-rwsr-xr-x"* ]]; then
@@ -82,6 +87,10 @@ if [ "${ENGINE}" = "podman" ]; then
 fi
 
 PKG_DIR_ABS="$(cd "${PKG_DIR}" && pwd)"
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+REPO_ROOT="$(dirname "${SCRIPT_DIR}")"
+RPM_GPG_KEY="${REPO_ROOT}/RPM-GPG-KEY-antigravity"
+REQUIRE_RPM_SIG="${REQUIRE_RPM_SIG:-false}"
 
 # Which apps are present for this architecture decides what must be installed and verified
 has_pkg() { compgen -G "${PKG_DIR_ABS}/$1" > /dev/null; }
@@ -175,7 +184,7 @@ if has_pkg "*${RPM_ARCH}.rpm"; then
     has_pkg "antigravity-ide-[0-9]*.${RPM_ARCH}.rpm" && EXPECT_IDE=1
     has_pkg "antigravity-[0-9]*.${RPM_ARCH}.rpm" && EXPECT_HUB=1
 
-    echo -e "\n---> [1/2] Testing RPM installation in Fedora container (${PLATFORM})..."
+    echo -e "\n---> [1/3] Testing RPM installation in Fedora container (${PLATFORM})..."
     RPM_SCRIPT='
         set -euo pipefail
         echo "Installing packages with DNF..."
@@ -198,15 +207,46 @@ if has_pkg "*${RPM_ARCH}.rpm"; then
         ${VERIFY_COMMON}
         echo \"RPM installation smoke test PASSED!\"
         "
+
+    # 2. openSUSE Tumbleweed (rpm 4.x) Signature Verification Test
+    # Guards against RPM v6 (RPMSIGTAG_OPENPGP, tag 278) regressions that rpm 4.x ignores as unsigned.
+    if [ -f "${RPM_GPG_KEY}" ]; then
+        echo -e "\n---> [2/3] Verifying RPM v4 signatures in openSUSE Tumbleweed container (${PLATFORM})..."
+        SUSE_SCRIPT='
+            set -euo pipefail
+            rpm --version
+            rpm --import /keys/RPM-GPG-KEY-antigravity
+            for pkg in /packages/*'"${RPM_ARCH}"'.rpm; do
+                echo "Checking signature: $(basename "$pkg")"
+                out=$(rpm -Kv "$pkg")
+                echo "$out"
+                if ! echo "$out" | grep -qiE "Header .*Signature.*: OK"; then
+                    if [ "${REQUIRE_RPM_SIG:-false}" = "true" ]; then
+                        echo "ERROR: rpm 4.x did not verify a header OpenPGP/RSA signature on $pkg" >&2
+                        exit 1
+                    else
+                        echo "Warning: $pkg has no verified header signature (set REQUIRE_RPM_SIG=true to enforce)." >&2
+                    fi
+                fi
+            done
+            echo "openSUSE rpm 4.x signature check PASSED!"
+        '
+        # shellcheck disable=SC2016
+        "${ENGINE}" run --rm --platform "${PLATFORM}" \
+            -e "REQUIRE_RPM_SIG=${REQUIRE_RPM_SIG}" \
+            -v "${PKG_DIR_ABS}:/packages:ro${SELINUX_FLAG}" \
+            -v "${RPM_GPG_KEY}:/keys/RPM-GPG-KEY-antigravity:ro${SELINUX_FLAG}" \
+            docker.io/opensuse/tumbleweed:latest bash -c "${SUSE_SCRIPT}"
+    fi
 fi
 
-# 2. Ubuntu / DEB Installation Test
+# 3. Ubuntu / DEB Installation Test
 if has_pkg "*_${DEB_ARCH}.deb"; then
     EXPECT_IDE=0; EXPECT_HUB=0
     has_pkg "antigravity-ide_[0-9]*_${DEB_ARCH}.deb" && EXPECT_IDE=1
     has_pkg "antigravity_[0-9]*_${DEB_ARCH}.deb" && EXPECT_HUB=1
 
-    echo -e "\n---> [2/2] Testing DEB installation in Ubuntu container (${PLATFORM})..."
+    echo -e "\n---> [3/3] Testing DEB installation in Ubuntu container (${PLATFORM})..."
     DEB_SCRIPT='
         set -euo pipefail
         echo "Updating apt indexes..."

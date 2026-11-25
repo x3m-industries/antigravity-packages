@@ -219,6 +219,58 @@ class TestPackagingLogic(unittest.TestCase):
         gen = (repo_root / "scripts" / "generate_repos.sh").read_text()
         self.assertIn("KEEP_DEB_POOL", gen)
 
+    def test_vercel_rpm_redirect_config(self):
+        import json
+        cfg = json.loads((repo_root / "vercel-apt" / "vercel.json").read_text())
+        rpm_redirects = [r for r in cfg["redirects"] if r["source"].startswith("/rpm/")]
+        self.assertEqual(len(rpm_redirects), 1)
+        redirect = rpm_redirects[0]
+        self.assertEqual(redirect["source"], r"/rpm/:file([^/]+\.rpm)")
+        self.assertEqual(
+            redirect["destination"],
+            "https://github.com/x3m-industries/antigravity-packages/releases/latest/download/:file",
+        )
+        self.assertFalse(redirect["permanent"])
+        rpm_rewrites = [r for r in cfg["rewrites"] if r["source"].startswith("/rpm/")]
+        self.assertEqual(len(rpm_rewrites), 1)
+        rewrite = rpm_rewrites[0]
+        self.assertEqual(rewrite["source"], "/rpm/:path*")
+        self.assertTrue(rewrite["destination"].startswith("https://x3m-industries.github.io/antigravity-packages/rpm/"))
+
+        # Client-facing RPM URL must be the redirecting host everywhere so zypper works
+        for rel in (
+            "scripts/generate_repos.sh",
+            "install.sh",
+            "README.md",
+            "llms.txt",
+            "llms-full.txt",
+            "site/src/data/siteConfig.ts",
+            "site/src/pages/docs.astro",
+            "templates/index.html",
+            "templates/docs.html",
+        ):
+            content = (repo_root / rel).read_text(encoding="utf-8")
+            self.assertIn("https://rpm.x3m.industries/rpm/", content, rel)
+            self.assertNotIn("x3m-industries.github.io/antigravity-packages/rpm/", content, rel)
+
+        # Keep xml:base (-u) in createrepo_c so legacy github.io DNF clients stay compatible
+        gen = (repo_root / "scripts" / "generate_repos.sh").read_text(encoding="utf-8")
+        self.assertIn('createrepo_c -u "https://github.com/x3m-industries/antigravity-packages/releases/download/${RELEASE_TAG}/"', gen)
+
+    def test_rpm_v4_format_and_signature_guard(self):
+        build_script = (repo_root / "scripts" / "build_packages.py").read_text(encoding="utf-8")
+        self.assertIn('"--define", "_rpmformat 4"', build_script)
+
+        publish = (repo_root / ".github" / "workflows" / "build-and-publish.yml").read_text(encoding="utf-8")
+        self.assertIn("%_rpmformat 4", publish)
+        self.assertIn("%{RPMFORMAT}", publish)
+        self.assertIn("REQUIRE_RPM_SIG=true", publish)
+
+        smoke = (repo_root / "scripts" / "smoke_test.sh").read_text(encoding="utf-8")
+        self.assertIn("%{RPMFORMAT}", smoke)
+        self.assertIn("opensuse/tumbleweed:latest", smoke)
+        self.assertIn("REQUIRE_RPM_SIG", smoke)
+
     def test_installer_script(self):
         import subprocess
         install_sh = repo_root / "install.sh"

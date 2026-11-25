@@ -28,6 +28,9 @@ if ! compgen -G "${RPM_DIR}/*.rpm" > /dev/null; then
     echo "Error: no .rpm files found in ${RPM_DIR}; refusing to generate an empty RPM repository." >&2
     exit 1
 fi
+# Keep xml:base (-u) pointing at the exact release tag for DNF (including legacy github.io clients).
+# zypper/libzypp ignores xml:base and requests <baseurl>/<file>.rpm directly, which is served via
+# https://rpm.x3m.industries/rpm/ (a Vercel 307 redirect to GitHub Releases; see vercel-apt/).
 createrepo_c -u "https://github.com/x3m-industries/antigravity-packages/releases/download/${RELEASE_TAG}/" "${RPM_DIR}"
 
 # Sign repository metadata (required by zypper / repo_gpgcheck=1)
@@ -44,11 +47,11 @@ cp RPM-GPG-KEY-antigravity "${RPM_DIR}/"
 cat << REPO_EOF > "${RPM_DIR}/antigravity.repo"
 [antigravity]
 name=Antigravity Packages Repository
-baseurl=https://x3m-industries.github.io/antigravity-packages/rpm/
+baseurl=https://rpm.x3m.industries/rpm/
 enabled=1
 gpgcheck=1
 repo_gpgcheck=1
-gpgkey=https://x3m-industries.github.io/antigravity-packages/rpm/RPM-GPG-KEY-antigravity
+gpgkey=https://rpm.x3m.industries/rpm/RPM-GPG-KEY-antigravity
 REPO_EOF
 
 echo "=== Generating DEB Repository Metadata ==="

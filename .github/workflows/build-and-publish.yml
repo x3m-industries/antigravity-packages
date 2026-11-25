@@ -106,6 +106,7 @@ jobs:
           echo "$GPG_PRIVATE_KEY" | gpg --batch --import
           rm -rf ~/.rpmmacros
           {
+            echo "%_rpmformat 4"
             echo "%_openpgp_sign_id E83A23BC57FE6953E4B5F4657A48CA4D7E7B6601"
             echo "%_gpg_name E83A23BC57FE6953E4B5F4657A48CA4D7E7B6601"
             echo "%_gpg_sign_cmd_extra_args --batch --pinentry-mode loopback"
@@ -208,10 +209,18 @@ jobs:
       - name: Verify RPM signatures against the published public key
         run: |
           # Catches a signing secret that does not match RPM-GPG-KEY-antigravity (users would get gpgcheck failures)
+          # and enforces RPM v4 format so rpm 4.x clients (openSUSE, RHEL 9, Fedora <= 42) see the RSA signature.
           # A private rpm database avoids depending on the runner's system rpmdb (root-owned).
           RPMDB="$(mktemp -d)"
           rpm --dbpath "$RPMDB" --import RPM-GPG-KEY-antigravity
           rpm --dbpath "$RPMDB" -qa 'gpg-pubkey*'
+          for f in ./dist/packages/*.rpm; do
+            fmt=$(rpm -qp --qf '%{RPMFORMAT}\n' "$f" 2>/dev/null || echo "")
+            if [ -n "$fmt" ] && [ "$fmt" != "4" ]; then
+              echo "::error::$f has RPMFORMAT=$fmt (expected 4 for rpm 4.x compatibility)"
+              exit 1
+            fi
+          done
           rpm --dbpath "$RPMDB" -Kv ./dist/packages/*.rpm
           rpm --dbpath "$RPMDB" -K ./dist/packages/*.rpm
 
@@ -222,11 +231,11 @@ jobs:
 
       - name: Run Container Package Smoke Tests (x86_64)
         run: |
-          SMOKE_ARCH=x86_64 ./scripts/smoke_test.sh ./dist/packages
+          REQUIRE_RPM_SIG=true SMOKE_ARCH=x86_64 ./scripts/smoke_test.sh ./dist/packages
 
       - name: Run Container Package Smoke Tests (aarch64 via QEMU)
         run: |
-          SMOKE_ARCH=aarch64 ./scripts/smoke_test.sh ./dist/packages
+          REQUIRE_RPM_SIG=true SMOKE_ARCH=aarch64 ./scripts/smoke_test.sh ./dist/packages
 
       # Publish atomically: assets are uploaded to a draft (invisible to users) and only
       # then made public. An existing release with the same tag is updated in place instead
