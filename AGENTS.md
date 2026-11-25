@@ -58,7 +58,7 @@ antigravity-packages/
 │       ├── components/            # Reusable UI components (Navbar, Footer, TerminalHero, Features, Faq)
 │       ├── data/siteConfig.ts     # Single source of truth (release versions, commands, GPG keys, FAQs)
 │       ├── layouts/BaseLayout.astro # Common SEO, OpenGraph, JSON-LD schema, and analytics layout
-│       ├── pages/                 # Static pages (index.astro, docs.astro)
+│       ├── pages/                 # Static pages (index.astro, docs.astro, arch.astro, uninstall.astro, ubuntu.astro, fedora.astro, opensuse.astro)
 │       └── styles/global.css      # Tailwind v4 theme styling and terminal CSS
 ├── pkgbuild/                      # Standalone Arch Linux PKGBUILD definitions (makepkg)
 │   ├── README.md                  # Arch installation instructions (makepkg, debtap, CLI)
@@ -69,6 +69,7 @@ antigravity-packages/
 ├── tests/
 │   └── test_packaging.py          # Python unit test suite (version parsing, upstream regex matching, stats processing, desktop entries, templates)
 ├── AGENTS.md                      # This technical guide for AI agents and maintainers
+├── SEO.md                         # Long-term cross-session SEO strategy, GSC baseline, URL map, and KPI playbook
 ├── antigravity.gpg                # Binary GPG public keyring for APT (/etc/apt/keyrings/antigravity.gpg)
 ├── google676aa476e852c7b0.html    # Google Search Console domain ownership verification
 ├── install.sh                     # Universal one-line shell installer script for client systems

@@ -1,0 +1,138 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import CopyCodeBlock from '../components/CopyCodeBlock.astro';
+import { siteConfig, currentVersions, type FaqItem, type HowToSchema } from '../data/siteConfig';
+
+const title = 'Install Antigravity & CLI (agy) on Arch Linux (pacman/PKGBUILD)';
+const description =
+  'Install Google Antigravity CLI (agy), Antigravity IDE & App 2.0 on Arch Linux, CachyOS, Manjaro & EndeavourOS. 1-command CLI install, native PKGBUILD & pacman guide.';
+const keywords =
+  'antigravity cli arch, arch antigravity cli, pacman antigravity, antigravity pacman, antigravity arch linux, agy arch, agy cli arch, google antigravity arch, antigravity for cachyos, antigravity manjaro, antigravity ide arch linux, PKGBUILD antigravity, yay antigravity, debtap antigravity';
+
+const faqs: FaqItem[] = [
+  {
+    q: 'How do I install Antigravity CLI (agy) on Arch Linux without root?',
+    a: 'Run <code>curl -fsSL https://x3m-industries.github.io/antigravity-packages/install.sh | bash -s -- --cli-only</code>. It installs Google’s official <code>agy</code> terminal agent directly into <code>~/.local/bin/agy</code> with automatic background updates every 15 minutes and zero root or pacman changes.',
+  },
+  {
+    q: 'Can I install Antigravity IDE and Antigravity App via pacman on Arch Linux?',
+    a: 'Yes. Clone our repository and build native Arch packages with <code>makepkg -si</code> from <code>pkgbuild/antigravity-ide-bin</code> and <code>pkgbuild/antigravity-bin</code>. Pacman tracks every file, sets hardened <code>4755</code> SUID permissions on <code>chrome-sandbox</code>, and registers desktop launchers and OAuth URL handlers.',
+  },
+  {
+    q: 'Does this work on CachyOS, Manjaro, and EndeavourOS?',
+    a: 'Yes! Both the user-space <code>agy</code> CLI installer and the <code>makepkg -si</code> PKGBUILD templates work identically on Arch Linux, CachyOS, Manjaro, EndeavourOS, and Garuda Linux on both <code>x86_64</code> and <code>aarch64</code>.',
+  },
+  {
+    q: 'How do I update or uninstall Antigravity on Arch Linux?',
+    a: 'The <code>agy</code> CLI updates itself automatically every 15 minutes. For PKGBUILD desktop packages, pull the latest repo and re-run <code>makepkg -si</code>. To remove everything cleanly, run <code>sudo pacman -Rns antigravity-ide-bin antigravity-bin &amp;&amp; rm -f ~/.local/bin/agy</code>.',
+  },
+];
+
+const howTo: HowToSchema = {
+  name: 'How to Install Google Antigravity & CLI (agy) on Arch Linux',
+  description: 'Install Google Antigravity CLI (agy), Antigravity IDE, and Antigravity App on Arch Linux, CachyOS, Manjaro, or EndeavourOS using the CLI installer or pacman PKGBUILD.',
+  steps: [
+    {
+      name: 'Install Antigravity CLI (agy) in user-space',
+      text: 'Run curl -fsSL https://x3m-industries.github.io/antigravity-packages/install.sh | bash -s -- --cli-only to install agy into ~/.local/bin/agy without sudo.',
+      url: `${siteConfig.siteUrl}arch.html#arch-cli`,
+    },
+    {
+      name: 'Build and install Antigravity IDE with makepkg & pacman',
+      text: 'Clone https://github.com/x3m-industries/antigravity-packages.git, cd into pkgbuild/antigravity-ide-bin, and run makepkg -si.',
+      url: `${siteConfig.siteUrl}arch.html#arch-pkgbuild`,
+    },
+    {
+      name: 'Build and install Antigravity App (2.0) with makepkg & pacman',
+      text: 'Change into pkgbuild/antigravity-bin and run makepkg -si to install the desktop agent app via pacman.',
+      url: `${siteConfig.siteUrl}arch.html#arch-pkgbuild`,
+    },
+  ],
+};
+---
+
+<BaseLayout
+  title={title}
+  description={description}
+  currentPage="arch"
+  breadcrumbLabel="Arch Linux (pacman, PKGBUILD & CLI)"
+  keywords={keywords}
+  faqs={faqs}
+  howTo={howTo}
+>
+  <header class="doc-header">
+    <div class="doc-breadcrumb">
+      <a href={siteConfig.baseUrl}>Home</a>
+      <span>/</span>
+      <span>Arch Linux Guide</span>
+    </div>
+    <h1 class="doc-title">Install Google Antigravity &amp; CLI (<code>agy</code>) on Arch Linux</h1>
+    <p class="doc-subtitle">Native setup for Arch Linux, CachyOS, Manjaro &amp; EndeavourOS — 1-command user-space CLI (<code>agy</code>), official <code>makepkg -si</code> PKGBUILDs for <code>pacman</code>, or <code>debtap</code> conversion (x86_64 &amp; aarch64).</p>
+  </header>
+
+  <nav class="toc-bar" aria-label="Arch Linux sections">
+    <a href="#arch-cli" class="toc-link">⚡ 1. Antigravity CLI (agy)</a>
+    <a href="#arch-pkgbuild" class="toc-link">📦 2. pacman / PKGBUILD</a>
+    <a href="#arch-debtap" class="toc-link">🔄 3. debtap Conversion</a>
+    <a href="#arch-update-remove" class="toc-link">🗑️ Update &amp; Uninstall</a>
+    <a href="#faq" class="toc-link">❓ Arch FAQ</a>
+  </nav>
+
+  <main id="main-content">
+    <section class="doc-section" id="arch-cli">
+      <h2 class="section-heading"><span>⚡</span> Option 1: Install Antigravity CLI (<code>agy</code>) on Arch Linux (No Root)</h2>
+      <p class="section-desc">Installs Google’s official terminal coding agent into <code>~/.local/bin/agy</code> with built-in background auto-updates every 15 minutes. Works on Arch, CachyOS, Manjaro, and EndeavourOS with zero <code>sudo</code> or <code>pacman</code> conflicts:</p>
+      <div class="doc-card">
+        <h3 class="card-subtitle">1-Command CLI Install</h3>
+        <CopyCodeBlock code="curl -fsSL https://x3m-industries.github.io/antigravity-packages/install.sh | bash -s -- --cli-only" />
+        <p class="section-desc" style="margin-top: 14px;">Verify and launch from any project folder:</p>
+        <CopyCodeBlock code="export PATH=&quot;$HOME/.local/bin:$PATH&quot; && agy --version && agy" />
+      </div>
+    </section>
+
+    <section class="doc-section" id="arch-pkgbuild">
+      <h2 class="section-heading"><span>📦</span> Option 2: Native Arch Packages via <code>makepkg</code> &amp; <code>pacman</code> (Recommended for Desktop GUI)</h2>
+      <p class="section-desc">We maintain standalone Arch <code>PKGBUILD</code> definitions in <a href="https://github.com/x3m-industries/antigravity-packages/tree/main/pkgbuild" target="_blank" rel="noopener noreferrer" style="color:var(--accent);">pkgbuild/</a> for both <strong>Antigravity IDE</strong> (<code>antigravity-ide-bin</code>) and <strong>Antigravity App 2.0</strong> (<code>antigravity-bin</code>). <code>makepkg -si</code> installs cleanly into <code>pacman</code> with 512×512 icons, OAuth URL handlers, and hardened <code>4755</code> SUID <code>chrome-sandbox</code> permissions.</p>
+
+      <div class="doc-card">
+        <h3 class="card-subtitle">Install Antigravity IDE (<code>antigravity-ide-bin</code>)</h3>
+        <CopyCodeBlock code="git clone https://github.com/x3m-industries/antigravity-packages.git && cd antigravity-packages/pkgbuild/antigravity-ide-bin && makepkg -si" />
+      </div>
+
+      <div class="doc-card">
+        <h3 class="card-subtitle">Install Antigravity App 2.0 (<code>antigravity-bin</code>)</h3>
+        <CopyCodeBlock code="cd ../antigravity-bin && makepkg -si" />
+        <p class="section-desc" style="margin-top: 14px;">Launch anytime via your app menu or terminal shortcuts <code>agy-ide .</code> and <code>agy-app</code>.</p>
+      </div>
+    </section>
+
+    <section class="doc-section" id="arch-debtap">
+      <h2 class="section-heading"><span>🔄</span> Option 3: Convert Latest Signed <code>.deb</code> Package with <code>debtap</code></h2>
+      <p class="section-desc">Prefer converting the latest GitHub Release binary directly into a <code>.pkg.tar.zst</code> package for <code>pacman -U</code>?</p>
+      <div class="doc-card">
+        <h3 class="card-subtitle">Convert &amp; Install Latest IDE (<code>v{currentVersions.ideSemver}</code>)</h3>
+        <CopyCodeBlock code={`curl -fsSLO https://github.com/x3m-industries/antigravity-packages/releases/latest/download/antigravity-ide_${currentVersions.ideSemver}-${currentVersions.ideBuild}_amd64.deb && debtap -u && debtap antigravity-ide_*.deb && sudo pacman -U antigravity-ide-*.pkg.tar.zst`} />
+      </div>
+    </section>
+
+    <section class="doc-section" id="arch-update-remove">
+      <h2 class="section-heading"><span>🗑️</span> Updating &amp; Uninstalling on Arch Linux</h2>
+      <div class="doc-card">
+        <h3 class="card-subtitle">Cleanly Remove Packages &amp; CLI</h3>
+        <p class="section-desc">Remove all pacman-installed Antigravity packages and the user-space <code>agy</code> binary (leaving your projects untouched):</p>
+        <CopyCodeBlock code="sudo pacman -Rns antigravity-ide-bin antigravity-bin && rm -f ~/.local/bin/agy" />
+        <p class="section-desc" style="margin-top: 14px;">Need full cleanup across distros or leftover <code>/opt</code> files? See the <a href="uninstall.html" style="color:var(--accent);">Complete Linux Uninstall Guide →</a></p>
+      </div>
+    </section>
+
+    <section class="doc-section" id="faq">
+      <h2 class="section-heading"><span>❓</span> Arch Linux FAQ</h2>
+      {faqs.map((faq, index) => (
+        <details class="faq-item" open={index === 0}>
+          <summary>{faq.q}</summary>
+          <div class="faq-answer" set:html={faq.a} />
+        </details>
+      ))}
+    </section>
+  </main>
+</BaseLayout>

@@ -1,0 +1,121 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import CopyCodeBlock from '../components/CopyCodeBlock.astro';
+import { siteConfig, currentVersions, type FaqItem, type HowToSchema } from '../data/siteConfig';
+
+const title = 'Install Google Antigravity on Fedora, RHEL & Rocky (DNF RPM)';
+const description =
+  'Install Google Antigravity IDE, App 2.0 & CLI (agy) on Fedora 40–43+, RHEL 8/9, Rocky, AlmaLinux & Nobara. Official signed DNF RPM repository with daily updates.';
+const keywords =
+  'antigravity fedora, fedora antigravity, install antigravity fedora, agy fedora, google antigravity rpm, antigravity rpm repository, antigravity ide rpm, antigravity rhel, antigravity rocky linux, antigravity nobara';
+
+const faqs: FaqItem[] = [
+  {
+    q: 'Which Fedora and RHEL versions are supported?',
+    a: 'All modern Fedora releases (Fedora 38–43+, Nobara), RHEL 8/9/10, CentOS Stream, Rocky Linux, and AlmaLinux on both <code>x86_64</code> and <code>aarch64</code>. Packages are built in RPM v4 format with gzip repodata so both <code>rpm 4.x</code> and <code>rpm 6.x</code> verify signatures cleanly.',
+  },
+  {
+    q: 'How do I install only the Antigravity CLI (agy) on Fedora?',
+    a: 'Run <code>curl -fsSL https://x3m-industries.github.io/antigravity-packages/install.sh | bash -s -- --cli-only</code> to install <code>agy</code> into <code>~/.local/bin/agy</code> without root privileges.',
+  },
+  {
+    q: 'How do automatic updates work with DNF?',
+    a: 'Our CI checks Google’s release CDN daily at 02:30 UTC and publishes signed RPM updates. Your normal <code>sudo dnf upgrade</code> automatically updates <code>antigravity-ide</code> and <code>antigravity</code>.',
+  },
+  {
+    q: 'How do I uninstall Antigravity on Fedora?',
+    a: 'Run <code>sudo dnf remove -y antigravity-ide antigravity &amp;&amp; sudo rm -f /etc/yum.repos.d/antigravity.repo &amp;&amp; rm -f ~/.local/bin/agy</code>, or see our <a href="uninstall.html">Uninstall Guide</a>.',
+  },
+];
+
+const howTo: HowToSchema = {
+  name: 'How to Install Google Antigravity on Fedora, RHEL, and Rocky Linux',
+  description: 'Configure the signed DNF RPM repository and install Google Antigravity IDE, App 2.0, and CLI (agy) on Fedora and Enterprise Linux.',
+  steps: [
+    {
+      name: 'Add the DNF RPM repository file',
+      text: 'Run sudo curl -fsSL https://rpm.x3m.industries/rpm/antigravity.repo -o /etc/yum.repos.d/antigravity.repo.',
+      url: `${siteConfig.siteUrl}fedora.html#dnf-setup`,
+    },
+    {
+      name: 'Install Antigravity IDE and App via DNF',
+      text: 'Run sudo dnf install -y antigravity-ide antigravity.',
+      url: `${siteConfig.siteUrl}fedora.html#dnf-setup`,
+    },
+    {
+      name: 'Update anytime with DNF',
+      text: 'Run sudo dnf upgrade antigravity-ide antigravity to pull daily upstream releases.',
+      url: `${siteConfig.siteUrl}fedora.html#dnf-setup`,
+    },
+  ],
+};
+---
+
+<BaseLayout
+  title={title}
+  description={description}
+  currentPage="fedora"
+  breadcrumbLabel="Fedora, RHEL & Rocky Linux (DNF)"
+  keywords={keywords}
+  faqs={faqs}
+  howTo={howTo}
+>
+  <header class="doc-header">
+    <div class="doc-breadcrumb">
+      <a href={siteConfig.baseUrl}>Home</a>
+      <span>/</span>
+      <span>Fedora &amp; RHEL DNF Guide</span>
+    </div>
+    <h1 class="doc-title">Install Google Antigravity on Fedora, RHEL &amp; Rocky Linux (DNF)</h1>
+    <p class="doc-subtitle">Signed RPM repository (<code>IDE v{currentVersions.ideSemver}</code> &amp; <code>App v{currentVersions.hubSemver}</code>) with daily upstream sync, GPG key <code>{siteConfig.gpg.keyId}</code>, GNOME Files (Nautilus) &amp; KDE Dolphin right-click menus, and native <code>x86_64</code> + <code>aarch64</code> builds.</p>
+  </header>
+
+  <nav class="toc-bar" aria-label="Fedora sections">
+    <a href="#dnf-setup" class="toc-link">🎩 Manual DNF Setup</a>
+    <a href="#fedora-cli" class="toc-link">⚡ 1-Line Installer &amp; CLI</a>
+    <a href="#fedora-verify" class="toc-link">🔐 Verify GPG Signature</a>
+    <a href="#faq" class="toc-link">❓ Fedora FAQ</a>
+  </nav>
+
+  <main id="main-content">
+    <section class="doc-section" id="dnf-setup">
+      <h2 class="section-heading"><span>🎩</span> Manual DNF Repository Setup (No Curl-to-Bash)</h2>
+      <div class="doc-card">
+        <h3 class="card-subtitle">1. Add <code>/etc/yum.repos.d/antigravity.repo</code></h3>
+        <CopyCodeBlock code="sudo curl -fsSL https://rpm.x3m.industries/rpm/antigravity.repo -o /etc/yum.repos.d/antigravity.repo" />
+        <h3 class="card-subtitle" style="margin-top: 18px;">2. Install Antigravity IDE &amp; App 2.0</h3>
+        <CopyCodeBlock code="sudo dnf install -y antigravity-ide antigravity" />
+        <h3 class="card-subtitle" style="margin-top: 18px;">3. Update Anytime</h3>
+        <CopyCodeBlock code="sudo dnf upgrade antigravity-ide antigravity" />
+      </div>
+    </section>
+
+    <section class="doc-section" id="fedora-cli">
+      <h2 class="section-heading"><span>⚡</span> 1-Line Installer (IDE + App + <code>agy</code> CLI)</h2>
+      <div class="doc-card">
+        <h3 class="card-subtitle">Full Suite on Fedora / Nobara / RHEL</h3>
+        <CopyCodeBlock code="curl -fsSL https://x3m-industries.github.io/antigravity-packages/install.sh | bash" />
+        <h3 class="card-subtitle" style="margin-top: 18px;">Antigravity CLI (<code>agy</code>) Only — No Sudo</h3>
+        <CopyCodeBlock code="curl -fsSL https://x3m-industries.github.io/antigravity-packages/install.sh | bash -s -- --cli-only" />
+      </div>
+    </section>
+
+    <section class="doc-section" id="fedora-verify">
+      <h2 class="section-heading"><span>🔐</span> Cryptographic Verification &amp; Standalone RPMs</h2>
+      <p class="section-desc">Every package and repository index is signed with maintainer key <code>{siteConfig.gpg.fingerprint}</code>. Need offline <code>.rpm</code> files for air-gapped RHEL servers? Download them directly from <a href={siteConfig.repo.releasesUrl} target="_blank" rel="noopener noreferrer" style="color:var(--accent);">GitHub Releases</a>.</p>
+      <div class="doc-card">
+        <CopyCodeBlock code="rpm -qi antigravity-ide antigravity | grep -E 'Name|Version|Release|Signature'" />
+      </div>
+    </section>
+
+    <section class="doc-section" id="faq">
+      <h2 class="section-heading"><span>❓</span> Fedora &amp; RHEL FAQ</h2>
+      {faqs.map((faq, index) => (
+        <details class="faq-item" open={index === 0}>
+          <summary>{faq.q}</summary>
+          <div class="faq-answer" set:html={faq.a} />
+        </details>
+      ))}
+    </section>
+  </main>
+</BaseLayout>

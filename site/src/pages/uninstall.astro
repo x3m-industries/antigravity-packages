@@ -1,0 +1,137 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import CopyCodeBlock from '../components/CopyCodeBlock.astro';
+import { siteConfig, type FaqItem, type HowToSchema } from '../data/siteConfig';
+
+const title = 'How to Uninstall Google Antigravity on Ubuntu & Linux';
+const description =
+  'Completely uninstall Google Antigravity IDE, App 2.0 & CLI (agy) on Ubuntu, Debian, Fedora, openSUSE & Arch Linux. Remove APT/DNF repos, GPG keys & leftover /opt files.';
+const keywords =
+  'uninstall antigravity ubuntu, how to uninstall antigravity from ubuntu, how to uninstall antigravity ubuntu, remove antigravity completely ubuntu, uninstall antigravity in linux, uninstall antigravity ide ubuntu, uninstall antigravity fedora, antigravity cli uninstall linux, delete antigravity ubuntu';
+
+const faqs: FaqItem[] = [
+  {
+    q: 'How do I completely uninstall Antigravity from Ubuntu or Debian?',
+    a: 'Run <code>sudo apt purge antigravity-ide antigravity &amp;&amp; sudo apt autoremove -y &amp;&amp; rm -f ~/.local/bin/agy</code>. To also delete the APT repository file and GPG keyring, remove <code>/etc/apt/sources.list.d/antigravity.sources</code> and <code>/etc/apt/keyrings/antigravity.gpg</code>, or simply run our 1-command <code>install.sh --uninstall</code> script.',
+  },
+  {
+    q: 'Does uninstalling delete my code projects or VS Code / Antigravity settings?',
+    a: 'No. Both <code>apt remove</code> / <code>dnf remove</code> and <code>install.sh --uninstall</code> only remove system packages, repository definitions, GPG keys, and desktop integrations. Your project folders and <code>~/.config</code> user profiles stay untouched unless you explicitly delete them.',
+  },
+  {
+    q: 'How do I remove a manual /opt/antigravity tarball installation?',
+    a: 'Manual tarball installs are not tracked by APT or DNF. Delete them cleanly with <code>sudo rm -rf /opt/Antigravity* /opt/antigravity* &amp;&amp; sudo rm -f /usr/local/bin/antigravity* &amp;&amp; rm -f ~/.local/share/applications/antigravity*.desktop</code>.',
+  },
+  {
+    q: 'How do I uninstall only the Antigravity CLI (agy)?',
+    a: 'The terminal agent lives in user-space at <code>~/.local/bin/agy</code>. Remove it with <code>rm -f ~/.local/bin/agy</code> — no <code>sudo</code> needed.',
+  },
+];
+
+const howTo: HowToSchema = {
+  name: 'How to Completely Uninstall Google Antigravity on Ubuntu and Linux',
+  description: 'Step-by-step commands to remove Antigravity IDE, Antigravity App, Antigravity CLI (agy), APT/DNF/Zypper repositories, GPG keys, and legacy /opt extractions.',
+  steps: [
+    {
+      name: 'Remove packages and CLI on Ubuntu / Debian (APT)',
+      text: 'Run sudo apt purge -y antigravity-ide antigravity && sudo apt autoremove -y && rm -f ~/.local/bin/agy.',
+      url: `${siteConfig.siteUrl}uninstall.html#uninstall-ubuntu`,
+    },
+    {
+      name: 'Purge APT repository sources and GPG keyring',
+      text: 'Run sudo rm -f /etc/apt/sources.list.d/antigravity.sources /etc/apt/sources.list.d/antigravity.list /etc/apt/keyrings/antigravity.gpg && sudo apt update.',
+      url: `${siteConfig.siteUrl}uninstall.html#uninstall-ubuntu`,
+    },
+    {
+      name: 'Clean any manual /opt tarball residue (optional)',
+      text: 'Run sudo rm -rf /opt/Antigravity* /opt/antigravity* && sudo rm -f /usr/local/bin/antigravity* && rm -f ~/.local/share/applications/antigravity*.desktop.',
+      url: `${siteConfig.siteUrl}uninstall.html#uninstall-opt`,
+    },
+  ],
+};
+---
+
+<BaseLayout
+  title={title}
+  description={description}
+  currentPage="uninstall"
+  breadcrumbLabel="Uninstall Guide (Ubuntu & Linux)"
+  keywords={keywords}
+  faqs={faqs}
+  howTo={howTo}
+>
+  <header class="doc-header">
+    <div class="doc-breadcrumb">
+      <a href={siteConfig.baseUrl}>Home</a>
+      <span>/</span>
+      <span>Uninstall Guide</span>
+    </div>
+    <h1 class="doc-title">How to Completely Uninstall Google Antigravity on Ubuntu &amp; Linux</h1>
+    <p class="doc-subtitle">Clean, reversible removal of <code>antigravity-ide</code>, <code>antigravity</code> (App 2.0), the <code>agy</code> CLI, APT/DNF/Zypper repositories, GPG keys, and manual <code>/opt</code> tarball installs — while keeping your personal projects safe.</p>
+  </header>
+
+  <nav class="toc-bar" aria-label="Uninstall sections">
+    <a href="#uninstall-ubuntu" class="toc-link">🟠 Ubuntu / Debian (APT)</a>
+    <a href="#uninstall-auto" class="toc-link">⚡ 1-Command Uninstaller</a>
+    <a href="#uninstall-fedora" class="toc-link">🎩 Fedora / RHEL (DNF)</a>
+    <a href="#uninstall-opensuse" class="toc-link">🦎 openSUSE (Zypper)</a>
+    <a href="#uninstall-opt" class="toc-link">🧹 Manual /opt &amp; Configs</a>
+    <a href="#faq" class="toc-link">❓ Uninstall FAQ</a>
+  </nav>
+
+  <main id="main-content">
+    <section class="doc-section" id="uninstall-ubuntu">
+      <h2 class="section-heading"><span>🟠</span> Uninstall Antigravity on Ubuntu, Debian, Mint &amp; Pop!_OS (APT)</h2>
+      <div class="doc-card">
+        <h3 class="card-subtitle">1. Purge DEB Packages &amp; Remove CLI (<code>agy</code>)</h3>
+        <CopyCodeBlock code="sudo apt purge -y antigravity-ide antigravity && sudo apt autoremove -y && rm -f ~/.local/bin/agy" />
+        <h3 class="card-subtitle" style="margin-top: 18px;">2. Remove APT Repository &amp; GPG Keyring</h3>
+        <CopyCodeBlock code="sudo rm -f /etc/apt/sources.list.d/antigravity.sources /etc/apt/sources.list.d/antigravity.list /etc/apt/keyrings/antigravity.gpg && sudo apt update" />
+      </div>
+    </section>
+
+    <section class="doc-section" id="uninstall-auto">
+      <h2 class="section-heading"><span>⚡</span> Universal 1-Command Uninstaller (All Distros)</h2>
+      <p class="section-desc">Automatically removes native RPM/DEB/Arch packages, configured repos, GPG keys, file manager context menus (Nautilus, Dolphin, Nemo, Caja), <code>~/.local/bin/agy</code>, and conflicting <code>/opt</code> files:</p>
+      <div class="doc-card">
+        <CopyCodeBlock code="curl -fsSL https://x3m-industries.github.io/antigravity-packages/install.sh | bash -s -- --uninstall" />
+      </div>
+    </section>
+
+    <section class="doc-section" id="uninstall-fedora">
+      <h2 class="section-heading"><span>🎩</span> Uninstall on Fedora, RHEL, Rocky &amp; AlmaLinux (DNF)</h2>
+      <div class="doc-card">
+        <CopyCodeBlock code="sudo dnf remove -y antigravity-ide antigravity && sudo rm -f /etc/yum.repos.d/antigravity.repo && rm -f ~/.local/bin/agy" />
+      </div>
+    </section>
+
+    <section class="doc-section" id="uninstall-opensuse">
+      <h2 class="section-heading"><span>🦎</span> Uninstall on openSUSE Tumbleweed &amp; Leap (Zypper)</h2>
+      <div class="doc-card">
+        <CopyCodeBlock code="sudo zypper remove -y antigravity-ide antigravity && sudo zypper removerepo antigravity && rm -f ~/.local/bin/agy" />
+      </div>
+    </section>
+
+    <section class="doc-section" id="uninstall-opt">
+      <h2 class="section-heading"><span>🧹</span> Remove Manual <code>/opt</code> Tarball Extractions &amp; User Caches</h2>
+      <div class="doc-card">
+        <h3 class="card-subtitle">Clean Up Unmanaged <code>/opt</code> Installs &amp; Broken Symlinks</h3>
+        <p class="section-desc">If you previously extracted Google tarballs into <code>/opt</code> instead of using native packages:</p>
+        <CopyCodeBlock code="sudo rm -rf /opt/Antigravity* /opt/antigravity* && sudo rm -f /usr/local/bin/antigravity* && rm -f ~/.local/share/applications/antigravity*.desktop" />
+        <h3 class="card-subtitle" style="margin-top: 18px;">Optional: Also Reset Local User Settings &amp; Caches</h3>
+        <p class="section-desc">Only run this if you want a completely fresh reinstall (deletes local Antigravity app preferences, not your code folders):</p>
+        <CopyCodeBlock code="rm -rf ~/.config/Antigravity ~/.config/antigravity-ide ~/.cache/antigravity*" />
+      </div>
+    </section>
+
+    <section class="doc-section" id="faq">
+      <h2 class="section-heading"><span>❓</span> Uninstallation FAQ</h2>
+      {faqs.map((faq, index) => (
+        <details class="faq-item" open={index === 0}>
+          <summary>{faq.q}</summary>
+          <div class="faq-answer" set:html={faq.a} />
+        </details>
+      ))}
+    </section>
+  </main>
+</BaseLayout>

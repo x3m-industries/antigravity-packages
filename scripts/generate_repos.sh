@@ -229,10 +229,40 @@ cat << SITEMAP_EOF > "${DIST_DIR}/sitemap.xml"
     <priority>1.0</priority>
   </url>
   <url>
-    <loc>https://x3m-industries.github.io/antigravity-packages/docs.html</loc>
+    <loc>https://x3m-industries.github.io/antigravity-packages/arch.html</loc>
+    <lastmod>${CURRENT_DATE}</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.95</priority>
+  </url>
+  <url>
+    <loc>https://x3m-industries.github.io/antigravity-packages/uninstall.html</loc>
     <lastmod>${CURRENT_DATE}</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.9</priority>
+  </url>
+  <url>
+    <loc>https://x3m-industries.github.io/antigravity-packages/ubuntu.html</loc>
+    <lastmod>${CURRENT_DATE}</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
+  </url>
+  <url>
+    <loc>https://x3m-industries.github.io/antigravity-packages/fedora.html</loc>
+    <lastmod>${CURRENT_DATE}</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
+  </url>
+  <url>
+    <loc>https://x3m-industries.github.io/antigravity-packages/opensuse.html</loc>
+    <lastmod>${CURRENT_DATE}</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
+  </url>
+  <url>
+    <loc>https://x3m-industries.github.io/antigravity-packages/docs.html</loc>
+    <lastmod>${CURRENT_DATE}</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.85</priority>
   </url>
 </urlset>
 SITEMAP_EOF

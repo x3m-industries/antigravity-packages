@@ -450,38 +450,4 @@ import { siteConfig, currentVersions } from '../data/siteConfig';
       ))}
     </section>
   </main>
-
-  <script is:inline>
-    function copyCode(btn) {
-      const container = btn.closest('.code-block');
-      const codeEl = container ? container.querySelector('code') : null;
-      const code = codeEl ? codeEl.innerText.trim() : '';
-      if (!code) return;
-
-      navigator.clipboard.writeText(code).then(() => {
-        btn.classList.add('copied');
-        btn.setAttribute('title', 'Copied to clipboard!');
-        btn.setAttribute('aria-label', 'Copied to clipboard!');
-        setTimeout(() => {
-          btn.classList.remove('copied');
-          btn.setAttribute('title', 'Copy to clipboard');
-          btn.setAttribute('aria-label', 'Copy to clipboard');
-        }, 2000);
-
-        if (typeof gtag === 'function') {
-          const section = btn.closest('.doc-section');
-          const secId = section && section.id ? section.id : 'docs';
-          gtag('event', 'copy_docs_command', {
-            event_category: 'conversion',
-            event_label: secId,
-            command: code
-          });
-          gtag('event', 'copy_docs_' + secId.replace(/[^a-z0-9_]/gi, '_'), {
-            event_category: 'conversion',
-            event_label: secId
-          });
-        }
-      }).catch(err => console.error('Copy failed: ', err));
-    }
-  </script>
 </BaseLayout>

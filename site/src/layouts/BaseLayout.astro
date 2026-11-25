@@ -1,174 +1,213 @@
 ---
 import Navbar from '../components/Navbar.astro';
 import Footer from '../components/Footer.astro';
-import { siteConfig, currentVersions } from '../data/siteConfig';
+import { siteConfig, currentVersions, type PageId, type FaqItem, type HowToSchema } from '../data/siteConfig';
 import '../styles/global.css';
 
 interface Props {
   title?: string;
   description?: string;
-  currentPage?: 'home' | 'docs';
+  currentPage?: PageId;
   canonicalUrl?: string;
+  breadcrumbLabel?: string;
+  keywords?: string;
+  faqs?: FaqItem[];
+  howTo?: HowToSchema;
 }
+
+const defaultBreadcrumbs: Record<PageId, string> = {
+  home: 'Home',
+  docs: 'Documentation & CLI Reference',
+  arch: 'Arch Linux (pacman, PKGBUILD & CLI)',
+  uninstall: 'Uninstall Guide (Ubuntu & Linux)',
+  opensuse: 'openSUSE (Tumbleweed & Leap Zypper)',
+  fedora: 'Fedora, RHEL & Rocky Linux (DNF)',
+  ubuntu: 'Ubuntu, Debian & Mint (APT)',
+};
 
 const {
   title = siteConfig.title,
   description = siteConfig.description,
   currentPage = 'home',
-  canonicalUrl = currentPage === 'docs'
-    ? `${siteConfig.siteUrl}docs.html`
-    : siteConfig.siteUrl,
+  canonicalUrl = currentPage === 'home'
+    ? siteConfig.siteUrl
+    : `${siteConfig.siteUrl}${currentPage}.html`,
+  breadcrumbLabel = defaultBreadcrumbs[currentPage],
+  keywords = siteConfig.defaultKeywords,
+  faqs = currentPage === 'docs' ? siteConfig.docsFaqs : siteConfig.homeFaqs,
+  howTo,
 } = Astro.props;
 
-const structuredData = {
-  "@context": "https://schema.org",
-  "@graph": [
-    {
-      "@type": "SoftwareApplication",
-      "name": "Google Antigravity Linux Packages",
-      "applicationCategory": "DeveloperApplication",
-      "operatingSystem": "Linux (Fedora, Ubuntu, Debian, Arch Linux, openSUSE, RHEL, CentOS Stream, Rocky Linux, AlmaLinux, Pop!_OS, Linux Mint)",
-      "softwareVersion": `${currentVersions.ideSemver} (IDE) / ${currentVersions.hubSemver} (App)`,
-      "downloadUrl": siteConfig.repo.releasesUrl,
-      "url": siteConfig.siteUrl,
-      "offers": {
-        "@type": "Offer",
-        "price": "0",
-        "priceCurrency": "USD",
-      },
-      "publisher": {
-        "@type": "Organization",
-        "name": "X3M Industries",
-        "url": "https://x3m.industries",
-      },
-    },
-    {
-      "@type": "SoftwareApplication",
-      "name": "Google Antigravity IDE (antigravity-ide)",
-      "applicationCategory": "DeveloperApplication",
-      "operatingSystem": "Linux (x86_64, aarch64)",
-      "softwareVersion": currentVersions.ideSemver,
-      "downloadUrl": siteConfig.repo.releasesUrl,
-      "url": siteConfig.siteUrl,
-      "offers": {
-        "@type": "Offer",
-        "price": "0",
-        "priceCurrency": "USD",
-      },
-    },
-    {
-      "@type": "SoftwareApplication",
-      "name": "Google Antigravity App (antigravity)",
-      "applicationCategory": "DeveloperApplication",
-      "operatingSystem": "Linux (x86_64, aarch64)",
-      "softwareVersion": currentVersions.hubSemver,
-      "downloadUrl": siteConfig.repo.releasesUrl,
-      "url": siteConfig.siteUrl,
-      "offers": {
-        "@type": "Offer",
-        "price": "0",
-        "priceCurrency": "USD",
-      },
-    },
-    {
-      "@type": "WebSite",
-      "name": "Google Antigravity Linux Packages & Repositories",
-      "url": siteConfig.siteUrl,
-      "description": siteConfig.description,
-      "publisher": {
-        "@type": "Organization",
-        "name": "X3M Industries",
-        "url": "https://x3m.industries",
-      },
-    },
-    {
-      "@type": "FAQPage",
-      "mainEntity": (currentPage === 'docs' ? siteConfig.docsFaqs : siteConfig.homeFaqs).map((faq) => ({
-        "@type": "Question",
-        "name": faq.q,
-        "acceptedAnswer": {
-          "@type": "Answer",
-          "text": faq.a
-            .replace(/<br\s*\/?>/gi, " ")
-            .replace(/<[^>]*>/g, "")
-            .replace(/&amp;/g, "&")
-            .replace(/&lt;/g, "<")
-            .replace(/&gt;/g, ">")
-            .replace(/&quot;/g, '"')
-            .replace(/&#39;/g, "'")
-            .replace(/\s+/g, " ")
-            .trim(),
+const cleanHtml = (html: string) =>
+  html
+    .replace(/<br\s*\/?>/gi, ' ')
+    .replace(/<[^>]*>/g, '')
+    .replace(/&amp;/g, '&')
+    .replace(/&lt;/g, '<')
+    .replace(/&gt;/g, '>')
+    .replace(/&quot;/g, '"')
+    .replace(/&#39;/g, "'")
+    .replace(/\s+/g, ' ')
+    .trim();
+
+const defaultHowTo: HowToSchema = currentPage === 'home'
+  ? {
+      name: 'How to Install Google Antigravity on Linux',
+      description:
+        "Step-by-step guide to installing Google Antigravity 2.0, Antigravity IDE, and Antigravity CLI ('agy') on Fedora, Ubuntu, Debian, Arch Linux, and openSUSE.",
+      steps: [
+        {
+          name: 'Run Universal Detection Command',
+          text: 'Open your terminal and run the universal 1-line installer script: curl -fsSL https://x3m-industries.github.io/antigravity-packages/install.sh | bash',
+          url: `${siteConfig.siteUrl}#quickstart`,
         },
+        {
+          name: 'Select Components',
+          text: "Choose to install Antigravity IDE (AI code editor), Antigravity App (Agent 2.0 platform), or the standalone Antigravity CLI ('agy').",
+          url: `${siteConfig.siteUrl}#quickstart`,
+        },
+        {
+          name: 'Launch Antigravity',
+          text: "Launch your applications using application menu shortcuts or quick terminal commands: 'agy-ide', 'agy-app', or 'agy'.",
+          url: `${siteConfig.siteUrl}docs.html#cli-reference`,
+        },
+      ],
+    }
+  : {
+      name: 'How to Install or Uninstall Google Antigravity on Linux',
+      description:
+        "Reference commands for installing Antigravity CLI ('agy') and desktop packages on Arch Linux (PKGBUILD / pacman), Ubuntu/Debian (APT), Fedora (DNF), openSUSE (Zypper), and cleanly uninstalling.",
+      steps: [
+        {
+          name: 'Install on Arch Linux (CLI or PKGBUILD)',
+          text: 'Install the user-space CLI via: curl -fsSL https://x3m-industries.github.io/antigravity-packages/install.sh | bash -s -- --cli-only, or build desktop packages with makepkg -si from pkgbuild/.',
+          url: `${siteConfig.siteUrl}arch.html`,
+        },
+        {
+          name: 'Install on Ubuntu/Debian (APT), Fedora (DNF), or openSUSE (Zypper)',
+          text: 'Configure the signed APT DEB822 or RPM repository (apt.x3m.industries / rpm.x3m.industries) and install antigravity-ide and antigravity.',
+          url: `${siteConfig.siteUrl}docs.html#manual-repos`,
+        },
+        {
+          name: 'Cleanly Uninstall Antigravity',
+          text: 'Remove packages, repositories, and CLI shortcuts cleanly with: curl -fsSL https://x3m-industries.github.io/antigravity-packages/install.sh | bash -s -- --uninstall.',
+          url: `${siteConfig.siteUrl}uninstall.html`,
+        },
+      ],
+    };
+
+const resolvedHowTo = howTo || defaultHowTo;
+
+const structuredData = {
+  '@context': 'https://schema.org',
+  '@graph': [
+    {
+      '@type': 'SoftwareApplication',
+      name: 'Google Antigravity Linux Packages',
+      applicationCategory: 'DeveloperApplication',
+      operatingSystem:
+        'Linux (Fedora, Ubuntu, Debian, Arch Linux, openSUSE, RHEL, CentOS Stream, Rocky Linux, AlmaLinux, Pop!_OS, Linux Mint, CachyOS, Manjaro)',
+      softwareVersion: `${currentVersions.ideSemver} (IDE) / ${currentVersions.hubSemver} (App)`,
+      downloadUrl: siteConfig.repo.releasesUrl,
+      url: siteConfig.siteUrl,
+      offers: {
+        '@type': 'Offer',
+        price: '0',
+        priceCurrency: 'USD',
+      },
+      publisher: {
+        '@type': 'Organization',
+        name: 'X3M Industries',
+        url: 'https://x3m.industries',
+      },
+    },
+    {
+      '@type': 'SoftwareApplication',
+      name: 'Google Antigravity IDE (antigravity-ide)',
+      applicationCategory: 'DeveloperApplication',
+      operatingSystem: 'Linux (x86_64, aarch64)',
+      softwareVersion: currentVersions.ideSemver,
+      downloadUrl: siteConfig.repo.releasesUrl,
+      url: siteConfig.siteUrl,
+      offers: {
+        '@type': 'Offer',
+        price: '0',
+        priceCurrency: 'USD',
+      },
+    },
+    {
+      '@type': 'SoftwareApplication',
+      name: 'Google Antigravity App (antigravity)',
+      applicationCategory: 'DeveloperApplication',
+      operatingSystem: 'Linux (x86_64, aarch64)',
+      softwareVersion: currentVersions.hubSemver,
+      downloadUrl: siteConfig.repo.releasesUrl,
+      url: siteConfig.siteUrl,
+      offers: {
+        '@type': 'Offer',
+        price: '0',
+        priceCurrency: 'USD',
+      },
+    },
+    {
+      '@type': 'WebSite',
+      name: 'Google Antigravity Linux Packages & Repositories',
+      url: siteConfig.siteUrl,
+      description: siteConfig.description,
+      publisher: {
+        '@type': 'Organization',
+        name: 'X3M Industries',
+        url: 'https://x3m.industries',
+      },
+    },
+    ...(faqs.length > 0
+      ? [
+          {
+            '@type': 'FAQPage',
+            mainEntity: faqs.map((faq) => ({
+              '@type': 'Question',
+              name: faq.q,
+              acceptedAnswer: {
+                '@type': 'Answer',
+                text: cleanHtml(faq.a),
+              },
+            })),
+          },
+        ]
+      : []),
+    {
+      '@type': 'HowTo',
+      name: resolvedHowTo.name,
+      description: resolvedHowTo.description,
+      totalTime: 'PT2M',
+      step: resolvedHowTo.steps.map((step) => ({
+        '@type': 'HowToStep',
+        name: step.name,
+        text: step.text,
+        url: step.url,
       })),
     },
-    ...(currentPage === 'home' ? [{
-      "@type": "HowTo",
-      "name": "How to Install Google Antigravity on Linux",
-      "description": "Step-by-step guide to installing Google Antigravity 2.0, Antigravity IDE, and Antigravity CLI ('agy') on Fedora, Ubuntu, Debian, Arch Linux, and openSUSE.",
-      "totalTime": "PT2M",
-      "step": [
-        {
-          "@type": "HowToStep",
-          "name": "Run Universal Detection Command",
-          "text": "Open your terminal and run the universal 1-line installer script: curl -fsSL https://x3m-industries.github.io/antigravity-packages/install.sh | bash",
-          "url": `${siteConfig.siteUrl}#quickstart`
-        },
-        {
-          "@type": "HowToStep",
-          "name": "Select Components",
-          "text": "Choose to install Antigravity IDE (AI code editor), Antigravity App (Agent 2.0 platform), or the standalone Antigravity CLI ('agy').",
-          "url": `${siteConfig.siteUrl}#quickstart`
-        },
-        {
-          "@type": "HowToStep",
-          "name": "Launch Antigravity",
-          "text": "Launch your applications using application menu shortcuts or quick terminal commands: 'agy-ide', 'agy-app', or 'agy'.",
-          "url": `${siteConfig.siteUrl}docs.html#cli-reference`
-        }
-      ]
-    }] : [{
-      "@type": "HowTo",
-      "name": "How to Install or Uninstall Google Antigravity on Arch Linux, Ubuntu, and Fedora",
-      "description": "Reference commands for installing Antigravity CLI ('agy') and desktop packages on Arch Linux (PKGBUILD / pacman), Ubuntu/Debian (APT), Fedora (DNF), and cleanly uninstalling.",
-      "totalTime": "PT2M",
-      "step": [
-        {
-          "@type": "HowToStep",
-          "name": "Install on Arch Linux (CLI or PKGBUILD)",
-          "text": "Install the user-space CLI via: curl -fsSL https://x3m-industries.github.io/antigravity-packages/install.sh | bash -s -- --cli-only, or build desktop packages with makepkg -si from pkgbuild/.",
-          "url": `${siteConfig.siteUrl}docs.html#arch`
-        },
-        {
-          "@type": "HowToStep",
-          "name": "Install on Ubuntu/Debian (APT) or Fedora (DNF)",
-          "text": "Configure the signed APT DEB822 or DNF repository and install via sudo apt install antigravity-ide antigravity or sudo dnf install antigravity-ide antigravity.",
-          "url": `${siteConfig.siteUrl}docs.html#manual-repos`
-        },
-        {
-          "@type": "HowToStep",
-          "name": "Cleanly Uninstall Antigravity",
-          "text": "Remove packages, repositories, and CLI shortcuts cleanly with: curl -fsSL https://x3m-industries.github.io/antigravity-packages/install.sh | bash -s -- --uninstall.",
-          "url": `${siteConfig.siteUrl}docs.html#maintenance`
-        }
-      ]
-    }]),
     {
-      "@type": "BreadcrumbList",
-      "itemListElement": [
+      '@type': 'BreadcrumbList',
+      itemListElement: [
         {
-          "@type": "ListItem",
-          "position": 1,
-          "name": "Home",
-          "item": siteConfig.siteUrl
+          '@type': 'ListItem',
+          position: 1,
+          name: 'Home',
+          item: siteConfig.siteUrl,
         },
-        ...(currentPage === 'docs' ? [{
-          "@type": "ListItem",
-          "position": 2,
-          "name": "Documentation & CLI Reference",
-          "item": `${siteConfig.siteUrl}docs.html`
-        }] : [])
-      ]
-    }
+        ...(currentPage !== 'home'
+          ? [
+              {
+                '@type': 'ListItem',
+                position: 2,
+                name: breadcrumbLabel,
+                item: canonicalUrl,
+              },
+            ]
+          : []),
+      ],
+    },
   ],
 };
 ---
@@ -191,7 +230,7 @@ const structuredData = {
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
   <title>{title}</title>
   <meta name="description" content={description} />
-  <meta name="keywords" content="antigravity packages linux, google antigravity packages, antigravity linux packages, Google Antigravity, Antigravity Linux, Antigravity IDE, Antigravity RPM, Antigravity DEB, Antigravity Fedora DNF, Antigravity Ubuntu PPA, Antigravity Ubuntu APT, Antigravity openSUSE, Antigravity openSUSE Zypper, Antigravity Arch Linux, Fedora Antigravity, Ubuntu Antigravity, Debian Antigravity, Arch Linux Antigravity, RHEL Antigravity, google antigravity rpm, antigravity fedora, fedora antigravity, antigravity apt, how to update antigravity ide in ubuntu, download antigravity linux, google antigravity download linux, install google antigravity, how to uninstall antigravity from ubuntu, uninstall antigravity ubuntu, uninstall antigravity in linux, remove antigravity completely ubuntu, antigravity cli arch, arch antigravity cli, pacman antigravity, yay antigravity, AI code editor, DeepMind Antigravity, DNF repository, APT repository, Zypper repository, x86_64, aarch64, arm64, AUR antigravity, antigravity 2.0 linux" />
+  <meta name="keywords" content={keywords} />
   <meta name="author" content={siteConfig.author.name} />
   <meta name="google-site-verification" content="google676aa476e852c7b0" />
   <link rel="author" href={siteConfig.author.linkedin} />
@@ -245,6 +284,38 @@ const structuredData = {
     <Footer currentPage={currentPage} />
   </div>
   <script is:inline>
+    window.copyCode = function(btn) {
+      const container = btn.closest('.code-block');
+      const codeEl = container ? container.querySelector('code') : null;
+      const code = codeEl ? codeEl.innerText.trim() : '';
+      if (!code) return;
+
+      navigator.clipboard.writeText(code).then(() => {
+        btn.classList.add('copied');
+        btn.setAttribute('title', 'Copied to clipboard!');
+        btn.setAttribute('aria-label', 'Copied to clipboard!');
+        setTimeout(() => {
+          btn.classList.remove('copied');
+          btn.setAttribute('title', 'Copy to clipboard');
+          btn.setAttribute('aria-label', 'Copy to clipboard');
+        }, 2000);
+
+        if (typeof gtag === 'function') {
+          const section = btn.closest('.doc-section');
+          const secId = section && section.id ? section.id : window.location.pathname.split('/').pop() || 'docs';
+          gtag('event', 'copy_docs_command', {
+            event_category: 'conversion',
+            event_label: secId,
+            command: code
+          });
+          gtag('event', 'copy_docs_' + secId.replace(/[^a-z0-9_]/gi, '_'), {
+            event_category: 'conversion',
+            event_label: secId
+          });
+        }
+      }).catch(err => console.error('Copy failed: ', err));
+    };
+
     document.addEventListener('DOMContentLoaded', () => {
       document.querySelectorAll('details.faq-item').forEach((detailsEl) => {
         detailsEl.addEventListener('toggle', () => {

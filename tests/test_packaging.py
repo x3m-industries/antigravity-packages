@@ -369,7 +369,7 @@ class TestPackagingLogic(unittest.TestCase):
         template_file = repo_root / "templates" / "index.html"
         self.assertTrue(template_file.exists())
         html = template_file.read_text(encoding="utf-8")
-        self.assertIn("<title>Google Antigravity for Linux — Native Packages, DNF &amp; APT Repositories</title>", html)
+        self.assertIn("<title>Google Antigravity for Linux — RPM, DEB, Arch &amp; CLI (agy)</title>", html)
         self.assertNotIn('href="index.html"', html)
         self.assertIn("switchTab", html)
         self.assertIn("detectOSAndInitTabs", html)
@@ -404,9 +404,9 @@ class TestPackagingLogic(unittest.TestCase):
         docs_file = repo_root / "templates" / "docs.html"
         self.assertTrue(docs_file.exists())
         docs_html = docs_file.read_text(encoding="utf-8")
-        self.assertIn("<title>Antigravity Linux Packages &amp; Docs: Arch, APT, DNF, CLI &amp; Uninstall</title>", docs_html)
+        self.assertIn("<title>Antigravity Linux Docs — CLI Flags, GPG Keys &amp; Integrations</title>", docs_html)
         self.assertNotIn('href="index.html"', docs_html)
-        self.assertIn("pacman, PKGBUILD, agy CLI", docs_html)
+        self.assertIn("CLI flags", docs_html)
         self.assertIn("Google Antigravity Linux Packages — Developer &amp; Enterprise Documentation", docs_html)
         self.assertIn("--status", docs_html)
         self.assertIn("--uninstall", docs_html)
@@ -743,10 +743,22 @@ class TestPackagingLogic(unittest.TestCase):
         self.assertIn("parseReleaseTag", config_content)
         self.assertNotIn("antigravity-ide_latest_amd64.deb", config_content)
 
-        index_astro = site_dir / "src" / "pages" / "index.astro"
-        docs_astro = site_dir / "src" / "pages" / "docs.astro"
-        self.assertTrue(index_astro.exists())
-        self.assertTrue(docs_astro.exists())
+        for page_name in (
+            "index.astro",
+            "docs.astro",
+            "arch.astro",
+            "uninstall.astro",
+            "opensuse.astro",
+            "fedora.astro",
+            "ubuntu.astro",
+        ):
+            self.assertTrue((site_dir / "src" / "pages" / page_name).exists(), page_name)
+
+        # Verify long-term SEO strategy doc and sitemap coverage for all dedicated pages
+        self.assertTrue((repo_root / "SEO.md").exists())
+        gen = (repo_root / "scripts" / "generate_repos.sh").read_text(encoding="utf-8")
+        for slug in ("arch.html", "uninstall.html", "ubuntu.html", "fedora.html", "opensuse.html", "docs.html"):
+            self.assertIn(f"https://x3m-industries.github.io/antigravity-packages/{slug}", gen)
 
         astro_config = site_dir / "astro.config.mjs"
         self.assertTrue(astro_config.exists())

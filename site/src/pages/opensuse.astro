@@ -1,0 +1,119 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import CopyCodeBlock from '../components/CopyCodeBlock.astro';
+import { siteConfig, currentVersions, type FaqItem, type HowToSchema } from '../data/siteConfig';
+
+const title = 'Install Google Antigravity on openSUSE (Tumbleweed & Leap)';
+const description =
+  'Install Google Antigravity IDE, App 2.0 & CLI (agy) on openSUSE Tumbleweed and Leap 15/16 via Zypper. Signed RPM v4 packages & dedicated rpm.x3m.industries repo.';
+const keywords =
+  'antigravity opensuse, opensuse antigravity, antigravity zypper, opensuse tumbleweed antigravity, opensuse leap antigravity, leap 16.1 antigravity, antigravity rpm opensuse, install antigravity opensuse';
+
+const faqs: FaqItem[] = [
+  {
+    q: 'Does the RPM repository work with Zypper and rpm 4.x GPG verification on openSUSE?',
+    a: 'Yes! All packages are built in RPM v4 format with legacy RSA/SHA512 signatures verified in CI against <code>opensuse/tumbleweed:latest</code> (<code>rpm 4.20.1</code>) on both <code>x86_64</code> and <code>aarch64</code>, and hosted via <code>https://rpm.x3m.industries/rpm/</code> with gzip repodata and full Zypper redirect support.',
+  },
+  {
+    q: 'I previously added the old github.io URL in Zypper and got 404 errors — how do I fix it?',
+    a: 'Remove the legacy repository and add the dedicated RPM endpoint: <code>sudo zypper removerepo antigravity &amp;&amp; sudo zypper addrepo -f https://rpm.x3m.industries/rpm/ antigravity &amp;&amp; sudo zypper refresh</code>. Re-running <code>install.sh</code> also migrates it automatically.',
+  },
+  {
+    q: 'Are both openSUSE Tumbleweed and Leap (15.5 / 15.6 / 16.x) supported?',
+    a: 'Yes. RPM dependencies use standard shared-library sonames (<code>libgtk-3.so.0</code>, <code>libgbm.so.1</code>, <code>libnss3.so</code>, etc.) and gzip-compressed repodata (<code>primary.xml.gz</code>), ensuring compatibility across Tumbleweed and Leap.',
+  },
+  {
+    q: 'How do I update Antigravity on openSUSE?',
+    a: 'Updates synchronize daily from Google’s official release CDN. Upgrade anytime via <code>sudo zypper refresh &amp;&amp; sudo zypper update antigravity-ide antigravity</code>.',
+  },
+];
+
+const howTo: HowToSchema = {
+  name: 'How to Install Google Antigravity on openSUSE with Zypper',
+  description: 'Add the signed rpm.x3m.industries Zypper repository and install Google Antigravity IDE and App on openSUSE Tumbleweed and Leap.',
+  steps: [
+    {
+      name: 'Add the Zypper repository and import the GPG key',
+      text: 'Run sudo zypper addrepo -f https://rpm.x3m.industries/rpm/ antigravity && sudo rpm --import https://rpm.x3m.industries/rpm/RPM-GPG-KEY-antigravity.',
+      url: `${siteConfig.siteUrl}opensuse.html#zypper-setup`,
+    },
+    {
+      name: 'Install Antigravity IDE and App via Zypper',
+      text: 'Run sudo zypper install antigravity-ide antigravity.',
+      url: `${siteConfig.siteUrl}opensuse.html#zypper-setup`,
+    },
+    {
+      name: 'Optionally install the Antigravity CLI (agy)',
+      text: 'Run curl -fsSL https://x3m-industries.github.io/antigravity-packages/install.sh | bash -s -- --cli-only.',
+      url: `${siteConfig.siteUrl}opensuse.html#opensuse-cli`,
+    },
+  ],
+};
+---
+
+<BaseLayout
+  title={title}
+  description={description}
+  currentPage="opensuse"
+  breadcrumbLabel="openSUSE (Tumbleweed & Leap Zypper)"
+  keywords={keywords}
+  faqs={faqs}
+  howTo={howTo}
+>
+  <header class="doc-header">
+    <div class="doc-breadcrumb">
+      <a href={siteConfig.baseUrl}>Home</a>
+      <span>/</span>
+      <span>openSUSE Zypper Guide</span>
+    </div>
+    <h1 class="doc-title">Install Google Antigravity on openSUSE (Tumbleweed &amp; Leap)</h1>
+    <p class="doc-subtitle">Native Zypper repository at <code>https://rpm.x3m.industries/rpm/</code> serving GPG-signed RPM v4 packages (<code>IDE v{currentVersions.ideSemver}</code> &amp; <code>App v{currentVersions.hubSemver}</code>) verified in CI against <code>opensuse/tumbleweed</code> on <code>x86_64</code> and <code>aarch64</code>.</p>
+  </header>
+
+  <nav class="toc-bar" aria-label="openSUSE sections">
+    <a href="#zypper-setup" class="toc-link">🦎 Zypper Repo Setup</a>
+    <a href="#opensuse-cli" class="toc-link">⚡ 1-Line Universal Installer</a>
+    <a href="#opensuse-migrate" class="toc-link">🔄 Migrate Old Repo</a>
+    <a href="#faq" class="toc-link">❓ openSUSE FAQ</a>
+  </nav>
+
+  <main id="main-content">
+    <section class="doc-section" id="zypper-setup">
+      <h2 class="section-heading"><span>🦎</span> Manual Zypper Repository Setup (Recommended)</h2>
+      <div class="doc-card">
+        <h3 class="card-subtitle">1. Add Repository &amp; Import GPG Signing Key</h3>
+        <CopyCodeBlock code="sudo zypper addrepo -f https://rpm.x3m.industries/rpm/ antigravity && sudo rpm --import https://rpm.x3m.industries/rpm/RPM-GPG-KEY-antigravity" />
+        <h3 class="card-subtitle" style="margin-top: 18px;">2. Install Antigravity IDE &amp; App 2.0</h3>
+        <CopyCodeBlock code="sudo zypper install antigravity-ide antigravity" />
+        <h3 class="card-subtitle" style="margin-top: 18px;">3. Update Anytime</h3>
+        <CopyCodeBlock code="sudo zypper refresh && sudo zypper update antigravity-ide antigravity" />
+      </div>
+    </section>
+
+    <section class="doc-section" id="opensuse-cli">
+      <h2 class="section-heading"><span>⚡</span> Universal 1-Line Installer (IDE + App + <code>agy</code> CLI)</h2>
+      <p class="section-desc">Auto-detects openSUSE Tumbleweed/Leap, configures Zypper with <code>rpm.x3m.industries</code>, imports the GPG key, and installs the user-space <code>agy</code> CLI agent:</p>
+      <div class="doc-card">
+        <CopyCodeBlock code="curl -fsSL https://x3m-industries.github.io/antigravity-packages/install.sh | bash" />
+      </div>
+    </section>
+
+    <section class="doc-section" id="opensuse-migrate">
+      <h2 class="section-heading"><span>🔄</span> Migrating from the Legacy <code>github.io</code> RPM URL</h2>
+      <p class="section-desc">Because <code>libzypp</code> ignores <code>xml:base</code> attributes in RPM metadata, Zypper requires <code>https://rpm.x3m.industries/rpm/</code>. If you added the old URL previously, switch in one line:</p>
+      <div class="doc-card">
+        <CopyCodeBlock code="sudo zypper removerepo antigravity && sudo zypper addrepo -f https://rpm.x3m.industries/rpm/ antigravity && sudo rpm --import https://rpm.x3m.industries/rpm/RPM-GPG-KEY-antigravity && sudo zypper refresh" />
+      </div>
+    </section>
+
+    <section class="doc-section" id="faq">
+      <h2 class="section-heading"><span>❓</span> openSUSE FAQ</h2>
+      {faqs.map((faq, index) => (
+        <details class="faq-item" open={index === 0}>
+          <summary>{faq.q}</summary>
+          <div class="faq-answer" set:html={faq.a} />
+        </details>
+      ))}
+    </section>
+  </main>
+</BaseLayout>

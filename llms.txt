@@ -4,6 +4,12 @@
 
 ## Canonical Links
 - Website: https://x3m-industries.github.io/antigravity-packages/
+- Arch Linux Guide (pacman, PKGBUILD & agy CLI): https://x3m-industries.github.io/antigravity-packages/arch.html
+- Ubuntu / Debian / Mint Guide (APT): https://x3m-industries.github.io/antigravity-packages/ubuntu.html
+- Fedora / RHEL / Rocky Guide (DNF): https://x3m-industries.github.io/antigravity-packages/fedora.html
+- openSUSE Guide (Tumbleweed & Leap Zypper): https://x3m-industries.github.io/antigravity-packages/opensuse.html
+- Uninstall Guide (Ubuntu & Linux): https://x3m-industries.github.io/antigravity-packages/uninstall.html
+- Full CLI & GPG Docs: https://x3m-industries.github.io/antigravity-packages/docs.html
 - Source Repository: https://github.com/x3m-industries/antigravity-packages
 - Universal Installer: https://x3m-industries.github.io/antigravity-packages/install.sh
 - LLM Guide: https://x3m-industries.github.io/antigravity-packages/llms.txt

@@ -1,0 +1,117 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import CopyCodeBlock from '../components/CopyCodeBlock.astro';
+import { siteConfig, currentVersions, type FaqItem, type HowToSchema } from '../data/siteConfig';
+
+const title = 'Install & Update Google Antigravity on Ubuntu, Debian & Mint';
+const description =
+  'Install & update Google Antigravity IDE, App 2.0 & CLI (agy) on Ubuntu 22.04/24.04/26.04, Debian, Pop!_OS & Linux Mint via signed DEB822 APT repo (SUID sandbox fixed).';
+const keywords =
+  'install antigravity ubuntu, install antigravity in ubuntu, antigravity ubuntu 26.04, how to install antigravity in ubuntu 22.04, install antigravity debian, antigravity for linux mint, antigravity apt, sudo apt update antigravity, how to update antigravity ide in ubuntu, google antigravity deb';
+
+const faqs: FaqItem[] = [
+  {
+    q: 'Does this fix the chrome-sandbox SUID permission error on Ubuntu 24.04 and 26.04?',
+    a: 'Yes! Ubuntu 24.04+ restricts unprivileged user namespaces via AppArmor, causing manual tarball installs to crash. Our <code>.deb</code> packages automatically configure <code>04755 root:root</code> on <code>chrome-sandbox</code> during install and upgrade.',
+  },
+  {
+    q: 'How do I update Google Antigravity IDE in Ubuntu, Debian, or Linux Mint?',
+    a: 'Run <code>sudo apt update &amp;&amp; sudo apt install --only-upgrade antigravity-ide antigravity</code>, or simply run your normal <code>sudo apt upgrade</code>. Our APT repository syncs daily from Google’s CDN.',
+  },
+  {
+    q: 'Does this support Ubuntu 22.04, 24.04, 26.04, Debian 12/13, Linux Mint, and Pop!_OS?',
+    a: 'Yes! Package dependencies handle both traditional and <code>t64</code> libraries (<code>libgtk-3-0t64 | libgtk-3-0</code>, <code>libasound2t64 | libasound2</code>) on both <code>amd64</code> and <code>arm64</code>.',
+  },
+  {
+    q: 'How do I completely uninstall Antigravity from Ubuntu?',
+    a: 'Run <code>sudo apt purge -y antigravity-ide antigravity &amp;&amp; rm -f ~/.local/bin/agy</code>, or see our dedicated <a href="uninstall.html">Ubuntu &amp; Linux Uninstall Guide</a> for full repository and <code>/opt</code> cleanup.',
+  },
+];
+
+const howTo: HowToSchema = {
+  name: 'How to Install and Update Google Antigravity on Ubuntu, Debian, and Linux Mint',
+  description: 'Add the signed apt.x3m.industries DEB822 APT repository and install or upgrade Google Antigravity IDE and App on Ubuntu and Debian-based Linux distributions.',
+  steps: [
+    {
+      name: 'Install GPG keyring and DEB822 APT source file',
+      text: 'Run sudo mkdir -p /etc/apt/keyrings && sudo curl -fsSL https://apt.x3m.industries/deb/antigravity.gpg -o /etc/apt/keyrings/antigravity.gpg && sudo curl -fsSL https://apt.x3m.industries/deb/antigravity.sources -o /etc/apt/sources.list.d/antigravity.sources.',
+      url: `${siteConfig.siteUrl}ubuntu.html#apt-setup`,
+    },
+    {
+      name: 'Update APT index and install Antigravity packages',
+      text: 'Run sudo apt update && sudo apt install -y antigravity-ide antigravity.',
+      url: `${siteConfig.siteUrl}ubuntu.html#apt-setup`,
+    },
+    {
+      name: 'Upgrade Antigravity anytime via APT',
+      text: 'Run sudo apt update && sudo apt install --only-upgrade antigravity-ide antigravity.',
+      url: `${siteConfig.siteUrl}ubuntu.html#apt-update`,
+    },
+  ],
+};
+---
+
+<BaseLayout
+  title={title}
+  description={description}
+  currentPage="ubuntu"
+  breadcrumbLabel="Ubuntu, Debian & Mint (APT)"
+  keywords={keywords}
+  faqs={faqs}
+  howTo={howTo}
+>
+  <header class="doc-header">
+    <div class="doc-breadcrumb">
+      <a href={siteConfig.baseUrl}>Home</a>
+      <span>/</span>
+      <span>Ubuntu &amp; Debian APT Guide</span>
+    </div>
+    <h1 class="doc-title">Install &amp; Update Google Antigravity on Ubuntu, Debian &amp; Linux Mint</h1>
+    <p class="doc-subtitle">Signed DEB822 APT repository at <code>https://apt.x3m.industries/deb</code> (<code>IDE v{currentVersions.ideSemver}</code> &amp; <code>App v{currentVersions.hubSemver}</code>) for Ubuntu 22.04, 24.04, 26.04, Debian 12/13, Pop!_OS &amp; Mint (<code>amd64</code> &amp; <code>arm64</code>) — with hardened AppArmor SUID sandboxing out of the box.</p>
+  </header>
+
+  <nav class="toc-bar" aria-label="Ubuntu sections">
+    <a href="#apt-setup" class="toc-link">🟠 APT Repository Setup</a>
+    <a href="#apt-update" class="toc-link">🔄 Updating via APT</a>
+    <a href="#ubuntu-cli" class="toc-link">⚡ 1-Line Installer</a>
+    <a href="#faq" class="toc-link">❓ Ubuntu / Debian FAQ</a>
+  </nav>
+
+  <main id="main-content">
+    <section class="doc-section" id="apt-setup">
+      <h2 class="section-heading"><span>🟠</span> Manual APT Repository Setup (Modern DEB822 Format)</h2>
+      <div class="doc-card">
+        <h3 class="card-subtitle">1. Add Signed GPG Keyring &amp; Repository Source</h3>
+        <CopyCodeBlock code="sudo mkdir -p /etc/apt/keyrings && sudo curl -fsSL https://apt.x3m.industries/deb/antigravity.gpg -o /etc/apt/keyrings/antigravity.gpg && sudo curl -fsSL https://apt.x3m.industries/deb/antigravity.sources -o /etc/apt/sources.list.d/antigravity.sources" />
+        <h3 class="card-subtitle" style="margin-top: 18px;">2. Update Index &amp; Install Antigravity IDE &amp; App 2.0</h3>
+        <CopyCodeBlock code="sudo apt update && sudo apt install -y antigravity-ide antigravity" />
+      </div>
+    </section>
+
+    <section class="doc-section" id="apt-update">
+      <h2 class="section-heading"><span>🔄</span> How to Update Google Antigravity on Ubuntu &amp; Debian</h2>
+      <p class="section-desc">Packages sync daily from Google’s official CDN. Upgrade only Antigravity without touching other system packages:</p>
+      <div class="doc-card">
+        <CopyCodeBlock code="sudo apt update && sudo apt install --only-upgrade antigravity-ide antigravity" />
+        <p class="section-desc" style="margin-top: 14px;">Need to remove Antigravity cleanly instead? Follow our <a href="uninstall.html" style="color:var(--accent);">Ubuntu &amp; Linux Uninstall Guide →</a></p>
+      </div>
+    </section>
+
+    <section class="doc-section" id="ubuntu-cli">
+      <h2 class="section-heading"><span>⚡</span> Universal 1-Line Installer (IDE + App + <code>agy</code> CLI + Nautilus/Nemo)</h2>
+      <div class="doc-card">
+        <CopyCodeBlock code="curl -fsSL https://x3m-industries.github.io/antigravity-packages/install.sh | bash" />
+      </div>
+    </section>
+
+    <section class="doc-section" id="faq">
+      <h2 class="section-heading"><span>❓</span> Ubuntu, Debian &amp; Mint FAQ</h2>
+      {faqs.map((faq, index) => (
+        <details class="faq-item" open={index === 0}>
+          <summary>{faq.q}</summary>
+          <div class="faq-answer" set:html={faq.a} />
+        </details>
+      ))}
+    </section>
+  </main>
+</BaseLayout>

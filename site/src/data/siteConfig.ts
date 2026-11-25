@@ -1,3 +1,22 @@
+export type PageId = 'home' | 'docs' | 'arch' | 'uninstall' | 'opensuse' | 'fedora' | 'ubuntu';
+
+export interface FaqItem {
+  q: string;
+  a: string;
+}
+
+export interface HowToStep {
+  name: string;
+  text: string;
+  url: string;
+}
+
+export interface HowToSchema {
+  name: string;
+  description: string;
+  steps: HowToStep[];
+}
+
 export interface ReleaseVersions {
   ideSemver: string;
   ideBuild: string;
@@ -7,10 +26,10 @@ export interface ReleaseVersions {
 
 export function parseReleaseTag(tag?: string): ReleaseVersions {
   const defaultVersions: ReleaseVersions = {
-    ideSemver: "2.6.0",
-    ideBuild: "5526304964083712",
-    hubSemver: "2.31.0",
-    hubBuild: "6379060755038208",
+    ideSemver: "2.9.0",
+    ideBuild: "4671306730438656.1",
+    hubSemver: "2.35.1",
+    hubBuild: "4615540875067392.1",
   };
 
   if (!tag || tag === "latest" || tag === "vlatest") {
@@ -49,12 +68,14 @@ export const currentVersions = parseReleaseTag(rawTag);
 export const siteConfig = {
   siteUrl: "https://x3m-industries.github.io/antigravity-packages/",
   baseUrl: "/antigravity-packages/",
-  title: "Google Antigravity for Linux — Native Packages, DNF & APT Repositories",
-  docsTitle: "Antigravity Linux Packages & Docs: Arch, APT, DNF, CLI & Uninstall",
+  title: "Google Antigravity for Linux — RPM, DEB, Arch & CLI (agy)",
+  docsTitle: "Antigravity Linux Docs — CLI Flags, GPG Keys & Integrations",
   docsDescription:
-    "Install or uninstall Google Antigravity Linux packages on Arch Linux (pacman, PKGBUILD, agy CLI), Ubuntu/Debian (APT), Fedora (DNF) & openSUSE. Full CLI & GPG guide.",
+    "Complete CLI flags (--status, --uninstall, --cli-only), GPG signature verification, Nautilus/Dolphin/Nemo right-click integration & troubleshooting for Linux.",
   description:
-    "Install Google Antigravity 2.0, IDE & CLI packages on Linux with 1 command. Native RPM (DNF/Zypper) & DEB (APT) repositories for Fedora, Ubuntu, Debian & Arch.",
+    "Install Google Antigravity 2.0, IDE & CLI (agy) on Linux in 1 command. Signed RPM (Fedora, openSUSE) & DEB (Ubuntu, Debian) repos + Arch PKGBUILD.",
+  defaultKeywords:
+    "antigravity packages linux, google antigravity packages, antigravity linux packages, Google Antigravity, Antigravity Linux, Antigravity IDE, Antigravity RPM, Antigravity DEB, Antigravity Fedora DNF, Antigravity Ubuntu APT, Antigravity openSUSE Zypper, Antigravity Arch Linux, antigravity cli arch, pacman antigravity, uninstall antigravity ubuntu, agy cli, x86_64, aarch64",
   author: {
     name: "Steven Ceuppens · X3M Industries",
     url: "https://x3m.industries",

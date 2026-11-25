@@ -1,12 +1,22 @@
 ---
-import { siteConfig } from '../data/siteConfig';
+import { siteConfig, type PageId } from '../data/siteConfig';
 
 interface Props {
-  currentPage?: 'home' | 'docs';
+  currentPage?: PageId;
 }
 
 const { currentPage = 'home' } = Astro.props;
-const isDocs = currentPage === 'docs';
+const isHome = currentPage === 'home';
+
+const pageBadges: Partial<Record<PageId, string>> = {
+  docs: 'Docs',
+  arch: 'Arch',
+  uninstall: 'Uninstall',
+  opensuse: 'openSUSE',
+  fedora: 'Fedora',
+  ubuntu: 'Ubuntu',
+};
+const badge = pageBadges[currentPage];
 ---
 
 <nav class="site-nav" aria-label="Main Navigation">
@@ -14,27 +24,28 @@ const isDocs = currentPage === 'docs';
     <a href={siteConfig.baseUrl} class="nav-brand" aria-label="Antigravity Linux Home">
       <img src="assets/logo.png" alt="Antigravity Logo" width="28" height="28" />
       <span>Antigravity Linux</span>
-      {isDocs && <span class="nav-brand-badge">Docs</span>}
+      {badge && <span class="nav-brand-badge">{badge}</span>}
     </a>
     <div class="nav-links">
-      {isDocs ? (
+      {isHome ? (
         <>
-          <a href={siteConfig.baseUrl} class="nav-link">← Quickstart</a>
-          <a href="#cli-reference" class="nav-link">CLI Options</a>
-          <a href="#manual-repos" class="nav-link">Manual Repos</a>
-          <a href="#nautilus" class="nav-link">GNOME Files</a>
-          <a href="#troubleshooting" class="nav-link">Fixes</a>
-          <a href="#security" class="nav-link">GPG Security</a>
-          <a href="#faq" class="nav-link">Full FAQ</a>
+          <a href="#quickstart" class="nav-link">Quickstart</a>
+          <a href="arch.html" class="nav-link">Arch</a>
+          <a href="ubuntu.html" class="nav-link">Ubuntu</a>
+          <a href="fedora.html" class="nav-link">Fedora</a>
+          <a href="opensuse.html" class="nav-link">openSUSE</a>
+          <a href="uninstall.html" class="nav-link">Uninstall</a>
+          <a href="docs.html" class="nav-link" style="color:var(--accent); font-weight:600;">Docs &amp; CLI ↗</a>
         </>
       ) : (
         <>
-          <a href="#quickstart" class="nav-link">Quickstart</a>
-          <a href="#features" class="nav-link">Features</a>
-          <a href="#why-native" class="nav-link">Why Native?</a>
-          <a href="#faq" class="nav-link">FAQ</a>
-          <a href="docs.html#manual-repos" class="nav-link" style="color:var(--accent); font-weight:600;">Manual Repos ↗</a>
-          <a href="docs.html" class="nav-link" style="color:var(--accent); font-weight:600;">Docs &amp; CLI ↗</a>
+          <a href={siteConfig.baseUrl} class="nav-link">← Quickstart</a>
+          <a href="arch.html" class="nav-link" style={currentPage === 'arch' ? 'color:var(--accent); font-weight:600;' : undefined}>Arch</a>
+          <a href="ubuntu.html" class="nav-link" style={currentPage === 'ubuntu' ? 'color:var(--accent); font-weight:600;' : undefined}>Ubuntu</a>
+          <a href="fedora.html" class="nav-link" style={currentPage === 'fedora' ? 'color:var(--accent); font-weight:600;' : undefined}>Fedora</a>
+          <a href="opensuse.html" class="nav-link" style={currentPage === 'opensuse' ? 'color:var(--accent); font-weight:600;' : undefined}>openSUSE</a>
+          <a href="uninstall.html" class="nav-link" style={currentPage === 'uninstall' ? 'color:var(--accent); font-weight:600;' : undefined}>Uninstall</a>
+          <a href="docs.html" class="nav-link" style={currentPage === 'docs' ? 'color:var(--accent); font-weight:600;' : undefined}>Full Docs</a>
         </>
       )}
       <a href={siteConfig.repo.githubUrl} target="_blank" rel="noopener noreferrer" class="nav-btn" aria-label="GitHub Repository">

@@ -1,8 +1,8 @@
 ---
-import { siteConfig } from '../data/siteConfig';
+import { siteConfig, type PageId } from '../data/siteConfig';
 
 interface Props {
-  currentPage?: 'home' | 'docs';
+  currentPage?: PageId;
 }
 
 const { currentPage = 'home' } = Astro.props;
@@ -14,13 +14,19 @@ const isHome = currentPage === 'home';
     Architected &amp; maintained by <strong><a href={siteConfig.author.linkedin} target="_blank" rel="noopener noreferrer">Steven Ceuppens</a></strong> at <a href={siteConfig.author.url} target="_blank" rel="noopener noreferrer"><strong>X3M Industries</strong></a> · GPG Key: <code style="font-family:'JetBrains Mono',monospace; background:rgba(0,0,0,0.35); padding:2px 6px; border-radius:4px; font-size:0.82rem; color:var(--accent);">{siteConfig.gpg.fingerprint}</code>
   </p>
   <p class="footer-links">
-    {isHome ? (
-      <a href="docs.html">Documentation &amp; Reference</a>
-    ) : (
-      <a href={siteConfig.baseUrl}>Main Website</a>
-    )} · 
-    <a href={siteConfig.repo.githubUrl} target="_blank" rel="noopener noreferrer">GitHub Repository</a> · 
-    <a href="llms.txt">LLM Index</a> · 
+    {!isHome && (
+      <>
+        <a href={siteConfig.baseUrl}>Home</a> ·{' '}
+      </>
+    )}
+    <a href="arch.html">Arch Linux</a> ·
+    <a href="ubuntu.html">Ubuntu / Debian</a> ·
+    <a href="fedora.html">Fedora / RHEL</a> ·
+    <a href="opensuse.html">openSUSE</a> ·
+    <a href="uninstall.html">Uninstall Guide</a> ·
+    <a href="docs.html">Full Docs</a> ·
+    <a href={siteConfig.repo.githubUrl} target="_blank" rel="noopener noreferrer">GitHub</a> ·
+    <a href="llms.txt">LLM Index</a> ·
     <a href="install.sh">install.sh</a>
   </p>
   <p class="footer-disclaimer">
