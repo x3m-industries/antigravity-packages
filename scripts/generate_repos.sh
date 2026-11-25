@@ -31,7 +31,11 @@ fi
 # Keep xml:base (-u) pointing at the exact release tag for DNF (including legacy github.io clients).
 # zypper/libzypp ignores xml:base and requests <baseurl>/<file>.rpm directly, which is served via
 # https://rpm.x3m.industries/rpm/ (a Vercel 307 redirect to GitHub Releases; see vercel-apt/).
-createrepo_c -u "https://github.com/x3m-industries/antigravity-packages/releases/download/${RELEASE_TAG}/" "${RPM_DIR}"
+# Pin gzip compression so older RPM clients (RHEL/Rocky 8, openSUSE Leap 15.x) can read repodata
+# (Ubuntu 26.04's createrepo_c otherwise defaults to .zst).
+createrepo_c --general-compress-type=gz \
+    -u "https://github.com/x3m-industries/antigravity-packages/releases/download/${RELEASE_TAG}/" \
+    "${RPM_DIR}"
 
 # Sign repository metadata (required by zypper / repo_gpgcheck=1)
 if have_signing_key; then

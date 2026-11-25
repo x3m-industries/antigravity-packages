@@ -8,6 +8,7 @@ on:
       - 'scripts/generate_repos.sh'
       - 'scripts/inject_versions.py'
       - 'scripts/verify_packages.sh'
+      - 'scripts/verify_live_repos.sh'
       - 'scripts/check_pages_size.sh'
       - 'site/**'
       - 'templates/**'
@@ -39,8 +40,8 @@ env:
   BUN_VERSION: '1.4.2'
 
 jobs:
-  deploy:
-    name: Build & Deploy Landing Page
+  build:
+    name: Build Landing Page & Repo Metadata
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
@@ -92,9 +93,9 @@ jobs:
       - name: Generate Repository Metadata & Landing Page
         env:
           REQUIRE_SIGNING: 'true'
-          # Transition: legacy clients still use the github.io APT URL. Set to 'false' to drop the
-          # ~640 MB .deb pool from Pages once they have migrated to https://apt.x3m.industries/deb
-          KEEP_DEB_POOL: 'true'
+          # Clients download .deb files via https://apt.x3m.industries/deb (Vercel 307 redirect
+          # to GitHub Releases), keeping the GitHub Pages artifact small (~3 MB vs ~630 MB).
+          KEEP_DEB_POOL: 'false'
         run: |
           ./scripts/generate_repos.sh "$RELEASE_TAG" ./dist
 
@@ -114,5 +115,22 @@ jobs:
         with:
           path: ./dist
 
+  deploy-pages:
+    name: Deploy to GitHub Pages
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
       - name: Deploy to GitHub Pages
         uses: actions/deploy-pages@v5
+
+  verify-live-repos:
+    name: Verify Live RPM & APT Repositories
+    needs: deploy-pages
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v7
+
+      - name: Verify live rpm.x3m.industries and apt.x3m.industries
+        run: |
+          ./scripts/verify_live_repos.sh

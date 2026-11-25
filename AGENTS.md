@@ -49,6 +49,7 @@ antigravity-packages/
 │   ├── inject_versions.py         # Injects release versions from GitHub release tags into HTML landing pages during repo generation
 │   ├── smoke_test.sh              # Containerized end-to-end installation test for Fedora and Ubuntu (Docker / Podman); x86_64 native, aarch64 via QEMU (`SMOKE_ARCH`)
 │   ├── verify_packages.sh         # Asserts the complete set of 8 packages (2 apps x 2 arches x rpm/deb) exists before publishing / regenerating metadata
+│   ├── verify_live_repos.sh       # Post-deploy live verification of rpm.x3m.industries (zypper/dnf) and apt.x3m.industries (apt) endpoints & redirects
 │   └── stats.py                   # CLI analytics tool querying GitHub Releases API to track package downloads across arch and formats
 ├── site/                          # Astro + Tailwind CSS web frontend (managed with Bun)
 │   ├── astro.config.mjs           # Astro configuration (base /antigravity-packages, static file format)
@@ -226,11 +227,11 @@ The script `scripts/generate_repos.sh <RELEASE_TAG> <DIST_DIR>` builds the deplo
 ```
 
 ### 4.2 RPM Repository Generation (DNF/YUM)
-- **`createrepo_c` with External URLs**:
+- **`createrepo_c` with External URLs & Gzip Metadata**:
   ```bash
-  createrepo_c -u "https://github.com/x3m-industries/antigravity-packages/releases/download/${RELEASE_TAG}/" "${RPM_DIR}"
+  createrepo_c --general-compress-type=gz -u "https://github.com/x3m-industries/antigravity-packages/releases/download/${RELEASE_TAG}/" "${RPM_DIR}"
   ```
-  The `-u` parameter directs DNF/RPM to download the `.rpm` binaries directly from GitHub Releases CDN. This is critical because **GitHub Pages has strict storage and bandwidth limits** and GitHub Releases provides high-speed CDN delivery for large (>100MB) binary packages.
+  The `-u` parameter directs DNF/RPM to download the `.rpm` binaries directly from GitHub Releases CDN (keeping GitHub Pages lightweight). `--general-compress-type=gz` keeps `repodata` universally readable on older RPM clients (RHEL/Rocky 8, openSUSE Leap 15.x) where Ubuntu 26.04's default `.zst` repodata can fail.
 - **Signed Metadata**: `repodata/repomd.xml` is detached-signed (`repomd.xml.asc`, plus `repomd.xml.key`), which `zypper` requires.
 - **Client Configuration**: `dist/rpm/antigravity.repo` points to `baseurl=https://rpm.x3m.industries/rpm/` with `gpgcheck=1` and `repo_gpgcheck=1`.
 
@@ -257,9 +258,9 @@ APT resolves `Filename:` relative to the repository URL and does not accept abso
 - `redirects`: `/deb/pool/main/:file` → `https://github.com/x3m-industries/antigravity-packages/releases/latest/download/:file` (307). The `.deb` bytes come from GitHub Releases, so Vercel serves only a redirect.
 - `rewrites`: `/deb/:path*` → `https://x3m-industries.github.io/antigravity-packages/deb/:path*`. Signed metadata (`InRelease`, `Packages`, keys, `.sources`) is proxied unchanged from Pages, so the signatures stay valid.
 - Clients use `https://apt.x3m.industries/deb` (`antigravity.sources`, `antigravity.list` and `install.sh` all point there). The Vercel config is static and deployed manually (`cd vercel-apt && vercel deploy --prod --scope x3m-industries`); the project is **not** linked to GitHub, so pushes do not trigger deployments. It only needs redeploying when `vercel-apt/` changes.
-- `generate_repos.sh` removes `dist/deb/pool` after indexing, unless `KEEP_DEB_POOL=true`. Both workflows currently set `KEEP_DEB_POOL: 'true'` as a transition for legacy clients that still use the github.io APT URL (their download path needs the pool on Pages). Set it to `'false'` in `build-and-publish.yml` and `deploy-pages.yml` to drop the ~640 MB pool from Pages once legacy clients have migrated (`install.sh` rewrites the APT sources on every run).
+- `generate_repos.sh` removes `dist/deb/pool` after indexing, unless `KEEP_DEB_POOL=true`. Both workflows set `KEEP_DEB_POOL: 'false'`, keeping the GitHub Pages artifact tiny (~3 MB instead of ~630 MB) while `.deb` bytes are served from GitHub Releases via `https://apt.x3m.industries/deb`.
 - Constraints: Vercel Hobby is free for non-commercial use (100 GB/month, hard caps); `releases/latest` always contains all 8 assets; a client with a stale `Packages` index can get a 404 immediately after a release (same as before).
-- `scripts/check_pages_size.sh` warns at 700 MB and fails the deploy at 950 MB (hard Pages limit: 1 GB) while the pool is still on Pages.
+- `scripts/check_pages_size.sh` guards against accidental Pages bloat (warns at 700 MB, fails at 950 MB; hard Pages limit: 1 GB).
 
 ### 4.4.2 RPM Delivery via `rpm.x3m.industries` (Vercel redirect for Zypper)
 DNF honors the `xml:base` attribute written by `createrepo_c -u ...`, so DNF downloads `.rpm` files straight from GitHub Releases. `zypper`/`libzypp` ignores `xml:base` (and does not accept absolute `href`s) and instead requests `<baseurl>/<file>.rpm` relative to the repository URL. Because `.rpm` files are purged from Pages, `rpm.x3m.industries` is attached to the same static Vercel project in `vercel-apt/` (`x3m-industries/antigravity-apt`):

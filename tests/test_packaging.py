@@ -253,9 +253,10 @@ class TestPackagingLogic(unittest.TestCase):
             self.assertIn("https://rpm.x3m.industries/rpm/", content, rel)
             self.assertNotIn("x3m-industries.github.io/antigravity-packages/rpm/", content, rel)
 
-        # Keep xml:base (-u) in createrepo_c so legacy github.io DNF clients stay compatible
+        # Keep xml:base (-u) and gzip repodata in createrepo_c for DNF & older RPM distro compatibility
         gen = (repo_root / "scripts" / "generate_repos.sh").read_text(encoding="utf-8")
-        self.assertIn('createrepo_c -u "https://github.com/x3m-industries/antigravity-packages/releases/download/${RELEASE_TAG}/"', gen)
+        self.assertIn("--general-compress-type=gz", gen)
+        self.assertIn('-u "https://github.com/x3m-industries/antigravity-packages/releases/download/${RELEASE_TAG}/"', gen)
 
     def test_rpm_v4_format_and_signature_guard(self):
         build_script = (repo_root / "scripts" / "build_packages.py").read_text(encoding="utf-8")
@@ -270,6 +271,25 @@ class TestPackagingLogic(unittest.TestCase):
         self.assertIn("%{RPMFORMAT}", smoke)
         self.assertIn("opensuse/tumbleweed:latest", smoke)
         self.assertIn("REQUIRE_RPM_SIG", smoke)
+
+    def test_pages_optimization_and_live_repo_verification(self):
+        import subprocess
+        publish = (repo_root / ".github" / "workflows" / "build-and-publish.yml").read_text(encoding="utf-8")
+        pages = (repo_root / ".github" / "workflows" / "deploy-pages.yml").read_text(encoding="utf-8")
+        ci = (repo_root / ".github" / "workflows" / "ci.yml").read_text(encoding="utf-8")
+
+        for wf in (publish, pages):
+            self.assertIn("KEEP_DEB_POOL: 'false'", wf)
+            self.assertIn("needs: build", wf)
+            self.assertIn("verify-live-repos:", wf)
+            self.assertIn("needs: deploy-pages", wf)
+            self.assertIn("./scripts/verify_live_repos.sh", wf)
+
+        self.assertIn("scripts/verify_live_repos.sh", ci)
+        live_script = repo_root / "scripts" / "verify_live_repos.sh"
+        self.assertTrue(live_script.exists())
+        res = subprocess.run(["bash", "-n", str(live_script)], capture_output=True, text=True)
+        self.assertEqual(res.returncode, 0, res.stderr)
 
     def test_installer_script(self):
         import subprocess
