@@ -101,11 +101,22 @@ DNF_LIVE_SCRIPT='
 
 # 4. Ubuntu (apt) live metadata, GPG verification, and 307 redirect download
 echo -e "\n---> [4/4] Testing live APT repository & redirect download in Ubuntu..."
+# shellcheck disable=SC2016
 APT_LIVE_SCRIPT='
     set -euo pipefail
     export DEBIAN_FRONTEND=noninteractive
-    apt-get update -qq
-    apt-get install -y -qq --no-install-recommends curl ca-certificates
+    apt_ok=false
+    for attempt in 1 2 3; do
+        if apt-get update -qq -o Acquire::Retries=3 && \
+           apt-get install -y -qq --no-install-recommends -o Acquire::Retries=3 curl ca-certificates; then
+            apt_ok=true
+            break
+        fi
+        echo "APT bootstrap failed (attempt ${attempt}/3); clearing apt lists and retrying..." >&2
+        rm -rf /var/lib/apt/lists/*
+        sleep $((attempt * 10))
+    done
+    [ "$apt_ok" = "true" ] || { echo "ERROR: apt-get bootstrap failed after 3 attempts" >&2; exit 1; }
     rm -f /etc/apt/sources.list /etc/apt/sources.list.d/*
     mkdir -p /etc/apt/keyrings
     curl -fsSL "'"${APT_BASE}"'/antigravity.gpg" -o /etc/apt/keyrings/antigravity.gpg

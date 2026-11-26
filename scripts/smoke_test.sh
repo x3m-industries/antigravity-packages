@@ -188,7 +188,17 @@ if has_pkg "*${RPM_ARCH}.rpm"; then
     RPM_SCRIPT='
         set -euo pipefail
         echo "Installing packages with DNF..."
-        dnf install -y /packages/*'"${RPM_ARCH}"'.rpm glibc-common
+        dnf_ok=false
+        for attempt in 1 2 3; do
+            if dnf install -y /packages/*'"${RPM_ARCH}"'.rpm glibc-common; then
+                dnf_ok=true
+                break
+            fi
+            echo "DNF install failed (attempt ${attempt}/3); refreshing metadata and retrying..." >&2
+            dnf clean metadata || true
+            sleep $((attempt * 10))
+        done
+        [ "$dnf_ok" = "true" ] || { echo "ERROR: dnf install failed after 3 attempts" >&2; exit 1; }
 
         echo "Verifying package database..."
         [ "$EXPECT_HUB" = 1 ] && rpm -q antigravity
@@ -249,11 +259,19 @@ if has_pkg "*_${DEB_ARCH}.deb"; then
     echo -e "\n---> [3/3] Testing DEB installation in Ubuntu container (${PLATFORM})..."
     DEB_SCRIPT='
         set -euo pipefail
-        echo "Updating apt indexes..."
-        apt-get update -qq
-
-        echo "Installing packages with APT..."
-        DEBIAN_FRONTEND=noninteractive apt-get install -y /packages/*_'"${DEB_ARCH}"'.deb
+        apt_ok=false
+        for attempt in 1 2 3; do
+            echo "Updating apt indexes and installing packages (attempt ${attempt}/3)..."
+            if apt-get update -qq -o Acquire::Retries=3 && \
+               DEBIAN_FRONTEND=noninteractive apt-get install -y -o Acquire::Retries=3 /packages/*_'"${DEB_ARCH}"'.deb; then
+                apt_ok=true
+                break
+            fi
+            echo "APT install failed (attempt ${attempt}/3); clearing apt lists and retrying..." >&2
+            rm -rf /var/lib/apt/lists/*
+            sleep $((attempt * 10))
+        done
+        [ "$apt_ok" = "true" ] || { echo "ERROR: apt-get install failed after 3 attempts" >&2; exit 1; }
 
         echo "Verifying package database..."
         [ "$EXPECT_HUB" = 1 ] && dpkg -s antigravity > /dev/null
